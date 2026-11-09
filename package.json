@@ -1,0 +1,12 @@
+{
+  "name": "hellgate-lunch",
+  "private": true,
+  "type": "module",
+  "description": "Scriptable widget for the Hellgate Elementary K-8 lunch menu, plus off-phone tests.",
+  "scripts": {
+    "test": "node test/run-tests.mjs"
+  },
+  "devDependencies": {
+    "pngjs": "7.0.0"
+  }
+}

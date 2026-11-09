@@ -1,0 +1,66 @@
+name: Refresh menu and publish site
+
+on:
+  schedule:
+    - cron: "17 */6 * * *" # every 6 hours (UTC), like the widget
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write # commit new menu pictures
+  pages: write
+  id-token: write
+
+concurrency:
+  group: menu-and-pages
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm test
+
+      - name: Read the school's menu
+        run: node menu/build.mjs
+
+      - name: Save new menu data
+        id: save
+        run: |
+          git add web/data
+          if git diff --cached --quiet; then
+            echo "No menu changes."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "Update lunch menu data"
+            git push
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      # Scheduled runs only publish when the menu changed; pushes and manual runs always publish.
+      - uses: actions/configure-pages@v5
+        if: steps.save.outputs.changed == 'true' || github.event_name != 'schedule'
+
+      - uses: actions/upload-pages-artifact@v3
+        if: steps.save.outputs.changed == 'true' || github.event_name != 'schedule'
+        with:
+          path: web
+
+      - id: deploy
+        uses: actions/deploy-pages@v4
+        if: steps.save.outputs.changed == 'true' || github.event_name != 'schedule'

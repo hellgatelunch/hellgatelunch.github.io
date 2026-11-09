@@ -1,0 +1,224 @@
+{
+ "page": "https://www.hellgate.k12.mt.us/departments/food-services/school-breakfast-lunch-program/k-8-food-menu",
+ "months": {
+  "2026-11": {
+   "name": "November 2026",
+   "source": "https://resources.finalsite.net/images/v1793201331/hellgatek12mtus/q36shaaq4eujy03daxtg/NovemberLUNCH2026docx.pdf",
+   "cut": "2026-11-09",
+   "ok": true
+  }
+ },
+ "typed": {
+  "2026-11-02": [
+   "Sweet & Sour Chicken/Rice",
+   "Green Beans",
+   "Pears",
+   "Fortune Cookie"
+  ],
+  "2026-11-03": [
+   "Beef Hot Dog",
+   "Baked Beans",
+   "Peaches"
+  ],
+  "2026-11-04": [
+   "Beef Burrito",
+   "Carrots/Ranch",
+   "Grapes"
+  ],
+  "2026-11-05": [
+   "Chicken Nuggets",
+   "Broccoli/Ranch",
+   "Orange Slices"
+  ],
+  "2026-11-06": [
+   "Sloppy Joe",
+   "Seasoned Tots",
+   "Apple Slices"
+  ],
+  "2026-11-09": [
+   "Orange Chicken/Rice",
+   "Steamed Peas",
+   "Mixed Fruit",
+   "Fortune Cookie"
+  ],
+  "2026-11-10": [
+   "Cheeseburger",
+   "Oven Fries",
+   "Strawberries"
+  ],
+  "2026-11-11": [
+   "Chicken Strips",
+   "Carrots/Ranch",
+   "Grapes"
+  ],
+  "2026-11-12": [
+   "Corn Dog",
+   "Celery/Ranch",
+   "Peach Cup",
+   "Hummus"
+  ],
+  "2026-11-13": [
+   "Beef Chili/Cheese",
+   "Steamed Broccoli",
+   "Pears",
+   "Corn Chips"
+  ],
+  "2026-11-16": [
+   "Beef Meatball Sub/Cheese",
+   "Broccoli/Ranch",
+   "Mixed Fruit"
+  ],
+  "2026-11-17": [
+   "Biscuits & Sausage Gravy",
+   "Tri Tater",
+   "Peaches"
+  ],
+  "2026-11-18": [
+   "Beef Taco",
+   "Black Beans",
+   "Mandarin Oranges"
+  ],
+  "2026-11-19": [
+   "Chicken Noodle Soup",
+   "Mixed Veggies",
+   "Mixed Berry Cup",
+   "Goldfish Crackers"
+  ],
+  "2026-11-20": [
+   "Turkey/Cheddar Wrap",
+   "Carrots/Ranch",
+   "Apple Slices",
+   "Chips"
+  ],
+  "2026-11-23": [
+   "Grilled Cheese",
+   "Tomato Soup",
+   "Peaches",
+   "Goldfish Crackers"
+  ],
+  "2026-11-24": [
+   "Chicken Strips",
+   "Carrots/Ranch",
+   "Mixed Fruit"
+  ],
+  "2026-11-25": null,
+  "2026-11-26": null,
+  "2026-11-27": null,
+  "2026-11-30": [
+   "Beef Burrito",
+   "Carrots/Ranch",
+   "Pears"
+  ]
+ },
+ "days": {
+  "2026-11-02": {
+   "img": "cells/2026-11-02.png",
+   "w": 292,
+   "h": 125
+  },
+  "2026-11-03": {
+   "img": "cells/2026-11-03.png",
+   "w": 150,
+   "h": 94
+  },
+  "2026-11-04": {
+   "img": "cells/2026-11-04.png",
+   "w": 162,
+   "h": 98
+  },
+  "2026-11-05": {
+   "img": "cells/2026-11-05.png",
+   "w": 184,
+   "h": 97
+  },
+  "2026-11-06": {
+   "img": "cells/2026-11-06.png",
+   "w": 160,
+   "h": 97
+  },
+  "2026-11-09": {
+   "img": "cells/2026-11-09.png",
+   "w": 227,
+   "h": 125
+  },
+  "2026-11-10": {
+   "img": "cells/2026-11-10.png",
+   "w": 156,
+   "h": 93
+  },
+  "2026-11-11": {
+   "img": "cells/2026-11-11.png",
+   "w": 162,
+   "h": 97
+  },
+  "2026-11-12": {
+   "img": "cells/2026-11-12.png",
+   "w": 152,
+   "h": 123
+  },
+  "2026-11-13": {
+   "img": "cells/2026-11-13.png",
+   "w": 195,
+   "h": 129
+  },
+  "2026-11-16": {
+   "img": "cells/2026-11-16.png",
+   "w": 287,
+   "h": 94
+  },
+  "2026-11-17": {
+   "img": "cells/2026-11-17.png",
+   "w": 271,
+   "h": 93
+  },
+  "2026-11-18": {
+   "img": "cells/2026-11-18.png",
+   "w": 206,
+   "h": 98
+  },
+  "2026-11-19": {
+   "img": "cells/2026-11-19.png",
+   "w": 233,
+   "h": 123
+  },
+  "2026-11-20": {
+   "img": "cells/2026-11-20.png",
+   "w": 241,
+   "h": 128
+  },
+  "2026-11-23": {
+   "img": "cells/2026-11-23.png",
+   "w": 191,
+   "h": 124
+  },
+  "2026-11-24": {
+   "img": "cells/2026-11-24.png",
+   "w": 162,
+   "h": 94
+  },
+  "2026-11-25": {
+   "img": "cells/2026-11-25.png",
+   "w": 178,
+   "h": 37,
+   "note": true
+  },
+  "2026-11-26": {
+   "img": "cells/2026-11-26.png",
+   "w": 178,
+   "h": 37,
+   "note": true
+  },
+  "2026-11-27": {
+   "img": "cells/2026-11-27.png",
+   "w": 178,
+   "h": 37,
+   "note": true
+  },
+  "2026-11-30": {
+   "img": "cells/2026-11-30.png",
+   "w": 160,
+   "h": 94
+  }
+ },
+ "noLunch": []
+}

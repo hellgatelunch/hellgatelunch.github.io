@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Hellgate Lunch</title>
+<meta name="description" content="Today's lunch and this week's menu at Hellgate Elementary K-8, straight from the school's monthly menu.">
+<meta name="theme-color" content="#F4F1EA" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#151A17" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Lunch">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main class="wrap">
+  <header class="top">
+    <p class="eyebrow">Hellgate Elementary K-8</p>
+    <h1>Lunch</h1>
+  </header>
+
+  <section id="hero" class="hero" aria-live="polite">
+    <p class="when">Loading…</p>
+  </section>
+
+  <section class="week" aria-labelledby="week-title">
+    <div class="week-head">
+      <h2 id="week-title">This week</h2>
+      <div class="nav">
+        <button id="prev" type="button" aria-label="Previous week">‹</button>
+        <button id="today" type="button" hidden>This week</button>
+        <button id="next" type="button" aria-label="Next week">›</button>
+      </div>
+    </div>
+    <div id="days" class="days"></div>
+  </section>
+
+  <aside id="install" class="install" hidden>
+    <p><strong>Put it on your home screen:</strong> tap <span class="share" aria-label="Share">Share</span>, then <em>Add to Home Screen</em>.</p>
+    <button id="install-close" type="button" aria-label="Dismiss">×</button>
+  </aside>
+
+  <footer class="fine">
+    <p id="source"></p>
+    <p>All meals include 1% chocolate or white milk.</p>
+    <p><a id="page-link" href="https://www.hellgate.k12.mt.us/departments/food-services/school-breakfast-lunch-program/k-8-food-menu">The school's menu page</a></p>
+  </footer>
+</main>
+<script src="app.js"></script>
+</body>
+</html>
