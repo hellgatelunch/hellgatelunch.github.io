@@ -18,15 +18,17 @@
 <body>
 <main class="wrap">
   <header class="top">
-    <p class="eyebrow">Hellgate Elementary K-8</p>
-    <h1>Breakfast &amp; Lunch</h1>
+    <h1 class="brand-line"><strong>Hellgate K-8</strong> <span>· Breakfast and lunch</span></h1>
   </header>
-
-  <div id="toggles" class="toggles" role="group" aria-label="Meals to show"></div>
 
   <section id="hero" class="hero" aria-live="polite">
     <p class="when">Loading…</p>
   </section>
+
+  <div class="show-row">
+    <span class="show-label" id="show-label">Show</span>
+    <div id="toggles" class="toggles" role="group" aria-labelledby="show-label"></div>
+  </div>
 
   <section class="week" aria-labelledby="week-title">
     <div class="week-head">
@@ -38,6 +40,15 @@
       </div>
     </div>
     <div id="days" class="days"></div>
+  </section>
+
+  <section class="cal" aria-labelledby="cal-title">
+    <h2 id="cal-title">Get it in your calendar</h2>
+    <p>Shows each day's lunch in your phone's calendar and its widgets. Updates on its own.</p>
+    <div class="cal-buttons">
+      <a id="cal-apple" class="btn" href="webcal://hellgatelunch.github.io/calendar.ics">iPhone</a>
+      <a id="cal-google" class="btn btn-quiet" href="https://calendar.google.com/calendar/render?cid=webcal%3A%2F%2Fhellgatelunch.github.io%2Fcalendar.ics">Google / Android</a>
+    </div>
   </section>
 
   <aside id="install" class="install" hidden>

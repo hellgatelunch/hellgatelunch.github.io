@@ -51,10 +51,15 @@ p, h1, h2, h3 { margin: 0; }
 }
 a { color: var(--brand); }
 
-/* Header */
-.top { margin: 4px 0 12px; }
-.eyebrow { font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
-h1 { margin-top: 2px; font-size: 30px; line-height: 1.1; letter-spacing: -.01em; }
+/* Header: one quiet line, so today's answer is the first thing you see */
+.top { margin: 0 0 10px; }
+.brand-line { font-size: 15px; font-weight: 500; color: var(--muted); }
+.brand-line strong { color: var(--ink); font-weight: 750; }
+
+/* Meal toggles, under the top card */
+.show-row { display: flex; align-items: center; gap: 10px; margin: 0 0 22px; }
+.show-label { font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.show-row .toggles { flex: 1; margin: 0; }
 
 /* Meal colors, by class */
 .m-breakfast { --meal: var(--breakfast); --meal-tint: var(--breakfast-tint); }
@@ -199,3 +204,73 @@ h2 { font-size: 20px; }
 .fine { margin-top: 24px; font-size: 13px; color: var(--muted); }
 .fine p { margin: 6px 0; }
 .share-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; margin-bottom: 14px !important; }
+
+/* Pack or buy?: rating buttons and verdicts */
+.meal-head { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 10px; }
+.main-line { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.rate { display: inline-flex; gap: 2px; flex: none; margin: -6px -8px -6px 0; }
+.row-rate .rate { margin: 0; }
+.rate-btn {
+  width: 40px; height: 40px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border: 0; border-radius: 12px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 20px;
+  cursor: pointer;
+}
+.rate-btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 1px; }
+.rate-btn.like[aria-pressed="true"] { color: var(--meal); background: var(--meal-tint); }
+.rate-btn.like[aria-pressed="true"] .icon { fill: currentColor; }
+.rate-btn.nope[aria-pressed="true"] { color: var(--ink); background: var(--line); }
+.icon.filled { fill: currentColor; }
+.verdict {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 2px 9px; border-radius: 999px;
+  font-size: 12px; font-weight: 700; letter-spacing: 0; text-transform: none;
+}
+.verdict .icon { font-size: 13px; }
+.verdict.fav { background: var(--meal-tint); color: var(--ink); }
+.verdict.fav .icon { color: var(--meal); }
+.verdict.pack { background: var(--ink); color: var(--card); }
+.verdict.meh { background: var(--line); color: var(--muted); }
+
+/* Week: the main item is a quiet button that opens the rating buttons */
+.main-btn {
+  display: inline; padding: 0; border: 0; background: none;
+  color: inherit; font: inherit; font-weight: 700; text-align: left;
+  cursor: pointer;
+}
+.main-btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; border-radius: 4px; }
+.mark { display: inline-flex; vertical-align: -2px; margin-left: 5px; }
+.mark.fav { color: var(--meal); font-size: 14px; }
+.mark.meh { color: var(--muted); font-size: 13px; }
+.mark.pack {
+  padding: 0 7px; border-radius: 999px;
+  background: var(--ink); color: var(--card);
+  font-size: 11px; font-weight: 700; line-height: 18px; vertical-align: 1px;
+}
+.row-rate { display: flex; align-items: center; gap: 6px; margin-top: 4px; }
+.rate-help { font-size: 12.5px; color: var(--muted); }
+
+/* First-time hint */
+.hint {
+  display: flex; align-items: center; gap: 8px;
+  margin: 0 0 14px; padding: 10px 12px;
+  border-radius: 12px; background: var(--bg);
+  font-size: 13.5px; color: var(--muted);
+}
+.hint .icon { font-size: 16px; color: var(--lunch); flex: none; }
+.hint span { flex: 1; }
+.hint button {
+  flex: none; border: 0; border-radius: 999px; padding: 6px 12px;
+  background: var(--card); color: var(--ink);
+  font: inherit; font-size: 13px; font-weight: 650; cursor: pointer;
+}
+
+/* Get it in your calendar */
+.cal { margin-top: 22px; padding: 16px; border-radius: 16px; background: var(--card); }
+.cal p { margin-top: 4px; font-size: 14px; color: var(--muted); }
+.cal-buttons { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.cal-buttons .btn { text-decoration: none; display: inline-flex; align-items: center; min-height: 40px; }
+.btn-quiet { background: var(--bg); color: var(--ink); }

@@ -14,10 +14,13 @@ import { fileURLToPath } from "node:url";
 import { PNG } from "pngjs";
 import { readMonth } from "./read-month.mjs";
 import { S, sortLinks } from "./sources.mjs";
+import { makeIcs } from "./calendar.mjs";
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
 const DATA = path.join(ROOT, "web", "data");
 const MENU_JSON = path.join(DATA, "menu.json");
+const CALENDAR = path.join(ROOT, "web", "calendar.ics");
+const SITE = "https://hellgatelunch.github.io/";
 const BREAK_JSON = path.join(ROOT, "menu", "break.json");
 const UA = "Mozilla/5.0 (compatible; hellgate-lunch-site/1.0)";
 
@@ -147,6 +150,10 @@ async function main() {
   };
   fs.writeFileSync(MENU_JSON, JSON.stringify(out, null, 1) + "\n");
   console.log(`Wrote ${path.relative(ROOT, MENU_JSON)}: ${Object.keys(out.days).length} lunch days, ${Object.keys(out.breakfast.days).length} breakfast days`);
+  // The same menu as a calendar feed parents can subscribe to (web/calendar.ics).
+  const ics = makeIcs(out, SITE);
+  fs.writeFileSync(CALENDAR, ics);
+  console.log(`Wrote ${path.relative(ROOT, CALENDAR)}: ${(ics.match(/BEGIN:VEVENT/g) || []).length} school days`);
 }
 
 main().catch(e => { console.error(e); process.exit(1); });

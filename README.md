@@ -14,6 +14,8 @@ Both read the school's own monthly menus. The website shows each day's menu as t
 - Before 2 PM (Montana time) the top card shows today's meals; after 2 PM, the next school day.
 - Each meal has one color and icon everywhere: amber/sunrise for breakfast, teal/apple for Breakfast @ Break, orange/plate for lunch. The week is a timetable with the meal labels in one column.
 - Each day shows Breakfast, Breakfast @ Break (middle school) and Lunch. The chips at the top hide the ones a family doesn't need; the choice is remembered on that phone.
+- **Calendar feed:** the build also writes `web/calendar.ics` (`menu/calendar.mjs`): one all-day event per school day, titled with lunch ("Lunch: Cheeseburger"), with breakfast, break and lunch in the notes. Parents subscribe once from the site's *Get it in your calendar* card (iPhone `webcal://`, or Google Calendar), and it shows in their calendar widgets and refreshes on its own. Days off get no event.
+- **Pack or buy?:** parents tap the heart or thumbs-down on a food (in the top card, or by tapping a food in the week). Liked mains show "Favorite" and a heart; disliked lunches show "Maybe pack a lunch" / "Pack?". Ratings are stored only in that phone's browser (`localStorage`), never sent anywhere.
 - **Breakfast @ Break** isn't a monthly calendar: the school posts one sheet for the year with two weekly menus that alternate by month. It's typed into `menu/break.json`. If the school posts a different sheet, the Action logs a warning and the site links to the new sheet; then update `menu/break.json` from it (including its `source` address).
 - Below it is the week, with arrows (or ← →) to flip weeks.
 - To force a refresh, open the repository's **Actions** tab → *Refresh menu and publish site* → **Run workflow**.

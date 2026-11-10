@@ -262,5 +262,50 @@ await testAsync("without readable words, a day falls back to a see-through pictu
   assert.ok(res.days["2026-11-25"].note, "NO SCHOOL box is a note");
 });
 
+console.log("Calendar feed (website)");
+
+{
+  const { makeIcs } = await import("../menu/calendar.mjs");
+  const ICAL = (await import("ical.js")).default;
+  const lunchRes = await readMonth(pngOf("november-2026.png"), pdfOf("november-2026.pdf"), 2026, 10);
+  const bfRes = await readMonth(pngOf("november-2026-breakfast.png"), pdfOf("november-2026-breakfast.pdf"), 2026, 10);
+  const br = JSON.parse(fs.readFileSync(new URL("../menu/break.json", import.meta.url), "utf8"));
+  const menu = {
+    months: { "2026-11": { name: "November 2026", cut: "2026-11-09", ok: true } },
+    days: lunchRes.days, noLunch: lunchRes.noLunch, typed: {},
+    breakfast: { months: { "2026-11": { name: "November 2026", cut: "2026-11-09", ok: true } }, days: bfRes.days, noLunch: [] },
+    break: br,
+  };
+  const ics = makeIcs(menu, "https://hellgatelunch.github.io/");
+  const events = new ICAL.Component(ICAL.parse(ics)).getAllSubcomponents("vevent").map(e => new ICAL.Event(e));
+
+  test("the feed parses as a calendar, one event per November school day", () => {
+    assert.equal(events.length, 18);
+    const days = events.map(e => e.startDate.toString());
+    for (const off of ["2026-11-25", "2026-11-26", "2026-11-27"]) assert.ok(!days.includes(off), off);
+    assert.ok(events.every(e => e.startDate.isDate), "all-day events");
+  });
+
+  test("Nov 10: lunch in the title, the whole day in the notes", () => {
+    const e = events.find(x => x.startDate.toString() === "2026-11-10");
+    assert.equal(e.summary, "Lunch: Cheeseburger");
+    assert.match(e.description, /^Breakfast: Yogurt Bar; Add Your Own Toppings! · Mini Donuts · Mixed Berries$/m);
+    assert.match(e.description, /^Break \(middle school\): Mini Pancakes · Yogurt · Fruits · Milk$/m);
+    assert.match(e.description, /^Lunch: Cheeseburger · Oven Fries · Strawberries$/m);
+    assert.equal(e.uid, "20261110@hellgatelunch.github.io");
+  });
+
+  test("lines are CRLF, at most 75 octets, with commas and semicolons escaped", () => {
+    assert.ok(!/[^\r]\n/.test(ics), "bare LF");
+    for (const l of ics.split("\r\n")) assert.ok(Buffer.byteLength(l) <= 75, l);
+    assert.match(ics, /Yogurt Bar\\; Add/);
+    assert.match(ics, /^X-WR-CALNAME:Hellgate Lunch\r$/m);
+  });
+
+  test("the same menu always gives the same feed (no needless commits)", () => {
+    assert.equal(makeIcs(menu, "https://hellgatelunch.github.io/"), ics);
+  });
+}
+
 console.log(failed ? `\n${failed} failed` : "\nAll passed. Day crops are in test/out/.");
 process.exit(failed ? 1 : 0);

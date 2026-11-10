@@ -104,9 +104,45 @@
 
   function salad(dow) {
     var b3 = dow === 1 || dow === 5, b4 = dow !== 2;
-    if (b3 && b4) return "Salad bar: Building 3 and Building 4";
-    if (b4) return "Salad bar: Building 4";
-    return "No salad bar on Tuesdays";
+    if (b3 && b4) return "Salad bar: Bldg 3 and 4";
+    if (b4) return "Salad bar: Bldg 4";
+    return "No salad bar Tue";
+  }
+
+  // Foods the kid likes (1) or doesn't (-1). Kept on this phone only; never sent anywhere.
+  var likes = {};
+  try { likes = JSON.parse(store("hl-likes") || "{}") || {}; } catch (e) { likes = {}; }
+  function foodKey(s) { return String(s).toLowerCase().replace(/\s+/g, " ").trim(); }
+  function liking(s) { return has(likes, foodKey(s)) ? likes[foodKey(s)] : 0; }
+  function rate(s, v) {
+    var k = foodKey(s);
+    if (likes[k] === v) delete likes[k]; else likes[k] = v; // tapping again clears it
+    store("hl-likes", JSON.stringify(likes));
+    store("hl-likes-hint", "1");
+  }
+  var openRow = null; // the week row whose rating buttons are showing
+
+  var HEART = '<path d="M12 20s-7-4.4-9-8.6C1.6 8.4 3.4 5 6.8 5c2 0 3.3 1.1 5.2 3 1.9-1.9 3.2-3 5.2-3 3.4 0 5.2 3.4 3.8 6.4C19 15.6 12 20 12 20z"/>';
+  var THUMB = '<path d="M7 13V5a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h3a4 4 0 0 1 4 4v1a2 2 0 0 0 4 0v-5h3a2 2 0 0 0 2-2l-1-5a2 3 0 0 0-2-2h-7a3 3 0 0 0-3 3"/>';
+  function svg(paths, cls) { return '<svg class="icon ' + (cls || "") + '" viewBox="0 0 24 24" aria-hidden="true">' + paths + "</svg>"; }
+
+  // The two rating buttons for a food.
+  function rateButtons(name) {
+    var v = liking(name), f = esc(name);
+    return '<span class="rate">'
+      + '<button type="button" class="rate-btn like" data-food="' + f + '" data-v="1" aria-pressed="' + (v > 0) + '" aria-label="Likes ' + f + '">' + svg(HEART) + "</button>"
+      + '<button type="button" class="rate-btn nope" data-food="' + f + '" data-v="-1" aria-pressed="' + (v < 0) + '" aria-label="Doesn\'t like ' + f + '">' + svg(THUMB) + "</button>"
+      + "</span>";
+  }
+
+  // The verdict for a meal's main item: big tag in the top card, small mark in the week.
+  function verdict(id, l, big) {
+    if (!l || !l.items) return "";
+    var v = liking(l.items[0]);
+    if (!v) return "";
+    if (v > 0) return big ? '<span class="verdict fav">' + svg(HEART, "filled") + "Favorite</span>" : '<span class="mark fav" title="Favorite">' + svg(HEART, "filled") + "</span>";
+    if (id === "lunch") return big ? '<span class="verdict pack">Maybe pack a lunch</span>' : '<span class="mark pack">Pack?</span>';
+    return big ? '<span class="verdict meh">Not a favorite</span>' : '<span class="mark meh" title="Not a favorite">' + svg(THUMB) + "</span>";
   }
 
   // A picture of the school's box, drawn in the text color (no white box). scale is about the text size.
@@ -120,7 +156,7 @@
   function notPosted(id, d) { return MONL[d.getMonth()] + " " + (id === "break" ? "Breakfast @ Break" : mealName(id).toLowerCase()) + " menu not posted yet"; }
 
   // What's served, as the top card shows it (big) or as a compact week row.
-  function food(id, d, l, big) {
+  function food(id, d, l, big, rowKey) {
     var alt = mealName(id) + " for " + DOW[d.getDay()] + ", " + MONL[d.getMonth()] + " " + d.getDate() + ", from the school's menu";
     var t = big ? "p" : "span";
     var wrap = function (cls, html) { return "<" + t + ' class="' + cls + '">' + html + "</" + t + ">"; };
@@ -128,7 +164,16 @@
     if (l.off) return wrap("none", esc(l.off));
     if (l.unreadable) return wrap("none", "Couldn't read this menu. <a href=\"" + esc(l.unreadable.source) + "\">Open the school's menu</a>");
     if (l.pic) return pic(l.pic, alt, big ? 0.95 : 0.72);
-    return wrap("main", esc(l.items[0])) + (l.items.length > 1 ? wrap("sides", esc(l.items.slice(1).join(" · "))) : "");
+    var main = l.items[0], sides = l.items.length > 1 ? esc(l.items.slice(1).join(" · ")) : "";
+    if (big) {
+      return '<div class="main-line"><p class="main">' + esc(main) + "</p>" + rateButtons(main) + "</div>"
+        + (sides ? '<p class="sides">' + sides + "</p>" : "");
+    }
+    // Week: tap the main item to rate it; marks show what's already rated.
+    return '<button type="button" class="main main-btn" data-row="' + rowKey + '" aria-expanded="' + (openRow === rowKey) + '">' + esc(main) + "</button>"
+      + verdict(id, l, false)
+      + (sides ? '<span class="sides">' + sides + "</span>" : "")
+      + (openRow === rowKey ? '<span class="row-rate">' + rateButtons(main) + '<span class="rate-help">Does your kid like it?</span></span>' : "");
   }
 
   function mealLabel(m, big) {
@@ -157,11 +202,34 @@
       if (m.id === "break" && !l) return; // no break menu for this month: leave it out
       var extra = m.id === "lunch" && real(l) ? '<p class="salad">' + salad(d.getDay()) + "</p>" : "";
       html += big
-        ? '<section class="meal m-' + m.id + '"><h3>' + mealLabel(m, true) + "</h3>" + food(m.id, d, l, true) + extra + "</section>"
-        : '<div class="row m-' + m.id + '"><span class="label-col">' + mealLabel(m, false) + '</span><span class="what">' + food(m.id, d, l, false) + "</span></div>";
+        ? '<section class="meal m-' + m.id + '"><h3 class="meal-head">' + mealLabel(m, true) + verdict(m.id, l, true) + "</h3>"
+          + food(m.id, d, l, true) + extra + "</section>"
+        : '<div class="row m-' + m.id + '"><span class="label-col">' + mealLabel(m, false) + '</span><span class="what">'
+          + food(m.id, d, l, false, key(d) + "/" + m.id) + "</span></div>";
     });
-    return html || '<p class="none">Turn on a meal above to see it here.</p>';
+    return html || '<p class="none">Turn on a meal below to see it here.</p>';
   }
+
+  // One handler for every rating button and tappable week item (they're redrawn often).
+  document.addEventListener("click", function (e) {
+    var b = e.target.closest && e.target.closest(".rate-btn, .main-btn, #hint-close");
+    if (!b) return;
+    if (b.id === "hint-close") { store("hl-likes-hint", "1"); renderHero(); return; }
+    if (b.classList.contains("main-btn")) {
+      var r = b.getAttribute("data-row");
+      openRow = openRow === r ? null : r;
+      renderWeek();
+      var again = document.querySelector('.main-btn[data-row="' + r + '"]');
+      if (again) again.focus();
+      return;
+    }
+    rate(b.getAttribute("data-food"), +b.getAttribute("data-v"));
+    var sel = '.rate-btn[data-food="' + b.getAttribute("data-food").replace(/"/g, '\\"') + '"][data-v="' + b.getAttribute("data-v") + '"]';
+    var inHero = !!b.closest("#hero");
+    renderHero(); renderWeek();
+    var back = document.querySelector((inHero ? "#hero " : "#days ") + sel);
+    if (back) back.focus();
+  });
 
   var now, picked, week;
 
@@ -174,7 +242,11 @@
     var near = picked.label === "Today" || picked.label === "Tomorrow";
     h.innerHTML = '<p class="when">' + (near ? picked.label : "Next school day") + "</p>"
       + '<p class="date">' + DOW[d.getDay()] + ", " + MON[d.getMonth()] + " " + d.getDate() + "</p>"
-      + dayHTML(d, true);
+      + dayHTML(d, true)
+      + (store("hl-likes-hint") !== "1" && !Object.keys(likes).length
+        ? '<p class="hint">' + svg(HEART) + "<span>Tap the heart on foods your kid likes. Thumbs down flags lunches to pack.</span>"
+          + '<button type="button" id="hint-close">Got it</button></p>'
+        : "");
   }
 
   function hasData(mon) {
@@ -283,6 +355,13 @@
   if ("serviceWorker" in navigator && location.protocol === "https:") {
     window.addEventListener("load", function () { navigator.serviceWorker.register("sw.js").catch(function () {}); });
   }
+
+  // "Get it in your calendar": subscribe links to this site's calendar.ics.
+  (function () {
+    var feed = location.host + location.pathname.replace(/[^/]*$/, "") + "calendar.ics";
+    $("cal-apple").href = "webcal://" + feed;
+    $("cal-google").href = "https://calendar.google.com/calendar/render?cid=" + encodeURIComponent("webcal://" + feed);
+  })();
 
   // Share the link with other parents (phones' share sheet; elsewhere, copy it).
   $("share").onclick = function () {

@@ -1,0 +1,242 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Hellgate Lunch//hellgatelunch.github.io//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Hellgate Lunch
+X-WR-CALDESC:Breakfast and lunch at Hellgate Elementary K-8\, from the scho
+ ol's menus. https://hellgatelunch.github.io/
+X-WR-TIMEZONE:America/Denver
+REFRESH-INTERVAL;VALUE=DURATION:PT6H
+X-PUBLISHED-TTL:PT6H
+BEGIN:VEVENT
+UID:20261102@hellgatelunch.github.io
+DTSTAMP:20261110T120000Z
+DTSTART;VALUE=DATE:20261102
+DTEND;VALUE=DATE:20261103
+SUMMARY:Lunch: Sweet & Sour Chicken/Rice
+DESCRIPTION:Breakfast: Apple Frudel Stick · Tri Tater · Juice\nBreak (mid
+ dle school): Strawberry Pop Tart · Cheddar Stick · Fruits · Milk\nLunch
+ : Sweet & Sour Chicken/Rice · Green Beans · Pears · Fortune Cookie\nhtt
+ ps://hellgatelunch.github.io/
+URL:https://hellgatelunch.github.io/
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:20261103@hellgatelunch.github.io
+DTSTAMP:20261110T120000Z
+DTSTART;VALUE=DATE:20261103
+DTEND;VALUE=DATE:20261104
+SUMMARY:Lunch: Beef Hot Dog
+DESCRIPTION:Breakfast: Breakfast Nacho Bar\; Add Your Own Toppings! · Mixe
+ d Fruit\nBreak (middle school): Mini Pancakes · Yogurt · Fruits · Milk\
+ nLunch: Beef Hot Dog · Baked Beans · Peaches\nhttps://hellgatelunch.gith
+ ub.io/
+URL:https://hellgatelunch.github.io/
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:20261104@hellgatelunch.github.io
+DTSTAMP:20261110T120000Z
+DTSTART;VALUE=DATE:20261104
+DTEND;VALUE=DATE:20261105
+SUMMARY:Lunch: Beef Burrito
+DESCRIPTION:Breakfast: Dutch Waffle · Yogurt · Peaches\nBreak (middle sch
+ ool): Chocolate Chip Oatmeal Bar · Yogurt · Fruits · Milk\nLunch: Beef 
+ Burrito · Carrots/Ranch · Grapes\nhttps://hellgatelunch.github.io/
+URL:https://hellgatelunch.github.io/
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:20261105@hellgatelunch.github.io
+DTSTAMP:20261110T120000Z
+DTSTART;VALUE=DATE:20261105
+DTEND;VALUE=DATE:20261106
+SUMMARY:Lunch: Chicken Nuggets
+DESCRIPTION:Breakfast: Chocolate Donut · Turkey Sausage Patty · Apple Sli
+ ces\nBreak (middle school): Maple Donut · String Cheese · Fruits · Milk
+ \nLunch: Chicken Nuggets · Broccoli/Ranch · Orange Slices\nhttps://hellg
+ atelunch.github.io/
+URL:https://hellgatelunch.github.io/
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:20261106@hellgatelunch.github.io
+DTSTAMP:20261110T120000Z
+DTSTART;VALUE=DATE:20261106
+DTEND;VALUE=DATE:20261107
+SUMMARY:Lunch: Sloppy Joe
+DESCRIPTION:Breakfast: Cereal · String Cheese · Strawberry Cup\nBreak (mi
+ ddle school): Cinnamon Bun · Cheddar Stick · Fruits · Milk\nLunch: Slop
+ py Joe · Seasoned Tots · Apple Slices\nhttps://hellgatelunch.github.io/
+URL:https://hellgatelunch.github.io/
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:20261109@hellgatelunch.github.io
+DTSTAMP:20261110T120000Z
+DTSTART;VALUE=DATE:20261109
+DTEND;VALUE=DATE:20261110
+SUMMARY:Lunch: Orange Chicken/Rice
+DESCRIPTION:Breakfast: Mini Cinni · Tri Tater · Juice\nBreak (middle scho
+ ol): Strawberry Pop Tart · Cheddar Stick · Fruits · Milk\nLunch: Orange
+  Chicken/Rice · Steamed Peas · Mixed Fruit · Fortune Cookie\nhttps://he
+ llgatelunch.github.io/
+URL:https://hellgatelunch.github.io/
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:20261110@hellgatelunch.github.io
+DTSTAMP:20261110T120000Z
+DTSTART;VALUE=DATE:20261110
+DTEND;VALUE=DATE:20261111
+SUMMARY:Lunch: Cheeseburger
+DESCRIPTION:Breakfast: Yogurt Bar\; Add Your Own Toppings! · Mini Donuts 
+ · Mixed Berries\nBreak (middle school): Mini Pancakes · Yogurt · Fruits
+  · Milk\nLunch: Cheeseburger · Oven Fries · Strawberries\nhttps://hellg
+ atelunch.github.io/
+URL:https://hellgatelunch.github.io/
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:20261111@hellgatelunch.github.io
+DTSTAMP:20261110T120000Z
+DTSTART;VALUE=DATE:20261111
+DTEND;VALUE=DATE:20261112
+SUMMARY:Lunch: Chicken Strips
+DESCRIPTION:Breakfast: Honey Bun · String Cheese · Peaches\nBreak (middle
+  school): Chocolate Chip Oatmeal Bar · Yogurt · Fruits · Milk\nLunch: C
+ hicken Strips · Carrots/Ranch · Grapes\nhttps://hellgatelunch.github.io/
+URL:https://hellgatelunch.github.io/
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:20261112@hellgatelunch.github.io
+DTSTAMP:20261110T120000Z
+DTSTART;VALUE=DATE:20261112
+DTEND;VALUE=DATE:20261113
+SUMMARY:Lunch: Corn Dog
+DESCRIPTION:Breakfast: Maple Donut · Turkey Sausage Patty · Apple Slices\
+ nBreak (middle school): Maple Donut · String Cheese · Fruits · Milk\nLu
+ nch: Corn Dog · Celery/Ranch · Peach Cup · Hummus\nhttps://hellgatelunc
+ h.github.io/
+URL:https://hellgatelunch.github.io/
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:20261113@hellgatelunch.github.io
+DTSTAMP:20261110T120000Z
+DTSTART;VALUE=DATE:20261113
+DTEND;VALUE=DATE:20261114
+SUMMARY:Lunch: Beef Chili/Cheese
+DESCRIPTION:Breakfast: Cereal · Cheddar Stick · Mixed Fruit\nBreak (middl
+ e school): Cinnamon Bun · Cheddar Stick · Fruits · Milk\nLunch: Beef Ch
+ ili/Cheese · Steamed Broccoli · Pears · Corn Chips\nhttps://hellgatelun
+ ch.github.io/
+URL:https://hellgatelunch.github.io/
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:20261116@hellgatelunch.github.io
+DTSTAMP:20261110T120000Z
+DTSTART;VALUE=DATE:20261116
+DTEND;VALUE=DATE:20261117
+SUMMARY:Lunch: Beef Meatball Sub/Cheese
+DESCRIPTION:Breakfast: Mini Waffles · Tri Tater · Juice\nBreak (middle sc
+ hool): Strawberry Pop Tart · Cheddar Stick · Fruits · Milk\nLunch: Beef
+  Meatball Sub/Cheese · Broccoli/Ranch · Mixed Fruit\nhttps://hellgatelun
+ ch.github.io/
+URL:https://hellgatelunch.github.io/
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:20261117@hellgatelunch.github.io
+DTSTAMP:20261110T120000Z
+DTSTART;VALUE=DATE:20261117
+DTEND;VALUE=DATE:20261118
+SUMMARY:Lunch: Biscuits & Sausage Gravy
+DESCRIPTION:Breakfast: Cinnamon Roll · String Cheese · Pears\nBreak (midd
+ le school): Mini Pancakes · Yogurt · Fruits · Milk\nLunch: Biscuits & S
+ ausage Gravy · Tri Tater · Peaches\nhttps://hellgatelunch.github.io/
+URL:https://hellgatelunch.github.io/
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:20261118@hellgatelunch.github.io
+DTSTAMP:20261110T120000Z
+DTSTART;VALUE=DATE:20261118
+DTEND;VALUE=DATE:20261119
+SUMMARY:Lunch: Beef Taco
+DESCRIPTION:Breakfast: Waffle Sticks/Syrup · Yogurt · Peaches\nBreak (mid
+ dle school): Chocolate Chip Oatmeal Bar · Yogurt · Fruits · Milk\nLunch
+ : Beef Taco · Black Beans · Mandarin Oranges\nhttps://hellgatelunch.gith
+ ub.io/
+URL:https://hellgatelunch.github.io/
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:20261119@hellgatelunch.github.io
+DTSTAMP:20261110T120000Z
+DTSTART;VALUE=DATE:20261119
+DTEND;VALUE=DATE:20261120
+SUMMARY:Lunch: Chicken Noodle Soup
+DESCRIPTION:Breakfast: Chocolate Donut · Turkey Sausage Patty · Apple Sli
+ ces\nBreak (middle school): Maple Donut · String Cheese · Fruits · Milk
+ \nLunch: Chicken Noodle Soup · Mixed Veggies · Mixed Berry Cup · Goldfi
+ sh Crackers\nhttps://hellgatelunch.github.io/
+URL:https://hellgatelunch.github.io/
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:20261120@hellgatelunch.github.io
+DTSTAMP:20261110T120000Z
+DTSTART;VALUE=DATE:20261120
+DTEND;VALUE=DATE:20261121
+SUMMARY:Lunch: Turkey/Cheddar Wrap
+DESCRIPTION:Breakfast: Cereal · Yogurt · Peach Cup\nBreak (middle school)
+ : Cinnamon Bun · Cheddar Stick · Fruits · Milk\nLunch: Turkey/Cheddar W
+ rap · Carrots/Ranch · Apple Slices · Chips\nhttps://hellgatelunch.githu
+ b.io/
+URL:https://hellgatelunch.github.io/
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:20261123@hellgatelunch.github.io
+DTSTAMP:20261110T120000Z
+DTSTART;VALUE=DATE:20261123
+DTEND;VALUE=DATE:20261124
+SUMMARY:Lunch: Grilled Cheese
+DESCRIPTION:Breakfast: Mini Strawberry Bagel · Tri Tater · Juice\nBreak (
+ middle school): Strawberry Pop Tart · Cheddar Stick · Fruits · Milk\nLu
+ nch: Grilled Cheese · Tomato Soup · Peaches · Goldfish Crackers\nhttps:
+ //hellgatelunch.github.io/
+URL:https://hellgatelunch.github.io/
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:20261124@hellgatelunch.github.io
+DTSTAMP:20261110T120000Z
+DTSTART;VALUE=DATE:20261124
+DTEND;VALUE=DATE:20261125
+SUMMARY:Lunch: Chicken Strips
+DESCRIPTION:Breakfast: Chocolate Chip Muffin · String Cheese · Peaches\nB
+ reak (middle school): Mini Pancakes · Yogurt · Fruits · Milk\nLunch: Ch
+ icken Strips · Carrots/Ranch · Mixed Fruit\nhttps://hellgatelunch.github
+ .io/
+URL:https://hellgatelunch.github.io/
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:20261130@hellgatelunch.github.io
+DTSTAMP:20261110T120000Z
+DTSTART;VALUE=DATE:20261130
+DTEND;VALUE=DATE:20261201
+SUMMARY:Lunch: Beef Burrito
+DESCRIPTION:Breakfast: Strawberry Pop Tart · String Cheese · Peaches\nBre
+ ak (middle school): Strawberry Pop Tart · Cheddar Stick · Fruits · Milk
+ \nLunch: Beef Burrito · Carrots/Ranch · Pears\nhttps://hellgatelunch.git
+ hub.io/
+URL:https://hellgatelunch.github.io/
+TRANSP:TRANSPARENT
+END:VEVENT
+END:VCALENDAR
