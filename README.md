@@ -5,19 +5,21 @@ Two ways to see the Hellgate Elementary K-8 school meals:
 - **The website: <https://hellgatelunch.github.io/>.** Breakfast, middle school Breakfast @ Break, and lunch. Open it on any phone or computer. On iPhone, tap Share → *Add to Home Screen*; on Android, tap *Install*. Either way it opens like an app and works offline. No setup. To spread the word, use the [printable flyer with a QR code](https://hellgatelunch.github.io/flyer.html) (for the school newsletter) or the site's *Share with other parents* button.
 - **The iPhone widget** (below). A home-screen widget that always shows the next lunch (lunch only).
 
-Both read the school's own monthly menus and show each day's box from them.
+Both read the school's own monthly menus. The website shows each day's menu as text in its own style; the widget shows the day's box from the school's menu.
 
 ## The website
 
-`web/` is a static site published with GitHub Pages. A GitHub Action (`.github/workflows/menu.yml`) runs every 6 hours. It reads the school's menu page, cuts each day's box out of the monthly lunch and breakfast menus, saves the pictures in `web/data/`, commits them if anything changed, and republishes the site. When the school posts next month's menu, the site picks it up within 6 hours, with nothing to tap.
+`web/` is a static site published with GitHub Pages. A GitHub Action (`.github/workflows/menu.yml`) runs every 6 hours. It reads the school's menu page and, for the monthly lunch and breakfast menus, reads the words in each day's box from the PDF's text layer (finding the boxes with the same grid code as the widget). It saves the result in `web/data/menu.json`, commits them if anything changed, and republishes the site. When the school posts next month's menu, the site picks it up within 6 hours, with nothing to tap.
 
 - Before 2 PM (Montana time) the top card shows today's meals; after 2 PM, the next school day.
+- Each meal has one color and icon everywhere: amber/sunrise for breakfast, teal/apple for Breakfast @ Break, orange/plate for lunch. The week is a timetable with the meal labels in one column.
 - Each day shows Breakfast, Breakfast @ Break (middle school) and Lunch. The chips at the top hide the ones a family doesn't need; the choice is remembered on that phone.
 - **Breakfast @ Break** isn't a monthly calendar: the school posts one sheet for the year with two weekly menus that alternate by month. It's typed into `menu/break.json`. If the school posts a different sheet, the Action logs a warning and the site links to the new sheet; then update `menu/break.json` from it (including its `source` address).
 - Below it is the week, with arrows (or ← →) to flip weeks.
 - To force a refresh, open the repository's **Actions** tab → *Refresh menu and publish site* → **Run workflow**.
 - GitHub pauses scheduled Actions in a repository with no activity for 60 days. Menu updates commit to the repository, so this shouldn't happen during the school year. After summer break, re-enable it from the Actions tab if needed.
 
+- If a menu's words can't be read (for example, a scanned PDF), that day falls back to a see-through picture of the school's box, drawn in the text color. The Action logs a notice when that happens.
 - `web/sw.js` (service worker) keeps the last menu so the app opens offline, and lets Android offer *Install*. If you change the app's own files in a way old copies would break, bump its `VERSION`.
 - `web/data/menu.json` is the one menu file everything reads. A future App Store / Google Play app can read the same file from the site.
 - `web/qr.svg` is made by `node tools/make-qr.mjs` (rerun it with a new address if the site ever moves).

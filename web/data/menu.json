@@ -4,118 +4,152 @@
   "2026-11": {
    "name": "November 2026",
    "source": "https://resources.finalsite.net/images/v1793201331/hellgatek12mtus/q36shaaq4eujy03daxtg/NovemberLUNCH2026docx.pdf",
-   "cut": "2026-11-09",
+   "cut": "2026-11-10",
    "ok": true
   }
  },
  "days": {
   "2026-11-02": {
-   "img": "cells/2026-11-02.png",
-   "w": 292,
-   "h": 125
+   "items": [
+    "Sweet & Sour Chicken/Rice",
+    "Green Beans",
+    "Pears",
+    "Fortune Cookie"
+   ]
   },
   "2026-11-03": {
-   "img": "cells/2026-11-03.png",
-   "w": 150,
-   "h": 94
+   "items": [
+    "Beef Hot Dog",
+    "Baked Beans",
+    "Peaches"
+   ]
   },
   "2026-11-04": {
-   "img": "cells/2026-11-04.png",
-   "w": 162,
-   "h": 98
+   "items": [
+    "Beef Burrito",
+    "Carrots/Ranch",
+    "Grapes"
+   ]
   },
   "2026-11-05": {
-   "img": "cells/2026-11-05.png",
-   "w": 184,
-   "h": 97
+   "items": [
+    "Chicken Nuggets",
+    "Broccoli/Ranch",
+    "Orange Slices"
+   ]
   },
   "2026-11-06": {
-   "img": "cells/2026-11-06.png",
-   "w": 160,
-   "h": 97
+   "items": [
+    "Sloppy Joe",
+    "Seasoned Tots",
+    "Apple Slices"
+   ]
   },
   "2026-11-09": {
-   "img": "cells/2026-11-09.png",
-   "w": 227,
-   "h": 125
+   "items": [
+    "Orange Chicken/Rice",
+    "Steamed Peas",
+    "Mixed Fruit",
+    "Fortune Cookie"
+   ]
   },
   "2026-11-10": {
-   "img": "cells/2026-11-10.png",
-   "w": 156,
-   "h": 93
+   "items": [
+    "Cheeseburger",
+    "Oven Fries",
+    "Strawberries"
+   ]
   },
   "2026-11-11": {
-   "img": "cells/2026-11-11.png",
-   "w": 162,
-   "h": 97
+   "items": [
+    "Chicken Strips",
+    "Carrots/Ranch",
+    "Grapes"
+   ]
   },
   "2026-11-12": {
-   "img": "cells/2026-11-12.png",
-   "w": 152,
-   "h": 123
+   "items": [
+    "Corn Dog",
+    "Celery/Ranch",
+    "Peach Cup",
+    "Hummus"
+   ]
   },
   "2026-11-13": {
-   "img": "cells/2026-11-13.png",
-   "w": 195,
-   "h": 129
+   "items": [
+    "Beef Chili/Cheese",
+    "Steamed Broccoli",
+    "Pears",
+    "Corn Chips"
+   ]
   },
   "2026-11-16": {
-   "img": "cells/2026-11-16.png",
-   "w": 287,
-   "h": 94
+   "items": [
+    "Beef Meatball Sub/Cheese",
+    "Broccoli/Ranch",
+    "Mixed Fruit"
+   ]
   },
   "2026-11-17": {
-   "img": "cells/2026-11-17.png",
-   "w": 271,
-   "h": 93
+   "items": [
+    "Biscuits & Sausage Gravy",
+    "Tri Tater",
+    "Peaches"
+   ]
   },
   "2026-11-18": {
-   "img": "cells/2026-11-18.png",
-   "w": 206,
-   "h": 98
+   "items": [
+    "Beef Taco",
+    "Black Beans",
+    "Mandarin Oranges"
+   ]
   },
   "2026-11-19": {
-   "img": "cells/2026-11-19.png",
-   "w": 233,
-   "h": 123
+   "items": [
+    "Chicken Noodle Soup",
+    "Mixed Veggies",
+    "Mixed Berry Cup",
+    "Goldfish Crackers"
+   ]
   },
   "2026-11-20": {
-   "img": "cells/2026-11-20.png",
-   "w": 241,
-   "h": 128
+   "items": [
+    "Turkey/Cheddar Wrap",
+    "Carrots/Ranch",
+    "Apple Slices",
+    "Chips"
+   ]
   },
   "2026-11-23": {
-   "img": "cells/2026-11-23.png",
-   "w": 191,
-   "h": 124
+   "items": [
+    "Grilled Cheese",
+    "Tomato Soup",
+    "Peaches",
+    "Goldfish Crackers"
+   ]
   },
   "2026-11-24": {
-   "img": "cells/2026-11-24.png",
-   "w": 162,
-   "h": 94
+   "items": [
+    "Chicken Strips",
+    "Carrots/Ranch",
+    "Mixed Fruit"
+   ]
   },
   "2026-11-25": {
-   "img": "cells/2026-11-25.png",
-   "w": 178,
-   "h": 37,
-   "note": true
+   "off": "No school"
   },
   "2026-11-26": {
-   "img": "cells/2026-11-26.png",
-   "w": 178,
-   "h": 37,
-   "note": true
+   "off": "No school"
   },
   "2026-11-27": {
-   "img": "cells/2026-11-27.png",
-   "w": 178,
-   "h": 37,
-   "note": true
+   "off": "No school"
   },
   "2026-11-30": {
-   "img": "cells/2026-11-30.png",
-   "w": 160,
-   "h": 94
+   "items": [
+    "Beef Burrito",
+    "Carrots/Ranch",
+    "Pears"
+   ]
   }
  },
  "noLunch": [],
@@ -232,112 +266,138 @@
   },
   "days": {
    "2026-11-02": {
-    "img": "cells-breakfast/2026-11-02.png",
-    "w": 200,
-    "h": 109
+    "items": [
+     "Apple Frudel Stick",
+     "Tri Tater",
+     "Juice"
+    ]
    },
    "2026-11-03": {
-    "img": "cells-breakfast/2026-11-03.png",
-    "w": 267,
-    "h": 94
+    "items": [
+     "Breakfast Nacho Bar; Add Your Own Toppings!",
+     "Mixed Fruit"
+    ]
    },
    "2026-11-04": {
-    "img": "cells-breakfast/2026-11-04.png",
-    "w": 148,
-    "h": 94
+    "items": [
+     "Dutch Waffle",
+     "Yogurt",
+     "Peaches"
+    ]
    },
    "2026-11-05": {
-    "img": "cells-breakfast/2026-11-05.png",
-    "w": 231,
-    "h": 97
+    "items": [
+     "Chocolate Donut",
+     "Turkey Sausage Patty",
+     "Apple Slices"
+    ]
    },
    "2026-11-06": {
-    "img": "cells-breakfast/2026-11-06.png",
-    "w": 174,
-    "h": 97
+    "items": [
+     "Cereal",
+     "String Cheese",
+     "Strawberry Cup"
+    ]
    },
    "2026-11-09": {
-    "img": "cells-breakfast/2026-11-09.png",
-    "w": 118,
-    "h": 93
+    "items": [
+     "Mini Cinni",
+     "Tri Tater",
+     "Juice"
+    ]
    },
    "2026-11-10": {
-    "img": "cells-breakfast/2026-11-10.png",
-    "w": 267,
-    "h": 123
+    "items": [
+     "Yogurt Bar; Add Your Own Toppings!",
+     "Mini Donuts",
+     "Mixed Berries"
+    ]
    },
    "2026-11-11": {
-    "img": "cells-breakfast/2026-11-11.png",
-    "w": 153,
-    "h": 92
+    "items": [
+     "Honey Bun",
+     "String Cheese",
+     "Peaches"
+    ]
    },
    "2026-11-12": {
-    "img": "cells-breakfast/2026-11-12.png",
-    "w": 231,
-    "h": 97
+    "items": [
+     "Maple Donut",
+     "Turkey Sausage Patty",
+     "Apple Slices"
+    ]
    },
    "2026-11-13": {
-    "img": "cells-breakfast/2026-11-13.png",
-    "w": 156,
-    "h": 93
+    "items": [
+     "Cereal",
+     "Cheddar Stick",
+     "Mixed Fruit"
+    ]
    },
    "2026-11-16": {
-    "img": "cells-breakfast/2026-11-16.png",
-    "w": 144,
-    "h": 94
+    "items": [
+     "Mini Waffles",
+     "Tri Tater",
+     "Juice"
+    ]
    },
    "2026-11-17": {
-    "img": "cells-breakfast/2026-11-17.png",
-    "w": 164,
-    "h": 93
+    "items": [
+     "Cinnamon Roll",
+     "String Cheese",
+     "Pears"
+    ]
    },
    "2026-11-18": {
-    "img": "cells-breakfast/2026-11-18.png",
-    "w": 215,
-    "h": 94
+    "items": [
+     "Waffle Sticks/Syrup",
+     "Yogurt",
+     "Peaches"
+    ]
    },
    "2026-11-19": {
-    "img": "cells-breakfast/2026-11-19.png",
-    "w": 231,
-    "h": 97
+    "items": [
+     "Chocolate Donut",
+     "Turkey Sausage Patty",
+     "Apple Slices"
+    ]
    },
    "2026-11-20": {
-    "img": "cells-breakfast/2026-11-20.png",
-    "w": 121,
-    "h": 97
+    "items": [
+     "Cereal",
+     "Yogurt",
+     "Peach Cup"
+    ]
    },
    "2026-11-23": {
-    "img": "cells-breakfast/2026-11-23.png",
-    "w": 243,
-    "h": 93
+    "items": [
+     "Mini Strawberry Bagel",
+     "Tri Tater",
+     "Juice"
+    ]
    },
    "2026-11-24": {
-    "img": "cells-breakfast/2026-11-24.png",
-    "w": 244,
-    "h": 94
+    "items": [
+     "Chocolate Chip Muffin",
+     "String Cheese",
+     "Peaches"
+    ]
    },
    "2026-11-25": {
-    "img": "cells-breakfast/2026-11-25.png",
-    "w": 178,
-    "h": 34,
-    "note": true
+    "off": "No school"
    },
    "2026-11-26": {
-    "img": "cells-breakfast/2026-11-26.png",
-    "w": 178,
-    "h": 34,
-    "note": true
+    "off": "No school"
    },
    "2026-11-27": {
-    "img": "cells-breakfast/2026-11-27.png",
-    "w": 178,
-    "h": 34,
-    "note": true
+    "off": "No school"
    },
    "2026-11-30": {
-    "img": "cells-breakfast/2026-11-30.png",
-    "w": 220,
-    "h": 93
+    "items": [
+     "Strawberry Pop Tart",
+     "String Cheese",
+     "Peaches"
+    ]
    }
   },
   "noLunch": []

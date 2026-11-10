@@ -10,9 +10,9 @@
   var MONL = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
   // In the order they're served.
   var MEALS = [
-    { id: "breakfast", label: "Breakfast" },
-    { id: "break", label: "Breakfast @ Break", tag: "Middle school" },
-    { id: "lunch", label: "Lunch" },
+    { id: "breakfast", short: "Breakfast", chip: "Breakfast" },
+    { id: "break", short: "Break", chip: "Middle school break", tag: "Middle school" },
+    { id: "lunch", short: "Lunch", chip: "Lunch" },
   ];
 
   var $ = function (id) { return document.getElementById(id); };
@@ -44,16 +44,29 @@
   var show = { breakfast: true, "break": true, lunch: true };
   try { var saved = JSON.parse(store("hl-meals") || "null"); if (saved) for (var s in show) if (has(saved, s)) show[s] = !!saved[s]; } catch (e) {}
 
-  // What one menu says for a day: {items}, {cell}, {off: text}, {unreadable: month}, or null (not posted).
+  // One small line icon per meal (stroke = the meal's color).
+  var ICONS = {
+    breakfast: '<path d="M3 18h18"/><path d="M7 18a5 5 0 0 1 10 0"/><path d="M12 6v3"/><path d="M5.6 10.6l1.8 1.8"/><path d="M18.4 10.6l-1.8 1.8"/><path d="M9 21h6"/>',
+    "break": '<path d="M12 7.5c-1.6-1.2-5.5-1.6-6.6 1.6-1.2 3.4.9 9.4 3.9 10.6 1.1.4 1.8-.3 2.7-.3s1.6.7 2.7.3c3-1.2 5.1-7.2 3.9-10.6-1.1-3.2-5-2.8-6.6-1.6z"/><path d="M12 7.5c0-2 .8-3.6 2.6-4.5"/>',
+    lunch: '<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/>'
+  };
+  function icon(id) { return '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true">' + ICONS[id] + "</svg>"; }
+
+  // What one monthly menu says for a day: {items}, {off: text}, {pic}, {unreadable: month}, or null (not posted).
   function fromMonthly(meal, k) {
-    if (meal.days[k]) return { cell: meal.days[k] };
+    var day = meal.days[k];
+    if (day) {
+      if (day.items) return { items: day.items };
+      if (day.off) return { off: day.off };
+      return { pic: day }; // words couldn't be read: a picture of the school's box
+    }
     if (meal.noLunch.indexOf(k) >= 0) return { off: "Nothing listed" };
     var mo = meal.months[k.slice(0, 7)];
     if (mo && !mo.ok) return { unreadable: mo };
     return null;
   }
-  function real(l) { return !!(l && (l.items || (l.cell && !l.cell.note))); }
-  function schoolDay(d) { var k = key(d); return !weekend(d) && (real(mealFor("lunch", d)) || real(mealFor("breakfast", d))); }
+  function real(l) { return !!(l && (l.items || (l.pic && !l.pic.note))); }
+  function schoolDay(d) { return !weekend(d) && (real(mealFor("lunch", d)) || real(mealFor("breakfast", d))); }
 
   function mealFor(id, d) {
     var k = key(d);
@@ -96,44 +109,58 @@
     return "No salad bar on Tuesdays";
   }
 
-  function cellImg(c, alt, scale) {
-    return '<img class="cell" src="data/' + esc(c.img) + '" width="' + c.w + '" height="' + c.h + '" alt="' + esc(alt) + '"'
-      + (scale ? ' style="width:' + Math.round(c.w * scale) + 'px"' : "") + ">";
+  // A picture of the school's box, drawn in the text color (no white box). scale is about the text size.
+  function pic(p, alt, scale) {
+    var src = "url(data/" + esc(p.img) + ")";
+    return '<span class="pic" role="img" aria-label="' + esc(alt) + '" style="width:' + Math.round(p.w * scale) + "px;aspect-ratio:"
+      + p.w + "/" + p.h + ";-webkit-mask-image:" + src + ";mask-image:" + src + '"></span>';
   }
 
-  // One meal's food. big = the top card, where things are shown larger.
+  function mealName(id) { return id === "lunch" ? "Lunch" : id === "breakfast" ? "Breakfast" : "Breakfast @ Break"; }
+  function notPosted(id, d) { return MONL[d.getMonth()] + " " + (id === "break" ? "Breakfast @ Break" : mealName(id).toLowerCase()) + " menu not posted yet"; }
+
+  // What's served, as the top card shows it (big) or as a compact week row.
   function food(id, d, l, big) {
-    var when = DOW[d.getDay()] + ", " + MONL[d.getMonth()] + " " + d.getDate();
-    var name = id === "lunch" ? "Lunch" : id === "breakfast" ? "Breakfast" : "Breakfast @ Break";
-    if (!l) return '<p class="none">' + MONL[d.getMonth()] + " " + (id === "break" ? name : name.toLowerCase()) + " menu not posted yet</p>";
-    if (l.off) return '<p class="none">' + esc(l.off) + "</p>";
-    if (l.unreadable) return '<p class="none">Posted, but the layout couldn\'t be read. <a href="' + esc(l.unreadable.source) + '">Open the school\'s menu</a></p>';
-    var extra = id === "lunch" ? '<p class="salad">' + salad(d.getDay()) + "</p>" : "";
-    if (l.items) return '<p class="main">' + esc(l.items[0]) + "</p>"
-      + (l.items.length > 1 ? '<p class="sides">' + esc(l.items.slice(1).join(" · ")) + "</p>" : "") + extra;
-    return cellImg(l.cell, name + " for " + when + ", from the school's menu", big ? 1.25 : 0) + extra;
+    var alt = mealName(id) + " for " + DOW[d.getDay()] + ", " + MONL[d.getMonth()] + " " + d.getDate() + ", from the school's menu";
+    var t = big ? "p" : "span";
+    var wrap = function (cls, html) { return "<" + t + ' class="' + cls + '">' + html + "</" + t + ">"; };
+    if (!l) return wrap("none", notPosted(id, d));
+    if (l.off) return wrap("none", esc(l.off));
+    if (l.unreadable) return wrap("none", "Couldn't read this menu. <a href=\"" + esc(l.unreadable.source) + "\">Open the school's menu</a>");
+    if (l.pic) return pic(l.pic, alt, big ? 0.95 : 0.72);
+    return wrap("main", esc(l.items[0])) + (l.items.length > 1 ? wrap("sides", esc(l.items.slice(1).join(" · "))) : "");
   }
 
-  // A whole day: each chosen meal, or one "no school" note for a day off.
+  function mealLabel(m, big) {
+    var sub = !m.tag ? "" : big ? ' <span class="ms">' + m.tag + "</span>" : '<span class="label-sub">' + m.tag + "</span>";
+    return '<span class="label">' + icon(m.id) + "<span>" + m.short + "</span>" + (big ? sub : "") + "</span>" + (big ? "" : sub);
+  }
+
+  // A day off: one line (or the school's note), instead of three empty meals.
+  function offDay(d, big) {
+    var L = mealFor("lunch", d), B = mealFor("breakfast", d), cls = big ? "day-off" : "none-day";
+    var off = (L && L.off) || (B && B.off);
+    var note = (L && L.pic && L.pic.note && L.pic) || (B && B.pic && B.pic.note && B.pic);
+    if (off && off !== "Nothing listed") return '<p class="' + cls + '">' + esc(off) + "</p>";
+    if (note) return pic(note, "Note from the school's menu", big ? 0.95 : 0.72);
+    if (!L && !B) return '<p class="' + cls + '">' + MONL[d.getMonth()] + " menu not posted yet</p>";
+    return '<p class="' + cls + '">No meals listed</p>';
+  }
+
+  // A whole day: each chosen meal in serving order.
   function dayHTML(d, big) {
-    var k = key(d);
-    if (!schoolDay(d)) {
-      var L = mealFor("lunch", d), B = mealFor("breakfast", d);
-      if (L && L.off === "No school") return '<p class="none big-none">No school</p>';
-      var note = (L && L.cell && L.cell.note && L.cell) || (B && B.cell && B.cell.note && B.cell);
-      if (note) return cellImg(note, "Note from the school's menu for " + k, big ? 1.25 : 0);
-      if (!L && !B) return '<p class="none big-none">' + MONL[d.getMonth()] + " menu not posted yet</p>";
-      return '<p class="none big-none">No meals listed</p>';
-    }
+    if (!schoolDay(d)) return offDay(d, big);
     var html = "";
     MEALS.forEach(function (m) {
       if (!show[m.id]) return;
       var l = mealFor(m.id, d);
       if (m.id === "break" && !l) return; // no break menu for this month: leave it out
-      html += '<section class="meal meal-' + m.id + '"><h3 class="meal-label">' + m.label
-        + (m.tag ? ' <span class="tag">' + m.tag + "</span>" : "") + "</h3>" + food(m.id, d, l, big) + "</section>";
+      var extra = m.id === "lunch" && real(l) ? '<p class="salad">' + salad(d.getDay()) + "</p>" : "";
+      html += big
+        ? '<section class="meal m-' + m.id + '"><h3>' + mealLabel(m, true) + "</h3>" + food(m.id, d, l, true) + extra + "</section>"
+        : '<div class="row m-' + m.id + '"><span class="label-col">' + mealLabel(m, false) + '</span><span class="what">' + food(m.id, d, l, false) + "</span></div>";
     });
-    return html || '<p class="none">Choose a meal to show above.</p>';
+    return html || '<p class="none">Turn on a meal above to see it here.</p>';
   }
 
   var now, picked, week;
@@ -141,13 +168,13 @@
   function renderHero() {
     var h = $("hero"), d = picked.day;
     if (!picked.ok) {
-      h.innerHTML = '<p class="when">Next school day</p><p class="none big-none">' + MONL[d.getMonth()] + " menu not posted yet</p>";
+      h.innerHTML = '<p class="when">Next school day</p><p class="day-off">' + MONL[d.getMonth()] + " menu not posted yet</p>";
       return;
     }
-    var when = picked.label === "Today" || picked.label === "Tomorrow"
-      ? picked.label + " · " + DOW[d.getDay()] + ", " + MON[d.getMonth()] + " " + d.getDate()
-      : picked.label;
-    h.innerHTML = '<p class="when">' + esc(when) + "</p>" + dayHTML(d, true);
+    var near = picked.label === "Today" || picked.label === "Tomorrow";
+    h.innerHTML = '<p class="when">' + (near ? picked.label : "Next school day") + "</p>"
+      + '<p class="date">' + DOW[d.getDay()] + ", " + MON[d.getMonth()] + " " + d.getDate() + "</p>"
+      + dayHTML(d, true);
   }
 
   function hasData(mon) {
@@ -156,29 +183,30 @@
   }
 
   function renderWeek() {
-    var fri = add(week, 4), thisWeek = key(monday(picked.day)) === key(week);
-    $("week-title").textContent = thisWeek ? "This week" : (week.getMonth() === fri.getMonth()
+    var fri = add(week, 4), home = key(monday(picked.day)) === key(week), wk = key(week);
+    var rel = wk === key(monday(now.day)) ? "This week" : wk === key(add(monday(now.day), 7)) ? "Next week" : "";
+    $("week-title").textContent = rel || (week.getMonth() === fri.getMonth()
       ? MONL[week.getMonth()] + " " + week.getDate() + "–" + fri.getDate()
       : MON[week.getMonth()] + " " + week.getDate() + " – " + MON[fri.getMonth()] + " " + fri.getDate());
     var html = "";
     for (var i = 0; i < 5; i++) {
       var d = add(week, i), hl = picked.ok && key(d) === key(picked.day);
-      var head = DOW[d.getDay()] + ", " + MON[d.getMonth()] + " " + d.getDate();
-      if (hl && (picked.label === "Today" || picked.label === "Tomorrow")) head = picked.label + " · " + head;
-      html += '<article class="card' + (hl ? " hl" : "") + (schoolDay(d) ? "" : " off") + '"><h3 class="head">' + head + "</h3>"
-        + dayHTML(d, false) + "</article>";
+      var pill = hl ? '<span class="pill">' + (picked.label === "Today" || picked.label === "Tomorrow" ? picked.label : "Next") + "</span>" : "";
+      html += '<article class="card' + (hl ? " hl" : "") + (schoolDay(d) ? "" : " off") + '"><h3 class="head">'
+        + DOW[d.getDay()] + ", " + MON[d.getMonth()] + " " + d.getDate() + pill + "</h3>" + dayHTML(d, false) + "</article>";
     }
     $("days").innerHTML = html;
     $("prev").disabled = !hasData(add(week, -7));
     $("next").disabled = !hasData(add(week, 7));
-    $("today").hidden = thisWeek;
+    $("today").hidden = home;
   }
 
   function renderToggles() {
     var html = "";
     MEALS.forEach(function (m) {
-      html += '<button type="button" class="chip" data-meal="' + m.id + '" aria-pressed="' + show[m.id] + '">'
-        + (m.id === "break" ? "Middle school break" : m.label) + "</button>";
+      html += '<button type="button" class="chip m-' + m.id + '" data-meal="' + m.id + '" aria-pressed="' + show[m.id] + '">'
+        + '<span class="chip-name">' + icon(m.id) + m.short + "</span>"
+        + (m.tag ? '<span class="chip-sub">' + m.tag.toLowerCase() + "</span>" : "") + "</button>";
     });
     $("toggles").innerHTML = html;
     Array.prototype.forEach.call($("toggles").querySelectorAll(".chip"), function (b) {
@@ -289,6 +317,6 @@
       });
     })
     .catch(function () {
-      $("hero").innerHTML = '<p class="when">Couldn\'t load the menu</p><p class="none big-none">Check your connection and try again.</p>';
+      $("hero").innerHTML = '<p class="when">Couldn\'t load the menu</p><p class="day-off">Check your connection and try again.</p>';
     });
 })();

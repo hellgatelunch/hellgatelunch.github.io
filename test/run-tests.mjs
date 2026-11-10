@@ -210,5 +210,57 @@ test("every November breakfast day gets a box; Thanksgiving break reads as a not
   }
 });
 
+console.log("Reading words from the school's PDFs (website)");
+
+async function testAsync(name, fn) {
+  try { await fn(); console.log("  ok   " + name); }
+  catch (e) { failed++; console.log("  FAIL " + name + "\n       " + e.message.split("\n").join("\n       ")); }
+}
+const { readMonth } = await import("../menu/read-month.mjs");
+const { toMeal } = await import("../menu/pdf-text.mjs");
+const { S } = await import("../menu/sources.mjs");
+const { PNG } = await import("pngjs");
+const pngOf = f => PNG.sync.read(fs.readFileSync(path.join(FIXTURES, f)));
+const pdfOf = f => fs.readFileSync(path.join(FIXTURES, f));
+
+test("a box's lines become a meal", () => {
+  assert.deepEqual(toMeal(["3", "Breakfast Nacho Bar;", "Add Your Own Toppings!", "Mixed Fruit"]),
+    { items: ["Breakfast Nacho Bar; Add Your Own Toppings!", "Mixed Fruit"] });
+  assert.deepEqual(toMeal(["2", "Apple Frudel Stick", "Tri Tater", "Juice", "`"]), { items: ["Apple Frudel Stick", "Tri Tater", "Juice"] });
+  assert.deepEqual(toMeal(["25", "NO SCHOOL"]), { off: "No school" });
+  assert.equal(toMeal(["25"]), null);
+});
+
+await testAsync("lunch words from the PDF match the typed-in November menu, every day", async () => {
+  const res = await readMonth(pngOf("november-2026.png"), pdfOf("november-2026.pdf"), 2026, 10);
+  assert.equal(res.fromPictures, 0);
+  for (const [k, typed] of Object.entries(S.MENU)) {
+    if (!k.startsWith("2026-11")) continue;
+    const got = res.days[k];
+    if (typed === null) assert.deepEqual({ ...got }, { off: "No school" }, k);
+    else assert.deepEqual([...got.items], [...typed], k);
+  }
+});
+
+await testAsync("breakfast words from the PDF", async () => {
+  const res = await readMonth(pngOf("november-2026-breakfast.png"), pdfOf("november-2026-breakfast.pdf"), 2026, 10);
+  assert.equal(res.fromText, 21);
+  assert.deepEqual([...res.days["2026-11-10"].items], ["Yogurt Bar; Add Your Own Toppings!", "Mini Donuts", "Mixed Berries"]);
+  assert.deepEqual([...res.days["2026-11-02"].items], ["Apple Frudel Stick", "Tri Tater", "Juice"]);
+  assert.deepEqual([...res.days["2026-11-19"].items], ["Chocolate Donut", "Turkey Sausage Patty", "Apple Slices"]);
+  for (const d of ["25", "26", "27"]) assert.equal(res.days["2026-11-" + d].off, "No school");
+});
+
+await testAsync("without readable words, a day falls back to a see-through picture", async () => {
+  const res = await readMonth(pngOf("november-2026-breakfast.png"), null, 2026, 10);
+  assert.equal(res.fromPictures, 21);
+  const p = PNG.sync.read(res.days["2026-11-10"].picture);
+  assert.equal(p.data[3], 0, "paper should be transparent");
+  let ink = 0;
+  for (let i = 3; i < p.data.length; i += 4) if (p.data[i] > 200) ink++;
+  assert.ok(ink > 500, "ink should be opaque");
+  assert.ok(res.days["2026-11-25"].note, "NO SCHOOL box is a note");
+});
+
 console.log(failed ? `\n${failed} failed` : "\nAll passed. Day crops are in test/out/.");
 process.exit(failed ? 1 : 0);

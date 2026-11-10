@@ -1,5 +1,5 @@
 // Builds the website's menu data (web/data/): reads the school's menu page, cuts each day's
-// box out of the monthly lunch and breakfast menus with the same code the widget uses, adds
+// box (its words, from the PDF) out of the monthly lunch and breakfast menus, adds
 // the middle school Breakfast @ Break menu (menu/break.json), and writes menu.json.
 //
 //   node menu/build.mjs        live: fetch the school's page and files
@@ -12,7 +12,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { PNG } from "pngjs";
-import { loadCore, flatten } from "../lib/script-parts.mjs";
+import { readMonth } from "./read-month.mjs";
 import { S, sortLinks } from "./sources.mjs";
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -30,9 +30,7 @@ const MEALS = {
 const args = process.argv.slice(2);
 const opt = n => { const i = args.indexOf("--" + n); return i < 0 ? null : (args[i + 1] && !args[i + 1].startsWith("--") ? args[i + 1] : true); };
 
-const core = loadCore();
 const now = opt("now") ? new Date(opt("now") + "T12:00:00") : new Date();
-const pad2 = n => String(n).padStart(2, "0");
 
 async function get(url, accept) {
   const r = await fetch(url, { headers: { "User-Agent": UA, "Accept": accept || "*/*" }, redirect: "follow" });
@@ -44,29 +42,16 @@ function readJson(file) {
   try { return JSON.parse(fs.readFileSync(file, "utf8")); } catch (e) { return {}; }
 }
 
-// Cuts one month's menu picture into day pictures. Returns { days, noLunch } or null if no grid.
-function cutMonth(png, year, month, dir) {
-  const img = flatten({ data: png.data, w: png.width, h: png.height });
-  const g = core.gridFind(img.data, img.w, img.h);
-  if (!g) return null;
-  const days = {}, noLunch = [];
-  const last = new Date(year, month + 1, 0).getDate();
-  for (let d = 1; d <= last; d++) {
-    const b = core.boxFor(g, year, month, d);
-    if (!b) continue;
-    const k = `${year}-${pad2(month + 1)}-${pad2(d)}`;
-    const t = core.trimBox(img.data, img.w, b);
-    if (!t) { noLunch.push(k); continue; }
-    const out = new PNG({ width: t.w, height: t.h });
-    for (let y = 0; y < t.h; y++) {
-      const s = ((t.y + y) * img.w + t.x) * 4;
-      img.data.copy(out.data, y * t.w * 4, s, s + t.w * 4);
-    }
-    fs.writeFileSync(path.join(DATA, dir, k + ".png"), PNG.sync.write(out, { colorType: 0 }));
-    // A one-line box (like "NO SCHOOL") is a note, not a meal.
-    days[k] = { img: `${dir}/${k}.png`, w: t.w, h: t.h, ...(t.h < t.w * 0.3 ? { note: true } : {}) };
+// Reads one month: words for each day from the PDF; a picture only where words can't be read.
+async function cutMonth(png, pdfBytes, year, month, dir) {
+  const res = await readMonth(png, pdfBytes, year, month);
+  if (!res) return null;
+  for (const [k, day] of Object.entries(res.days)) {
+    if (!day.picture) continue;
+    fs.writeFileSync(path.join(DATA, dir, k + ".png"), day.picture);
+    res.days[k] = { img: `${dir}/${k}.png`, w: day.w, h: day.h, mask: true, ...(day.note ? { note: true } : {}) };
   }
-  return { days, noLunch };
+  return res;
 }
 
 // Cuts any new month of one meal's menu into data (= { months, days, noLunch }).
@@ -81,22 +66,28 @@ async function updateMeal(meal, links, data, wanted) {
   for (const item of Object.values(found)) {
     const name = `${S.MON_LONG[item.month]} ${item.year}`;
     if (!opt("force") && data.months[item.mk] && data.months[item.mk].source === item.url) { console.log(`  ${name}: already cut`); continue; }
-    let buf;
+    let buf, pdf = null;
     try {
       buf = opt(meal + "-file") ? fs.readFileSync(opt(meal + "-file")) : await get(item.render || item.url, S.ACCEPT);
     } catch (e) { console.log(`  ${name}: download failed (${e.message}), will retry next run`); continue; }
+    // The original PDF, for its words. Without it, days fall back to pictures.
+    try {
+      pdf = opt(meal + "-pdf") ? fs.readFileSync(opt(meal + "-pdf")) : await get(item.url, "application/pdf");
+      if (pdf.subarray(0, 4).toString("latin1") !== "%PDF") pdf = null;
+    } catch (e) { pdf = null; }
     const entry = { name, source: item.url, cut: now.toISOString().slice(0, 10) };
     // Drop this month's old days, then cut the new ones.
     for (const k of Object.keys(data.days)) if (k.startsWith(item.mk)) delete data.days[k];
     data.noLunch = data.noLunch.filter(k => !k.startsWith(item.mk));
     for (const f of fs.readdirSync(cellsDir)) if (f.startsWith(item.mk)) fs.rmSync(path.join(cellsDir, f));
     let res = null;
-    if (buf.subarray(0, 4).toString("latin1") === "\x89PNG") res = cutMonth(PNG.sync.read(buf), item.year, item.month, dir);
+    if (buf.subarray(0, 4).toString("latin1") === "\x89PNG") res = await cutMonth(PNG.sync.read(buf), pdf, item.year, item.month, dir);
     if (res && Object.keys(res.days).length) {
       Object.assign(data.days, res.days);
       data.noLunch.push(...res.noLunch);
       entry.ok = true;
-      console.log(`  ${name}: cut ${Object.keys(res.days).length} days` + (res.noLunch.length ? `, ${res.noLunch.length} with nothing written` : ""));
+      console.log(`  ${name}: ${res.fromText} days as text, ${res.fromPictures} as pictures` + (res.noLunch.length ? `, ${res.noLunch.length} with nothing written` : ""));
+      if (res.fromPictures) console.log(`::notice::${label} ${name}: ${res.fromPictures} days couldn't be read as text and are shown as pictures.`);
     } else {
       entry.ok = false;
       console.log(`::warning::${label} ${name} is posted, but its layout couldn't be read.`);
@@ -155,7 +146,7 @@ async function main() {
     break: { note: br.note, always: br.always, menus: br.menus, source: br.source, ...(changed ? { newSheet: posted } : {}) },
   };
   fs.writeFileSync(MENU_JSON, JSON.stringify(out, null, 1) + "\n");
-  console.log(`Wrote ${path.relative(ROOT, MENU_JSON)}: ${Object.keys(out.days).length} lunch and ${Object.keys(out.breakfast.days).length} breakfast pictures, ${Object.keys(out.typed).length} typed-in lunch days`);
+  console.log(`Wrote ${path.relative(ROOT, MENU_JSON)}: ${Object.keys(out.days).length} lunch days, ${Object.keys(out.breakfast.days).length} breakfast days`);
 }
 
 main().catch(e => { console.error(e); process.exit(1); });
