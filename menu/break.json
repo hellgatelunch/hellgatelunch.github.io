@@ -1,0 +1,28 @@
+{
+ "about": "Middle school Breakfast @ Break, typed in from the school's sheet for the 2026-27 school year. Months are 1-12. Days are Monday to Friday. If the school posts a new sheet, the build warns and the site links to it; update this file from the new sheet and set source to its address.",
+ "source": "https://resources.finalsite.net/images/v1787250030/hellgatek12mtus/kzneadinlwk5pcuhy2wm/BreakfastBreakMiddleSchool2026.pdf",
+ "note": "Breakfast @ Break is for middle school only. Students choose one: breakfast before school or Breakfast @ Break.",
+ "always": ["Fruits", "Milk"],
+ "menus": [
+  {
+   "months": [8, 9, 11, 1, 3, 5],
+   "days": [
+    ["Strawberry Pop Tart", "Cheddar Stick"],
+    ["Mini Pancakes", "Yogurt"],
+    ["Chocolate Chip Oatmeal Bar", "Yogurt"],
+    ["Maple Donut", "String Cheese"],
+    ["Cinnamon Bun", "Cheddar Stick"]
+   ]
+  },
+  {
+   "months": [10, 12, 2, 4, 6],
+   "days": [
+    ["Brown Sugar Pop Tart", "Cheddar Stick"],
+    ["Mini Donuts", "Yogurt"],
+    ["Mini Cinnis", "Yogurt"],
+    ["Maple Donut", "String Cheese"],
+    ["Chocolate Chip Muffin", "Cheddar Stick"]
+   ]
+  }
+ ]
+}

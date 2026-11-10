@@ -1,5 +1,5 @@
 // Off-phone tests for hellgate-lunch.js. Run with: npm test
-// Fixtures are real copies of the school's page and November 2026 menu (fetched Nov 9, 2026).
+// Fixtures are real copies of the school's page and its November 2026 lunch and breakfast menus (fetched Nov 9, 2026).
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
@@ -155,6 +155,59 @@ test("weeks for months starting on a weekend", () => {
   assert.equal(core.weekRow(2026, 1, 2), 0);  // Feb 2026 starts Sunday
   assert.equal(core.weekRow(2026, 9, 1), 0);  // Oct 2026 starts Thursday
   assert.equal(core.weekRow(2026, 9, 5), 1);
+});
+
+console.log("Breakfast and Breakfast @ Break (website)");
+
+const { sortLinks } = await import("../menu/sources.mjs");
+const all = links.extractLinks(page, "https://www.hellgate.k12.mt.us/x");
+const sortedLinks = sortLinks(all, new Date(2026, 10, 9));
+
+test("the page's three menus are told apart", () => {
+  assert.deepEqual(Array.from(sortedLinks.lunch, l => l.url.split("/").pop()), ["NovemberLUNCH2026docx.pdf"]);
+  assert.deepEqual(Array.from(sortedLinks.breakfast, l => l.url.split("/").pop()), ["November2026BREAKFASTdocx.pdf"]);
+  assert.equal(sortedLinks.breakfast[0].mk, "2026-11");
+  assert.match(sortedLinks.breakfast[0].render, /\/f_auto,q_auto\/v1793201252\//);
+  assert.equal(sortedLinks.breakSheet.url.split("/").pop(), "BreakfastBreakMiddleSchool2026.pdf");
+});
+
+test("the typed-in Breakfast @ Break sheet is the one on the school's page", () => {
+  const br = JSON.parse(fs.readFileSync(new URL("../menu/break.json", import.meta.url), "utf8"));
+  assert.equal(br.source, sortedLinks.breakSheet.url);
+});
+
+test("Breakfast @ Break covers each school month once, Monday to Friday", () => {
+  const br = JSON.parse(fs.readFileSync(new URL("../menu/break.json", import.meta.url), "utf8"));
+  const months = br.menus.flatMap(m => m.months).sort((a, b) => a - b);
+  assert.deepEqual(months, [1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12]);
+  for (const m of br.menus) {
+    assert.equal(m.days.length, 5);
+    for (const d of m.days) assert.ok(d.length >= 1 && d.every(x => typeof x === "string" && x));
+  }
+  assert.deepEqual(br.menus[0].days[1], ["Mini Pancakes", "Yogurt"]); // Tuesday, Nov 2026 sheet
+});
+
+const bimg = flatten(readPng(path.join(FIXTURES, "november-2026-breakfast.png")));
+const bgrid = core.gridFind(bimg.data, bimg.w, bimg.h);
+
+test("finds the breakfast calendar's columns and weeks", () => {
+  assert.ok(bgrid, "no grid");
+  assert.deepEqual([...bgrid.xs], [53, 369, 688, 1005, 1321, 1638]);
+  assert.ok(bgrid.ys.length >= 7); // the grey rule under the table adds one harmless line
+});
+
+test("every November breakfast day gets a box; Thanksgiving break reads as a note", () => {
+  for (let d = 1; d <= 30; d++) {
+    if ([0, 6].includes(new Date(2026, 10, d).getDay())) continue;
+    const b = core.boxFor(bgrid, 2026, 10, d);
+    assert.ok(b, "no box for " + d);
+    const t = core.trimBox(bimg.data, bimg.w, b);
+    assert.ok(t, "blank box for " + d);
+    assert.ok(t.y - b.y > 25, `date number left in ${d}`);
+    const note = t.h < t.w * 0.3;
+    assert.equal(note, [25, 26, 27].includes(d), `note? ${d}`);
+    writeCrop(bimg, t, path.join(OUT, `breakfast-2026-11-${String(d).padStart(2, "0")}.png`));
+  }
 });
 
 console.log(failed ? `\n${failed} failed` : "\nAll passed. Day crops are in test/out/.");

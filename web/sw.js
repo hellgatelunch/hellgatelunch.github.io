@@ -1,6 +1,6 @@
 // Service worker: lets the app open offline (showing the last menu it saw) and lets
 // Android offer "Install app". Bump VERSION when the app's own files change shape.
-var VERSION = "v1";
+var VERSION = "v2";
 var SHELL = "hellgate-shell-" + VERSION;
 var DATA = "hellgate-data";
 var SHELL_FILES = ["./", "index.html", "style.css", "app.js", "manifest.webmanifest",

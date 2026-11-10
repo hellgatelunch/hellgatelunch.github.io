@@ -57,11 +57,55 @@ h1 { margin: 2px 0 0; font-size: 34px; line-height: 1.1; letter-spacing: -.01em;
   border: 2px solid var(--accent);
   margin-bottom: 26px;
 }
-.when { margin: 0 0 4px; font-size: 14px; font-weight: 700; color: var(--accent); }
-.hero .main { margin: 0; font-size: 28px; font-weight: 750; line-height: 1.15; }
-.hero .sides { margin: 8px 0 0; font-size: 18px; }
-.hero .cell { margin-top: 8px; padding: 8px 10px; }
-.hero .off .main, .hero .main.off { color: var(--muted); font-size: 22px; }
+.when { margin: 0 0 2px; font-size: 14px; font-weight: 700; color: var(--accent); }
+.hero .main { margin: 0; font-size: 26px; font-weight: 750; line-height: 1.15; }
+.hero .sides { margin: 6px 0 0; font-size: 17px; }
+.hero .cell { margin-top: 6px; padding: 8px 10px; }
+
+/* One meal inside a day */
+.meal { margin-top: 14px; }
+.card .meal { margin-top: 10px; }
+.meal p { margin: 0; }
+.meal-label {
+  margin: 0 0 2px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.tag {
+  margin-left: 4px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--ink);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+}
+.none { margin: 0; color: var(--muted); font-size: 15px; }
+.hero .none { font-size: 17px; }
+.big-none { margin-top: 4px !important; font-size: 18px !important; font-weight: 650; }
+
+/* Meal on/off chips */
+.toggles { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 14px; }
+.chip {
+  border: 1.5px solid var(--line);
+  border-radius: 999px;
+  padding: 6px 11px;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.chip small { font-weight: 500; font-size: 12px; }
+.chip[aria-pressed="true"] { background: var(--card); border-color: var(--accent); color: var(--ink); }
+.chip[aria-pressed="true"]::before { content: "✓ "; color: var(--accent); }
+.chip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 .salad { margin: 10px 0 0; font-size: 13px; color: var(--muted); }
 
@@ -93,10 +137,9 @@ h2 { margin: 0; font-size: 20px; }
 }
 .card.hl { border-color: var(--accent); }
 .card p { margin: 0; }
-.head { font-size: 13px; font-weight: 700; color: var(--muted); }
+.head { margin: 0; font-size: 13px; font-weight: 700; color: var(--muted); }
 .hl .head { color: var(--accent); }
-.card .main { margin-top: 2px; font-size: 19px; font-weight: 700; }
-.card.off .main { color: var(--muted); font-size: 17px; font-weight: 600; }
+.card .main { font-size: 18px; font-weight: 700; }
 .card .sides { margin-top: 2px; font-size: 15px; }
 .card .salad { margin-top: 6px; font-size: 12px; }
 

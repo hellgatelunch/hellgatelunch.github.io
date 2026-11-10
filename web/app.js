@@ -1,5 +1,5 @@
 // Hellgate Lunch — web app. Reads data/menu.json, which a scheduled GitHub Action builds
-// from the school's monthly menu (see menu/build.mjs).
+// from the school's monthly breakfast and lunch menus (see menu/build.mjs).
 (function () {
   "use strict";
 
@@ -8,15 +8,22 @@
   var DOW = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
   var MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   var MONL = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  // In the order they're served.
+  var MEALS = [
+    { id: "breakfast", label: "Breakfast" },
+    { id: "break", label: "Breakfast @ Break", tag: "Middle school" },
+    { id: "lunch", label: "Lunch" },
+  ];
 
   var $ = function (id) { return document.getElementById(id); };
   function p2(n) { return (n < 10 ? "0" : "") + n; }
   function key(d) { return d.getFullYear() + "-" + p2(d.getMonth() + 1) + "-" + p2(d.getDate()); }
-  function fromKey(k) { var a = k.split("-"); return new Date(+a[0], +a[1] - 1, +a[2], 12); }
   function add(d, n) { var x = new Date(d); x.setDate(x.getDate() + n); return x; }
   function monday(d) { return add(d, -((d.getDay() + 6) % 7)); }
   function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;"); }
   function weekend(d) { return d.getDay() === 0 || d.getDay() === 6; }
+  function has(o, k) { return Object.prototype.hasOwnProperty.call(o, k); }
+  function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } }
 
   // Today's date and hour in Montana. ?now=2026-11-23T15:00 pretends it's another time.
   function schoolNow() {
@@ -33,13 +40,34 @@
 
   var M = null;
 
-  // What the menu says for a day: {items}, {cell}, {off: text}, {unreadable: month}, or null (not posted).
-  function lunchFor(k) {
-    if (Object.prototype.hasOwnProperty.call(M.typed, k)) return M.typed[k] ? { items: M.typed[k] } : { off: "No school" };
-    if (M.days[k]) return { cell: M.days[k] };
-    if (M.noLunch.indexOf(k) >= 0) return { off: "No lunch listed" };
-    var mo = M.months[k.slice(0, 7)];
+  // Which meals to show (the viewer's choice, remembered on this device).
+  var show = { breakfast: true, "break": true, lunch: true };
+  try { var saved = JSON.parse(store("hl-meals") || "null"); if (saved) for (var s in show) if (has(saved, s)) show[s] = !!saved[s]; } catch (e) {}
+
+  // What one menu says for a day: {items}, {cell}, {off: text}, {unreadable: month}, or null (not posted).
+  function fromMonthly(meal, k) {
+    if (meal.days[k]) return { cell: meal.days[k] };
+    if (meal.noLunch.indexOf(k) >= 0) return { off: "Nothing listed" };
+    var mo = meal.months[k.slice(0, 7)];
     if (mo && !mo.ok) return { unreadable: mo };
+    return null;
+  }
+  function real(l) { return !!(l && (l.items || (l.cell && !l.cell.note))); }
+  function schoolDay(d) { var k = key(d); return !weekend(d) && (real(mealFor("lunch", d)) || real(mealFor("breakfast", d))); }
+
+  function mealFor(id, d) {
+    var k = key(d);
+    if (id === "lunch") {
+      if (has(M.typed, k)) return M.typed[k] ? { items: M.typed[k] } : { off: "No school" };
+      return fromMonthly(M.lunch, k);
+    }
+    if (id === "breakfast") return fromMonthly(M.breakfast, k);
+    // Breakfast @ Break: same menu every week of a month, on school days only.
+    if (!M.brk || weekend(d) || !schoolDay(d)) return null;
+    for (var i = 0; i < M.brk.menus.length; i++) {
+      var mm = M.brk.menus[i];
+      if (mm.months.indexOf(d.getMonth() + 1) >= 0) return { items: mm.days[d.getDay() - 1].concat(M.brk.always || []) };
+    }
     return null;
   }
 
@@ -50,17 +78,15 @@
     return DOW[day.getDay()] + ", " + MON[day.getMonth()] + " " + day.getDate();
   }
 
-  // Today until 2 PM, then the next school day. Skips days off; stops where the menu runs out.
+  // Today until 2 PM, then the next school day. Skips days off; stops where the menus run out.
   function pick(now) {
     var day = now.hour >= SWITCH_HOUR ? add(now.day, 1) : new Date(now.day);
     for (var i = 0; i < 21; i++, day = add(day, 1)) {
       if (weekend(day)) continue;
-      var l = lunchFor(key(day));
-      if (!l) break;
-      if (l.off) continue;
-      return { day: day, lunch: l, label: label(day, now.day) };
+      if (!mealFor("lunch", day) && !mealFor("breakfast", day)) break;
+      if (schoolDay(day)) return { day: day, ok: true, label: label(day, now.day) };
     }
-    return { day: day, lunch: null, label: null };
+    return { day: day, ok: false, label: null };
   }
 
   function salad(dow) {
@@ -75,36 +101,57 @@
       + (scale ? ' style="width:' + Math.round(c.w * scale) + 'px"' : "") + ">";
   }
 
-  // HTML for one day's lunch. big = the top card, where the school's picture is shown larger.
-  function body(d, l, big) {
-    var k = key(d), sal = '<p class="salad">' + salad(d.getDay()) + "</p>";
-    if (!l) return '<p class="main off">' + MONL[d.getMonth()] + " menu not posted yet</p>";
-    if (l.off) return '<p class="main off">' + esc(l.off) + "</p>";
-    if (l.unreadable) return '<p class="main off">The ' + esc(l.unreadable.name) + ' menu is posted, but its layout couldn\'t be read.</p>'
-      + '<p class="sides"><a href="' + esc(l.unreadable.source) + '">Open the school\'s menu</a></p>';
+  // One meal's food. big = the top card, where things are shown larger.
+  function food(id, d, l, big) {
+    var when = DOW[d.getDay()] + ", " + MONL[d.getMonth()] + " " + d.getDate();
+    var name = id === "lunch" ? "Lunch" : id === "breakfast" ? "Breakfast" : "Breakfast @ Break";
+    if (!l) return '<p class="none">' + MONL[d.getMonth()] + " " + (id === "break" ? name : name.toLowerCase()) + " menu not posted yet</p>";
+    if (l.off) return '<p class="none">' + esc(l.off) + "</p>";
+    if (l.unreadable) return '<p class="none">Posted, but the layout couldn\'t be read. <a href="' + esc(l.unreadable.source) + '">Open the school\'s menu</a></p>';
+    var extra = id === "lunch" ? '<p class="salad">' + salad(d.getDay()) + "</p>" : "";
     if (l.items) return '<p class="main">' + esc(l.items[0]) + "</p>"
-      + (l.items.length > 1 ? '<p class="sides">' + esc(l.items.slice(1).join(" · ")) + "</p>" : "") + sal;
-    return cellImg(l.cell, "Lunch for " + DOW[d.getDay()] + ", " + MONL[d.getMonth()] + " " + d.getDate() + ", from the school's menu", big ? 1.6 : 0)
-      + (l.cell.note ? "" : sal);
+      + (l.items.length > 1 ? '<p class="sides">' + esc(l.items.slice(1).join(" · ")) + "</p>" : "") + extra;
+    return cellImg(l.cell, name + " for " + when + ", from the school's menu", big ? 1.25 : 0) + extra;
+  }
+
+  // A whole day: each chosen meal, or one "no school" note for a day off.
+  function dayHTML(d, big) {
+    var k = key(d);
+    if (!schoolDay(d)) {
+      var L = mealFor("lunch", d), B = mealFor("breakfast", d);
+      if (L && L.off === "No school") return '<p class="none big-none">No school</p>';
+      var note = (L && L.cell && L.cell.note && L.cell) || (B && B.cell && B.cell.note && B.cell);
+      if (note) return cellImg(note, "Note from the school's menu for " + k, big ? 1.25 : 0);
+      if (!L && !B) return '<p class="none big-none">' + MONL[d.getMonth()] + " menu not posted yet</p>";
+      return '<p class="none big-none">No meals listed</p>';
+    }
+    var html = "";
+    MEALS.forEach(function (m) {
+      if (!show[m.id]) return;
+      var l = mealFor(m.id, d);
+      if (m.id === "break" && !l) return; // no break menu for this month: leave it out
+      html += '<section class="meal meal-' + m.id + '"><h3 class="meal-label">' + m.label
+        + (m.tag ? ' <span class="tag">' + m.tag + "</span>" : "") + "</h3>" + food(m.id, d, l, big) + "</section>";
+    });
+    return html || '<p class="none">Choose a meal to show above.</p>';
   }
 
   var now, picked, week;
 
   function renderHero() {
-    var h = $("hero");
-    if (!picked.lunch) {
-      h.innerHTML = '<p class="when">Next school day</p>' + body(picked.day, null);
+    var h = $("hero"), d = picked.day;
+    if (!picked.ok) {
+      h.innerHTML = '<p class="when">Next school day</p><p class="none big-none">' + MONL[d.getMonth()] + " menu not posted yet</p>";
       return;
     }
-    var d = picked.day;
     var when = picked.label === "Today" || picked.label === "Tomorrow"
       ? picked.label + " · " + DOW[d.getDay()] + ", " + MON[d.getMonth()] + " " + d.getDate()
       : picked.label;
-    h.innerHTML = '<p class="when">' + esc(when) + "</p>" + body(d, picked.lunch, true);
+    h.innerHTML = '<p class="when">' + esc(when) + "</p>" + dayHTML(d, true);
   }
 
   function hasData(mon) {
-    for (var i = 0; i < 5; i++) if (lunchFor(key(add(mon, i)))) return true;
+    for (var i = 0; i < 5; i++) { var d = add(mon, i); if (mealFor("lunch", d) || mealFor("breakfast", d)) return true; }
     return false;
   }
 
@@ -115,12 +162,11 @@
       : MON[week.getMonth()] + " " + week.getDate() + " – " + MON[fri.getMonth()] + " " + fri.getDate());
     var html = "";
     for (var i = 0; i < 5; i++) {
-      var d = add(week, i), k = key(d), l = lunchFor(k), hl = k === key(picked.day) && picked.lunch;
+      var d = add(week, i), hl = picked.ok && key(d) === key(picked.day);
       var head = DOW[d.getDay()] + ", " + MON[d.getMonth()] + " " + d.getDate();
       if (hl && (picked.label === "Today" || picked.label === "Tomorrow")) head = picked.label + " · " + head;
-      var off = !l || l.off || l.unreadable;
-      html += '<article class="card' + (hl ? " hl" : "") + (off ? " off" : "") + '"><div class="head">' + head + "</div>"
-        + body(d, l).replace(/<p class="main off">/, '<p class="main">') + "</article>";
+      html += '<article class="card' + (hl ? " hl" : "") + (schoolDay(d) ? "" : " off") + '"><h3 class="head">' + head + "</h3>"
+        + dayHTML(d, false) + "</article>";
     }
     $("days").innerHTML = html;
     $("prev").disabled = !hasData(add(week, -7));
@@ -128,11 +174,42 @@
     $("today").hidden = thisWeek;
   }
 
+  function renderToggles() {
+    var html = "";
+    MEALS.forEach(function (m) {
+      html += '<button type="button" class="chip" data-meal="' + m.id + '" aria-pressed="' + show[m.id] + '">'
+        + (m.id === "break" ? "Middle school break" : m.label) + "</button>";
+    });
+    $("toggles").innerHTML = html;
+    Array.prototype.forEach.call($("toggles").querySelectorAll(".chip"), function (b) {
+      b.onclick = function () {
+        var id = b.getAttribute("data-meal"), on = 0;
+        show[id] = !show[id];
+        for (var s in show) if (show[s]) on++;
+        if (!on) show[id] = true; // keep at least one
+        store("hl-meals", JSON.stringify(show));
+        renderToggles(); renderHero(); renderWeek();
+      };
+    });
+  }
+
   function renderSource() {
-    var ms = Object.keys(M.months).sort().map(function (mk) { return M.months[mk]; }).filter(function (m) { return m.ok; });
-    $("source").textContent = ms.length
-      ? "From the school's " + ms.map(function (m) { return m.name.replace(/ \d{4}$/, ""); }).join(" and ") + " lunch menu."
+    var names = [];
+    ["breakfast", "lunch"].forEach(function (id) {
+      var ms = M[id].months, list = Object.keys(ms).sort().filter(function (mk) { return ms[mk].ok; });
+      if (list.length) names.push(id);
+    });
+    var months = {};
+    [M.breakfast.months, M.lunch.months].forEach(function (ms) {
+      Object.keys(ms).forEach(function (mk) { if (ms[mk].ok) months[mk] = ms[mk].name.replace(/ \d{4}$/, ""); });
+    });
+    var mlist = Object.keys(months).sort().map(function (mk) { return months[mk]; });
+    $("source").textContent = names.length
+      ? "From the school's " + mlist.join(" and ") + " " + names.join(" and ") + " menus."
       : "";
+    var b = M.brk;
+    $("break-note").innerHTML = b ? esc(b.note) + (b.newSheet
+      ? ' <strong>The school posted a new Breakfast @ Break menu:</strong> <a href="' + esc(b.newSheet) + '">see it here</a>.' : "") : "";
     if (M.page) $("page-link").href = M.page;
   }
 
@@ -150,21 +227,18 @@
     now = schoolNow();
     picked = pick(now);
     week = monday(picked.day);
-    renderHero(); renderWeek(); renderSource();
+    renderToggles(); renderHero(); renderWeek(); renderSource();
   }
 
   // Offer "Add to Home Screen": on iPhone as instructions (Safari has no install button),
   // on Android/Chrome as a real Install button. Hidden once dismissed or installed.
   var installEvent = null;
   window.addEventListener("beforeinstallprompt", function (e) { e.preventDefault(); installEvent = e; installHint(); });
-  window.addEventListener("appinstalled", function () { $("install").hidden = true; dismissInstall(); });
-  function dismissInstall() { try { localStorage.setItem("hl-install-hint", "1"); } catch (e) {} }
+  window.addEventListener("appinstalled", function () { $("install").hidden = true; store("hl-install-hint", "1"); });
   function installHint() {
     var ios = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
     var standalone = navigator.standalone || matchMedia("(display-mode: standalone)").matches;
-    var seen = false;
-    try { seen = localStorage.getItem("hl-install-hint") === "1"; } catch (e) {}
-    if (standalone || seen || !M || (!ios && !installEvent)) return;
+    if (standalone || store("hl-install-hint") === "1" || !M || (!ios && !installEvent)) return;
     if (installEvent) {
       $("install-text").innerHTML = "<strong>Put it on your home screen</strong> to open it like an app.";
       $("install-go").hidden = false;
@@ -174,7 +248,7 @@
       };
     }
     $("install").hidden = false;
-    $("install-close").onclick = function () { $("install").hidden = true; dismissInstall(); };
+    $("install-close").onclick = function () { $("install").hidden = true; store("hl-install-hint", "1"); };
   }
 
   // Works offline after the first visit (and lets Android offer to install it).
@@ -185,7 +259,7 @@
   // Share the link with other parents (phones' share sheet; elsewhere, copy it).
   $("share").onclick = function () {
     var url = location.origin + location.pathname;
-    if (navigator.share) { navigator.share({ title: "Hellgate Lunch", text: "Today's lunch at Hellgate K-8", url: url }).catch(function () {}); return; }
+    if (navigator.share) { navigator.share({ title: "Hellgate Lunch", text: "Breakfast and lunch at Hellgate K-8", url: url }).catch(function () {}); return; }
     var done = function () { $("share").textContent = "Link copied"; setTimeout(function () { $("share").textContent = "Share with other parents"; }, 2000); };
     if (navigator.clipboard) navigator.clipboard.writeText(url).then(done, function () { prompt("Copy this link:", url); });
     else prompt("Copy this link:", url);
@@ -196,7 +270,14 @@
     .then(function (data) {
       // ?pictures previews how months without typed-in days look (all from the school's pictures).
       var pictures = new URLSearchParams(location.search).has("pictures");
-      M = { typed: pictures ? {} : data.typed || {}, days: data.days || {}, noLunch: data.noLunch || [], months: data.months || {}, page: data.page };
+      var empty = { months: {}, days: {}, noLunch: [] };
+      M = {
+        typed: pictures ? {} : data.typed || {},
+        lunch: { months: data.months || {}, days: data.days || {}, noLunch: data.noLunch || [] },
+        breakfast: data.breakfast || empty,
+        brk: data["break"] || null,
+        page: data.page,
+      };
       render();
       installHint();
       // Coming back to the app later in the day (or the next day): recompute.
@@ -208,6 +289,6 @@
       });
     })
     .catch(function () {
-      $("hero").innerHTML = '<p class="when">Couldn\'t load the menu</p><p class="main off">Check your connection and try again.</p>';
+      $("hero").innerHTML = '<p class="when">Couldn\'t load the menu</p><p class="none big-none">Check your connection and try again.</p>';
     });
 })();

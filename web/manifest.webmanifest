@@ -1,7 +1,7 @@
 {
   "name": "Hellgate Lunch",
   "short_name": "Lunch",
-  "description": "Today's lunch and this week's menu at Hellgate Elementary K-8.",
+  "description": "Today's breakfast and lunch, and this week's menus, at Hellgate Elementary K-8.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
