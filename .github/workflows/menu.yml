@@ -40,7 +40,7 @@ jobs:
       - name: Save new menu data
         id: save
         run: |
-          git add web/data
+          git add web/data web/calendar.ics
           if git diff --cached --quiet; then
             echo "No menu changes."
             echo "changed=false" >> "$GITHUB_OUTPUT"
