@@ -1,6 +1,6 @@
 // Service worker: lets the app open offline (showing the last menu it saw) and lets
 // Android offer "Install app". Bump VERSION when the app's own files change shape.
-var VERSION = "v3";
+var VERSION = "v4";
 var SHELL = "hellgate-shell-" + VERSION;
 var DATA = "hellgate-data";
 var SHELL_FILES = ["./", "index.html", "style.css", "app.js", "manifest.webmanifest",
@@ -39,7 +39,7 @@ self.addEventListener("fetch", function (e) {
   var req = e.request, url = new URL(req.url);
   if (req.method !== "GET" || url.origin !== location.origin) return;
   if (url.pathname.endsWith("/data/menu.json")) return e.respondWith(networkFirst(req, DATA));
-  if (url.pathname.indexOf("/data/cells/") >= 0) return e.respondWith(staleWhileRevalidate(req, DATA));
+  if (url.pathname.indexOf("/data/cells") >= 0) return e.respondWith(staleWhileRevalidate(req, DATA));
   // The app's own files: fresh when online (so a new page never meets an old script), saved copy offline.
   e.respondWith(networkFirst(req, SHELL));
 });
