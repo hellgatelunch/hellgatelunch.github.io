@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hellgate Lunch flyer</title>
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<style>
+  :root { --ink: #1D2A24; --muted: #5D6B63; --accent: #C9541A; --bg: #F4F1EA; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; }
+  .tools { max-width: 640px; margin: 0 auto; padding: 16px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; font-size: 14px; }
+  .tools button { border: 0; border-radius: 999px; padding: 9px 16px; background: var(--accent); color: #fff; font: inherit; font-weight: 650; cursor: pointer; }
+  .tools a { color: var(--accent); }
+  .sheet { max-width: 640px; margin: 0 auto 32px; background: #fff; border-radius: 18px; padding: 36px 36px 30px; }
+  .eyebrow { margin: 0; font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+  h1 { margin: 4px 0 6px; font-size: 38px; line-height: 1.1; }
+  .lede { margin: 0 0 22px; font-size: 18px; }
+  .row { display: flex; gap: 28px; align-items: center; flex-wrap: wrap; }
+  .qr { width: 220px; height: 220px; flex: none; border: 3px solid var(--accent); border-radius: 16px; padding: 6px; }
+  .qr img { width: 100%; height: 100%; display: block; }
+  .how { flex: 1 1 240px; }
+  .how h2 { margin: 0 0 4px; font-size: 15px; color: var(--accent); }
+  .how ol { margin: 0 0 14px; padding-left: 20px; }
+  .url { margin: 22px 0 0; font-size: 17px; font-weight: 700; word-break: break-all; }
+  .fine { margin: 8px 0 0; font-size: 12px; color: var(--muted); }
+  @media print {
+    @page { margin: 12mm; }
+    body { background: #fff; }
+    .tools { display: none; }
+    .sheet { margin: 0; padding: 0; max-width: none; border-radius: 0; }
+  }
+</style>
+</head>
+<body>
+<div class="tools">
+  <button type="button" onclick="print()">Print</button>
+  <a href="qr.svg" download="hellgate-lunch-qr.svg">Download the QR code</a>
+  <a href="./">Back to the menu</a>
+</div>
+<main class="sheet">
+  <p class="eyebrow">Hellgate Elementary K-8</p>
+  <h1>Today's lunch, on your phone</h1>
+  <p class="lede">See today's school lunch and the whole week's menu, taken from the school's monthly menu and updated when the new one is posted.</p>
+  <div class="row">
+    <div class="qr"><img src="qr.svg" alt="QR code for the Hellgate Lunch website"></div>
+    <div class="how">
+      <h2>iPhone</h2>
+      <ol>
+        <li>Point the Camera at the code and tap the link.</li>
+        <li>In Safari, tap Share, then <em>Add to Home Screen</em>.</li>
+      </ol>
+      <h2>Android</h2>
+      <ol>
+        <li>Point the Camera at the code and tap the link.</li>
+        <li>Tap <em>Install</em> (or ⋮ menu → <em>Add to Home screen</em>).</li>
+      </ol>
+    </div>
+  </div>
+  <p class="url" id="url">l33-dot.github.io/hellgate-lunch</p>
+  <p class="fine">Free, no sign-up, no ads. All meals include 1% chocolate or white milk.</p>
+</main>
+</body>
+</html>

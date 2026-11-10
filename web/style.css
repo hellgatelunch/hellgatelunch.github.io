@@ -6,6 +6,7 @@
   --line: #E3DED3;
   --accent: #C9541A;
   --accent-soft: #FBE9DE;
+  --on-accent: #FFFFFF;
   --paper: #FFFFFF;
   color-scheme: light;
 }
@@ -18,6 +19,7 @@
     --line: #2C3631;
     --accent: #F08A4B;
     --accent-soft: #3A2A20;
+    --on-accent: #1A120D;
     color-scheme: dark;
   }
 }
@@ -119,8 +121,21 @@ h2 { margin: 0; font-size: 20px; }
   font-size: 14px;
 }
 .install p { margin: 0; }
-.share { font-weight: 600; }
-.install button {
+.share-word { font-weight: 600; }
+.pill {
+  border: 0;
+  border-radius: 999px;
+  padding: 9px 16px;
+  background: var(--accent);
+  color: var(--on-accent);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 650;
+  cursor: pointer;
+}
+.install .pill { margin-top: 10px; }
+.share-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; margin-bottom: 14px !important; }
+#install-close {
   position: absolute; top: 6px; right: 6px;
   width: 32px; height: 32px;
   border: 0; background: none;

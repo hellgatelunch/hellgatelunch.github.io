@@ -2,7 +2,7 @@
 
 Two ways to see the Hellgate Elementary K-8 school lunch:
 
-- **The website: <https://l33-dot.github.io/hellgate-lunch/>.** Open it on any phone or computer. On iPhone, tap Share → *Add to Home Screen* and it opens like an app. No setup.
+- **The website: <https://l33-dot.github.io/hellgate-lunch/>.** Open it on any phone or computer. On iPhone, tap Share → *Add to Home Screen*; on Android, tap *Install*. Either way it opens like an app and works offline. No setup. To spread the word, use the [printable flyer with a QR code](https://l33-dot.github.io/hellgate-lunch/flyer.html) (for the school newsletter) or the site's *Share with other parents* button.
 - **The iPhone widget** (below). A home-screen widget that always shows the next lunch.
 
 Both read the school's own monthly lunch menu and show each day's box from it.
@@ -15,6 +15,10 @@ Both read the school's own monthly lunch menu and show each day's box from it.
 - Below it is the week, with arrows (or ← →) to flip weeks.
 - To force a refresh, open the repository's **Actions** tab → *Refresh menu and publish site* → **Run workflow**.
 - GitHub pauses scheduled Actions in a repository with no activity for 60 days. Menu updates commit to the repository, so this shouldn't happen during the school year. After summer break, re-enable it from the Actions tab if needed.
+
+- `web/sw.js` (service worker) keeps the last menu so the app opens offline, and lets Android offer *Install*. If you change the app's own files in a way old copies would break, bump its `VERSION`.
+- `web/data/menu.json` is the one menu file everything reads. A future App Store / Google Play app can read the same file from the site.
+- `web/qr.svg` is made by `node tools/make-qr.mjs` (rerun it with a new address if the site ever moves).
 
 Preview switches: `?now=2026-11-24T15:00` pretends it's another time, and `?pictures` ignores the typed-in days and shows only the school's pictures.
 

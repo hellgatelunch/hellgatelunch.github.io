@@ -153,18 +153,43 @@
     renderHero(); renderWeek(); renderSource();
   }
 
-  // Offer "Add to Home Screen" on iPhone Safari, once.
+  // Offer "Add to Home Screen": on iPhone as instructions (Safari has no install button),
+  // on Android/Chrome as a real Install button. Hidden once dismissed or installed.
+  var installEvent = null;
+  window.addEventListener("beforeinstallprompt", function (e) { e.preventDefault(); installEvent = e; installHint(); });
+  window.addEventListener("appinstalled", function () { $("install").hidden = true; dismissInstall(); });
+  function dismissInstall() { try { localStorage.setItem("hl-install-hint", "1"); } catch (e) {} }
   function installHint() {
-    var ios = /iphone|ipad|ipod/i.test(navigator.userAgent), standalone = navigator.standalone || matchMedia("(display-mode: standalone)").matches;
+    var ios = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+    var standalone = navigator.standalone || matchMedia("(display-mode: standalone)").matches;
     var seen = false;
     try { seen = localStorage.getItem("hl-install-hint") === "1"; } catch (e) {}
-    if (!ios || standalone || seen) return;
+    if (standalone || seen || !M || (!ios && !installEvent)) return;
+    if (installEvent) {
+      $("install-text").innerHTML = "<strong>Put it on your home screen</strong> to open it like an app.";
+      $("install-go").hidden = false;
+      $("install-go").onclick = function () {
+        installEvent.prompt();
+        installEvent.userChoice.then(function () { installEvent = null; $("install").hidden = true; });
+      };
+    }
     $("install").hidden = false;
-    $("install-close").onclick = function () {
-      $("install").hidden = true;
-      try { localStorage.setItem("hl-install-hint", "1"); } catch (e) {}
-    };
+    $("install-close").onclick = function () { $("install").hidden = true; dismissInstall(); };
   }
+
+  // Works offline after the first visit (and lets Android offer to install it).
+  if ("serviceWorker" in navigator && location.protocol === "https:") {
+    window.addEventListener("load", function () { navigator.serviceWorker.register("sw.js").catch(function () {}); });
+  }
+
+  // Share the link with other parents (phones' share sheet; elsewhere, copy it).
+  $("share").onclick = function () {
+    var url = location.origin + location.pathname;
+    if (navigator.share) { navigator.share({ title: "Hellgate Lunch", text: "Today's lunch at Hellgate K-8", url: url }).catch(function () {}); return; }
+    var done = function () { $("share").textContent = "Link copied"; setTimeout(function () { $("share").textContent = "Share with other parents"; }, 2000); };
+    if (navigator.clipboard) navigator.clipboard.writeText(url).then(done, function () { prompt("Copy this link:", url); });
+    else prompt("Copy this link:", url);
+  };
 
   fetch("data/menu.json", { cache: "no-cache" })
     .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
