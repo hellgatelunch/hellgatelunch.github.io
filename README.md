@@ -2,7 +2,7 @@
 
 Two ways to see the Hellgate Elementary K-8 school lunch:
 
-- **The website: <https://l33-dot.github.io/hellgate-lunch/>.** Open it on any phone or computer. On iPhone, tap Share → *Add to Home Screen*; on Android, tap *Install*. Either way it opens like an app and works offline. No setup. To spread the word, use the [printable flyer with a QR code](https://l33-dot.github.io/hellgate-lunch/flyer.html) (for the school newsletter) or the site's *Share with other parents* button.
+- **The website: <https://hellgatelunch.github.io/>.** Open it on any phone or computer. On iPhone, tap Share → *Add to Home Screen*; on Android, tap *Install*. Either way it opens like an app and works offline. No setup. To spread the word, use the [printable flyer with a QR code](https://hellgatelunch.github.io/flyer.html) (for the school newsletter) or the site's *Share with other parents* button.
 - **The iPhone widget** (below). A home-screen widget that always shows the next lunch.
 
 Both read the school's own monthly lunch menu and show each day's box from it.

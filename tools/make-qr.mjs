@@ -5,7 +5,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import QRCode from "qrcode";
 
-const SITE = process.argv[2] || "https://l33-dot.github.io/hellgate-lunch/";
+const SITE = process.argv[2] || "https://hellgatelunch.github.io/";
 const OUT = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "web", "qr.svg");
 
 const svg = await QRCode.toString(SITE, { type: "svg", errorCorrectionLevel: "M", margin: 2, color: { dark: "#1D2A24", light: "#FFFFFF" } });
