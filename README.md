@@ -85,7 +85,7 @@ The website:
 - The meal toggles (Breakfast / Break / Lunch tiles) hide meals a family doesn't need. **Pack or buy?**: the heart and thumbs-down mark foods a kid likes or not, saved separately for each meal; disliked lunches show "Maybe pack a lunch". Both are stored only in that phone's browser (the app asks the browser to keep them).
 - `web/sw.js` (service worker) keeps the last menu so the app opens offline. Bump its `VERSION` when the app's own files change.
 - Logo and icons: `node tools/make-logo.mjs assets/hawks-logo-source.png`, then `node tools/make-icons.mjs`. QR code: `node tools/make-qr.mjs`.
-- To force a refresh: the repository's **Actions** tab → *Refresh menu and publish site* → **Run workflow**. If a run fails on GitHub's side ("artifact not found"), start a new run that way rather than re-running the failed one.
+- To force a refresh: the repository's **Actions** tab → *Refresh menu and publish site* → **Run workflow**. Publishing waits a moment and retries once if GitHub briefly can't find the uploaded site ("artifact not found"). If a run still fails that way, start a new run rather than re-running the failed one.
 - GitHub pauses scheduled Actions after 60 days without activity. Menu updates commit to the repository, so this shouldn't happen during the school year. After summer break, re-enable it from the Actions tab if needed.
 
 Preview switches: `?now=2026-11-24T15:00` pretends it's another time; `?pictures` ignores the typed-in days.

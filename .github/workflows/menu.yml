@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-      url: ${{ steps.deploy.outputs.page_url }}
+      url: ${{ steps.deploy.outputs.page_url || steps.deploy_retry.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
 
@@ -61,6 +61,21 @@ jobs:
         with:
           path: web
 
+      # GitHub sometimes can't see the just-uploaded site package for a few seconds
+      # ("No artifacts named github-pages"), so wait a moment, and retry once if it still fails.
+      - name: Let the upload settle
+        if: steps.save.outputs.changed == 'true' || github.event_name != 'schedule'
+        run: sleep 10
+
       - id: deploy
         uses: actions/deploy-pages@v4
         if: steps.save.outputs.changed == 'true' || github.event_name != 'schedule'
+        continue-on-error: true
+
+      - name: Wait before retrying
+        if: steps.deploy.outcome == 'failure'
+        run: sleep 30
+
+      - id: deploy_retry
+        uses: actions/deploy-pages@v4
+        if: steps.deploy.outcome == 'failure'
