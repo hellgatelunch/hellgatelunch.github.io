@@ -83,9 +83,8 @@ a { color: var(--brand); }
 }
 
 /* Meal toggles, under the top card */
-.show-row { display: flex; align-items: center; gap: 10px; margin: 0 0 22px; }
-.show-label { font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
-.show-row .toggles { flex: 1; margin: 0; }
+.show-row { margin: 0 0 22px; }
+.show-row .toggles { margin: 0; }
 
 /* Meal colors, by class */
 .m-breakfast { --meal: var(--breakfast); --meal-bar: var(--breakfast-bar); --meal-tint: var(--breakfast-tint); }
@@ -248,6 +247,7 @@ h2 { font-size: 20px; }
 .rate-btn.like[aria-pressed="true"] { color: var(--meal); background: var(--meal-tint); }
 .rate-btn.like[aria-pressed="true"] .icon { fill: currentColor; }
 .rate-btn.nope[aria-pressed="true"] { color: var(--ink); background: var(--line); }
+.rate-btn.nope[aria-pressed="true"] .icon { fill: currentColor; }
 .icon.filled { fill: currentColor; }
 .verdict {
   display: inline-flex; align-items: center; gap: 5px;

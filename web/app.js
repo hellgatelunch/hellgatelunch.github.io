@@ -110,17 +110,27 @@
     return "No salad bar Tue";
   }
 
-  // Foods the kid likes (1) or doesn't (-1). Kept on this phone only; never sent anywhere.
+  // Foods the kid likes (1) or doesn't (-1), saved separately for each meal
+  // ("lunch|cheeseburger"). Kept on this phone only; never sent anywhere.
   var likes = {};
   try { likes = JSON.parse(store("hl-likes") || "{}") || {}; } catch (e) { likes = {}; }
   function foodKey(s) { return String(s).toLowerCase().replace(/\s+/g, " ").trim(); }
-  function liking(s) { return has(likes, foodKey(s)) ? likes[foodKey(s)] : 0; }
-  function rate(s, v) {
-    var k = foodKey(s);
+  function likeKey(meal, s) { return meal + "|" + foodKey(s); }
+  // Ratings saved before they were per meal ("cheeseburger") apply to every meal: convert them once.
+  Object.keys(likes).forEach(function (k) {
+    if (k.indexOf("|") >= 0) return;
+    MEALS.forEach(function (m) { if (!has(likes, m.id + "|" + k)) likes[m.id + "|" + k] = likes[k]; });
+    delete likes[k];
+  });
+  function liking(meal, s) { var k = likeKey(meal, s); return has(likes, k) ? likes[k] : 0; }
+  function rate(meal, s, v) {
+    var k = likeKey(meal, s);
     if (likes[k] === v) delete likes[k]; else likes[k] = v; // tapping again clears it
     store("hl-likes", JSON.stringify(likes));
     store("hl-likes-hint", "1");
   }
+  // Ask the browser to keep this site's saved data (ratings, meal choices) instead of clearing it when space runs low.
+  try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(function () {}); } catch (e) {}
   var openRow = null; // the week row whose rating buttons are showing
 
   var HEART = '<path d="M12 20s-7-4.4-9-8.6C1.6 8.4 3.4 5 6.8 5c2 0 3.3 1.1 5.2 3 1.9-1.9 3.2-3 5.2-3 3.4 0 5.2 3.4 3.8 6.4C19 15.6 12 20 12 20z"/>';
@@ -128,18 +138,18 @@
   function svg(paths, cls) { return '<svg class="icon ' + (cls || "") + '" viewBox="0 0 24 24" aria-hidden="true">' + paths + "</svg>"; }
 
   // The two rating buttons for a food.
-  function rateButtons(name) {
-    var v = liking(name), f = esc(name);
+  function rateButtons(meal, name) {
+    var v = liking(meal, name), f = esc(name), at = ' data-meal="' + meal + '" data-food="' + f + '"';
     return '<span class="rate">'
-      + '<button type="button" class="rate-btn like" data-food="' + f + '" data-v="1" aria-pressed="' + (v > 0) + '" aria-label="Likes ' + f + '">' + svg(HEART) + "</button>"
-      + '<button type="button" class="rate-btn nope" data-food="' + f + '" data-v="-1" aria-pressed="' + (v < 0) + '" aria-label="Doesn\'t like ' + f + '">' + svg(THUMB) + "</button>"
+      + '<button type="button" class="rate-btn like"' + at + ' data-v="1" aria-pressed="' + (v > 0) + '" aria-label="Likes ' + f + '">' + svg(HEART) + "</button>"
+      + '<button type="button" class="rate-btn nope"' + at + ' data-v="-1" aria-pressed="' + (v < 0) + '" aria-label="Doesn\'t like ' + f + '">' + svg(THUMB) + "</button>"
       + "</span>";
   }
 
   // The verdict for a meal's main item: big tag in the top card, small mark in the week.
   function verdict(id, l, big) {
     if (!l || !l.items) return "";
-    var v = liking(l.items[0]);
+    var v = liking(id, l.items[0]);
     if (!v) return "";
     if (v > 0) return big ? '<span class="verdict fav">' + svg(HEART, "filled") + "Favorite</span>" : '<span class="mark fav" title="Favorite">' + svg(HEART, "filled") + "</span>";
     if (id === "lunch") return big ? '<span class="verdict pack">Maybe pack a lunch</span>' : '<span class="mark pack">Pack?</span>';
@@ -167,14 +177,14 @@
     if (l.pic) return pic(l.pic, alt, big ? 0.95 : 0.72);
     var main = l.items[0], sides = l.items.length > 1 ? esc(l.items.slice(1).join(" · ")) : "";
     if (big) {
-      return '<div class="main-line"><p class="main">' + esc(main) + "</p>" + rateButtons(main) + "</div>"
+      return '<div class="main-line"><p class="main">' + esc(main) + "</p>" + rateButtons(id, main) + "</div>"
         + (sides ? '<p class="sides">' + sides + "</p>" : "");
     }
     // Week: tap the main item to rate it; marks show what's already rated.
     return '<button type="button" class="main main-btn" data-row="' + rowKey + '" aria-expanded="' + (openRow === rowKey) + '">' + esc(main) + "</button>"
       + verdict(id, l, false)
       + (sides ? '<span class="sides">' + sides + "</span>" : "")
-      + (openRow === rowKey ? '<span class="row-rate">' + rateButtons(main) + '<span class="rate-help">Does your kid like it?</span></span>' : "");
+      + (openRow === rowKey ? '<span class="row-rate">' + rateButtons(id, main) + '<span class="rate-help">Does your kid like it?</span></span>' : "");
   }
 
   function mealLabel(m, big) {
@@ -215,21 +225,23 @@
   document.addEventListener("click", function (e) {
     var b = e.target.closest && e.target.closest(".rate-btn, .main-btn, #hint-close");
     if (!b) return;
+    var byKeyboard = e.detail === 0; // Enter/Space on a focused button, not a tap
     if (b.id === "hint-close") { store("hl-likes-hint", "1"); renderHero(); return; }
     if (b.classList.contains("main-btn")) {
       var r = b.getAttribute("data-row");
       openRow = openRow === r ? null : r;
       renderWeek();
       var again = document.querySelector('.main-btn[data-row="' + r + '"]');
-      if (again) again.focus();
+      if (again && byKeyboard) again.focus();
       return;
     }
-    rate(b.getAttribute("data-food"), +b.getAttribute("data-v"));
-    var sel = '.rate-btn[data-food="' + b.getAttribute("data-food").replace(/"/g, '\\"') + '"][data-v="' + b.getAttribute("data-v") + '"]';
+    rate(b.getAttribute("data-meal"), b.getAttribute("data-food"), +b.getAttribute("data-v"));
+    var sel = '.rate-btn[data-meal="' + b.getAttribute("data-meal") + '"][data-food="' + b.getAttribute("data-food").replace(/"/g, '\\"') + '"][data-v="' + b.getAttribute("data-v") + '"]';
     var inHero = !!b.closest("#hero");
     renderHero(); renderWeek();
+    // Keep keyboard users on the button they pressed (a tap doesn't need the focus ring).
     var back = document.querySelector((inHero ? "#hero " : "#days ") + sel);
-    if (back) back.focus();
+    if (back && byKeyboard) back.focus();
   });
 
   var now, picked, week;
