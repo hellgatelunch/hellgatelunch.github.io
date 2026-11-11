@@ -1,0 +1,478 @@
+{
+ "page": "https://www.hellgate.k12.mt.us/departments/food-services/school-breakfast-lunch-program/k-8-food-menu",
+ "months": {
+  "2026-11": {
+   "name": "November 2026",
+   "source": "https://resources.finalsite.net/images/v1793201331/hellgatek12mtus/q36shaaq4eujy03daxtg/NovemberLUNCH2026docx.pdf",
+   "cut": "2026-11-10",
+   "ok": true
+  }
+ },
+ "days": {
+  "2026-11-02": {
+   "items": [
+    "Sweet & Sour Chicken/Rice",
+    "Green Beans",
+    "Pears",
+    "Fortune Cookie"
+   ]
+  },
+  "2026-11-03": {
+   "items": [
+    "Beef Hot Dog",
+    "Baked Beans",
+    "Peaches"
+   ]
+  },
+  "2026-11-04": {
+   "items": [
+    "Beef Burrito",
+    "Carrots/Ranch",
+    "Grapes"
+   ]
+  },
+  "2026-11-05": {
+   "items": [
+    "Chicken Nuggets",
+    "Broccoli/Ranch",
+    "Orange Slices"
+   ]
+  },
+  "2026-11-06": {
+   "items": [
+    "Sloppy Joe",
+    "Seasoned Tots",
+    "Apple Slices"
+   ]
+  },
+  "2026-11-09": {
+   "items": [
+    "Orange Chicken/Rice",
+    "Steamed Peas",
+    "Mixed Fruit",
+    "Fortune Cookie"
+   ]
+  },
+  "2026-11-10": {
+   "items": [
+    "Cheeseburger",
+    "Oven Fries",
+    "Strawberries"
+   ]
+  },
+  "2026-11-11": {
+   "items": [
+    "Chicken Strips",
+    "Carrots/Ranch",
+    "Grapes"
+   ]
+  },
+  "2026-11-12": {
+   "items": [
+    "Corn Dog",
+    "Celery/Ranch",
+    "Peach Cup",
+    "Hummus"
+   ]
+  },
+  "2026-11-13": {
+   "items": [
+    "Beef Chili/Cheese",
+    "Steamed Broccoli",
+    "Pears",
+    "Corn Chips"
+   ]
+  },
+  "2026-11-16": {
+   "items": [
+    "Beef Meatball Sub/Cheese",
+    "Broccoli/Ranch",
+    "Mixed Fruit"
+   ]
+  },
+  "2026-11-17": {
+   "items": [
+    "Biscuits & Sausage Gravy",
+    "Tri Tater",
+    "Peaches"
+   ]
+  },
+  "2026-11-18": {
+   "items": [
+    "Beef Taco",
+    "Black Beans",
+    "Mandarin Oranges"
+   ]
+  },
+  "2026-11-19": {
+   "items": [
+    "Chicken Noodle Soup",
+    "Mixed Veggies",
+    "Mixed Berry Cup",
+    "Goldfish Crackers"
+   ]
+  },
+  "2026-11-20": {
+   "items": [
+    "Turkey/Cheddar Wrap",
+    "Carrots/Ranch",
+    "Apple Slices",
+    "Chips"
+   ]
+  },
+  "2026-11-23": {
+   "items": [
+    "Grilled Cheese",
+    "Tomato Soup",
+    "Peaches",
+    "Goldfish Crackers"
+   ]
+  },
+  "2026-11-24": {
+   "items": [
+    "Chicken Strips",
+    "Carrots/Ranch",
+    "Mixed Fruit"
+   ]
+  },
+  "2026-11-25": {
+   "off": "No school"
+  },
+  "2026-11-26": {
+   "off": "No school"
+  },
+  "2026-11-27": {
+   "off": "No school"
+  },
+  "2026-11-30": {
+   "items": [
+    "Beef Burrito",
+    "Carrots/Ranch",
+    "Pears"
+   ]
+  }
+ },
+ "noLunch": [],
+ "typed": {
+  "2026-11-02": [
+   "Sweet & Sour Chicken/Rice",
+   "Green Beans",
+   "Pears",
+   "Fortune Cookie"
+  ],
+  "2026-11-03": [
+   "Beef Hot Dog",
+   "Baked Beans",
+   "Peaches"
+  ],
+  "2026-11-04": [
+   "Beef Burrito",
+   "Carrots/Ranch",
+   "Grapes"
+  ],
+  "2026-11-05": [
+   "Chicken Nuggets",
+   "Broccoli/Ranch",
+   "Orange Slices"
+  ],
+  "2026-11-06": [
+   "Sloppy Joe",
+   "Seasoned Tots",
+   "Apple Slices"
+  ],
+  "2026-11-09": [
+   "Orange Chicken/Rice",
+   "Steamed Peas",
+   "Mixed Fruit",
+   "Fortune Cookie"
+  ],
+  "2026-11-10": [
+   "Cheeseburger",
+   "Oven Fries",
+   "Strawberries"
+  ],
+  "2026-11-11": [
+   "Chicken Strips",
+   "Carrots/Ranch",
+   "Grapes"
+  ],
+  "2026-11-12": [
+   "Corn Dog",
+   "Celery/Ranch",
+   "Peach Cup",
+   "Hummus"
+  ],
+  "2026-11-13": [
+   "Beef Chili/Cheese",
+   "Steamed Broccoli",
+   "Pears",
+   "Corn Chips"
+  ],
+  "2026-11-16": [
+   "Beef Meatball Sub/Cheese",
+   "Broccoli/Ranch",
+   "Mixed Fruit"
+  ],
+  "2026-11-17": [
+   "Biscuits & Sausage Gravy",
+   "Tri Tater",
+   "Peaches"
+  ],
+  "2026-11-18": [
+   "Beef Taco",
+   "Black Beans",
+   "Mandarin Oranges"
+  ],
+  "2026-11-19": [
+   "Chicken Noodle Soup",
+   "Mixed Veggies",
+   "Mixed Berry Cup",
+   "Goldfish Crackers"
+  ],
+  "2026-11-20": [
+   "Turkey/Cheddar Wrap",
+   "Carrots/Ranch",
+   "Apple Slices",
+   "Chips"
+  ],
+  "2026-11-23": [
+   "Grilled Cheese",
+   "Tomato Soup",
+   "Peaches",
+   "Goldfish Crackers"
+  ],
+  "2026-11-24": [
+   "Chicken Strips",
+   "Carrots/Ranch",
+   "Mixed Fruit"
+  ],
+  "2026-11-25": null,
+  "2026-11-26": null,
+  "2026-11-27": null,
+  "2026-11-30": [
+   "Beef Burrito",
+   "Carrots/Ranch",
+   "Pears"
+  ]
+ },
+ "breakfast": {
+  "months": {
+   "2026-11": {
+    "name": "November 2026",
+    "source": "https://resources.finalsite.net/images/v1793201252/hellgatek12mtus/twuuwxln6jhm3sul79la/November2026BREAKFASTdocx.pdf",
+    "cut": "2026-11-10",
+    "ok": true
+   }
+  },
+  "days": {
+   "2026-11-02": {
+    "items": [
+     "Apple Frudel Stick",
+     "Tri Tater",
+     "Juice"
+    ]
+   },
+   "2026-11-03": {
+    "items": [
+     "Breakfast Nacho Bar; Add Your Own Toppings!",
+     "Mixed Fruit"
+    ]
+   },
+   "2026-11-04": {
+    "items": [
+     "Dutch Waffle",
+     "Yogurt",
+     "Peaches"
+    ]
+   },
+   "2026-11-05": {
+    "items": [
+     "Chocolate Donut",
+     "Turkey Sausage Patty",
+     "Apple Slices"
+    ]
+   },
+   "2026-11-06": {
+    "items": [
+     "Cereal",
+     "String Cheese",
+     "Strawberry Cup"
+    ]
+   },
+   "2026-11-09": {
+    "items": [
+     "Mini Cinni",
+     "Tri Tater",
+     "Juice"
+    ]
+   },
+   "2026-11-10": {
+    "items": [
+     "Yogurt Bar; Add Your Own Toppings!",
+     "Mini Donuts",
+     "Mixed Berries"
+    ]
+   },
+   "2026-11-11": {
+    "items": [
+     "Honey Bun",
+     "String Cheese",
+     "Peaches"
+    ]
+   },
+   "2026-11-12": {
+    "items": [
+     "Maple Donut",
+     "Turkey Sausage Patty",
+     "Apple Slices"
+    ]
+   },
+   "2026-11-13": {
+    "items": [
+     "Cereal",
+     "Cheddar Stick",
+     "Mixed Fruit"
+    ]
+   },
+   "2026-11-16": {
+    "items": [
+     "Mini Waffles",
+     "Tri Tater",
+     "Juice"
+    ]
+   },
+   "2026-11-17": {
+    "items": [
+     "Cinnamon Roll",
+     "String Cheese",
+     "Pears"
+    ]
+   },
+   "2026-11-18": {
+    "items": [
+     "Waffle Sticks/Syrup",
+     "Yogurt",
+     "Peaches"
+    ]
+   },
+   "2026-11-19": {
+    "items": [
+     "Chocolate Donut",
+     "Turkey Sausage Patty",
+     "Apple Slices"
+    ]
+   },
+   "2026-11-20": {
+    "items": [
+     "Cereal",
+     "Yogurt",
+     "Peach Cup"
+    ]
+   },
+   "2026-11-23": {
+    "items": [
+     "Mini Strawberry Bagel",
+     "Tri Tater",
+     "Juice"
+    ]
+   },
+   "2026-11-24": {
+    "items": [
+     "Chocolate Chip Muffin",
+     "String Cheese",
+     "Peaches"
+    ]
+   },
+   "2026-11-25": {
+    "off": "No school"
+   },
+   "2026-11-26": {
+    "off": "No school"
+   },
+   "2026-11-27": {
+    "off": "No school"
+   },
+   "2026-11-30": {
+    "items": [
+     "Strawberry Pop Tart",
+     "String Cheese",
+     "Peaches"
+    ]
+   }
+  },
+  "noLunch": []
+ },
+ "break": {
+  "note": "Breakfast @ Break is for middle school only. Students choose one: breakfast before school or Breakfast @ Break.",
+  "always": [
+   "Fruits",
+   "Milk"
+  ],
+  "menus": [
+   {
+    "months": [
+     8,
+     9,
+     11,
+     1,
+     3,
+     5
+    ],
+    "days": [
+     [
+      "Strawberry Pop Tart",
+      "Cheddar Stick"
+     ],
+     [
+      "Mini Pancakes",
+      "Yogurt"
+     ],
+     [
+      "Chocolate Chip Oatmeal Bar",
+      "Yogurt"
+     ],
+     [
+      "Maple Donut",
+      "String Cheese"
+     ],
+     [
+      "Cinnamon Bun",
+      "Cheddar Stick"
+     ]
+    ]
+   },
+   {
+    "months": [
+     10,
+     12,
+     2,
+     4,
+     6
+    ],
+    "days": [
+     [
+      "Brown Sugar Pop Tart",
+      "Cheddar Stick"
+     ],
+     [
+      "Mini Donuts",
+      "Yogurt"
+     ],
+     [
+      "Mini Cinnis",
+      "Yogurt"
+     ],
+     [
+      "Maple Donut",
+      "String Cheese"
+     ],
+     [
+      "Chocolate Chip Muffin",
+      "Cheddar Stick"
+     ]
+    ]
+   }
+  ],
+  "source": "https://resources.finalsite.net/images/v1787250030/hellgatek12mtus/kzneadinlwk5pcuhy2wm/BreakfastBreakMiddleSchool2026.pdf"
+ }
+}

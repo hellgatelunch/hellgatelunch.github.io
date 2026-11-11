@@ -1,4 +1,4 @@
-// Off-phone tests for hellgate-lunch.js. Run with: npm test
+// Off-phone tests for the website build (lib/school-menu.js, menu/) and the iPhone widget (hellgate-lunch.js). Run with: npm test
 // Fixtures are real copies of the school's page and its November 2026 lunch and breakfast menus (fetched Nov 9, 2026).
 import assert from "node:assert/strict";
 import fs from "node:fs";
@@ -74,43 +74,6 @@ test("a plain <a> link to a PDF still works", () => {
   assert.equal(todo.length, 1);
   assert.equal(todo[0].mk, "2027-01");
   assert.equal(todo[0].render, null);
-});
-
-console.log("Picking the day");
-
-function picker(cells = [], noLunch = {}) {
-  return loadSection("// ---------- which day to show", "// ---------- reading the school's page", ["pick"],
-    { hasCell: k => cells.includes(k) }).pick;
-}
-const s0 = { noLunch: {} };
-
-test("before 2 PM: today", () => {
-  const p = picker()(new Date(2026, 10, 9, 13, 59), s0);
-  assert.equal(p.label, "Today"); assert.equal(p.items[0], "Orange Chicken/Rice");
-});
-test("after 2 PM: tomorrow", () => {
-  const p = picker()(new Date(2026, 10, 9, 14, 0), s0);
-  assert.equal(p.label, "Tomorrow"); assert.equal(p.items[0], "Cheeseburger");
-});
-test("Friday afternoon: Monday", () => {
-  const p = picker()(new Date(2026, 10, 13, 15), s0);
-  assert.equal(p.label, "Mon, Nov 16"); assert.equal(p.items[0], "Beef Meatball Sub/Cheese");
-});
-test("skips Thanksgiving break", () => {
-  const p = picker()(new Date(2026, 10, 24, 15), s0);
-  assert.equal(p.label, "Mon, Nov 30"); assert.equal(p.items[0], "Beef Burrito");
-});
-test("December not loaded: says so", () => {
-  const p = picker()(new Date(2026, 10, 30, 15), s0);
-  assert.equal(p.label, "Lunch"); assert.equal(p.day.getMonth(), 11); assert.equal(p.day.getDate(), 1);
-});
-test("December loaded: shows the school's box", () => {
-  const p = picker(["2026-12-01"])(new Date(2026, 10, 30, 15), s0);
-  assert.equal(p.cell, "2026-12-01"); assert.equal(p.label, "Tomorrow");
-});
-test("skips a day with no lunch written", () => {
-  const p = picker(["2026-12-02"])(new Date(2026, 10, 30, 15), { noLunch: { "2026-12-01": true } });
-  assert.equal(p.cell, "2026-12-02"); assert.equal(p.label, "Wed, Dec 2");
 });
 
 console.log("Cutting boxes out of the real November menu");
@@ -304,6 +267,119 @@ console.log("Calendar feed (website)");
 
   test("the same menu always gives the same feed (no needless commits)", () => {
     assert.equal(makeIcs(menu, "https://hellgatelunch.github.io/"), ics);
+  });
+}
+
+console.log("iPhone widget (hellgate-lunch.js, with a stand-in for Scriptable)");
+
+{
+  const { loadWidgetSection, WIDGET_PATH } = await import("../lib/script-parts.mjs");
+  const vm = await import("node:vm");
+  const menu = JSON.parse(fs.readFileSync(path.join(FIXTURES, "menu-2026-11.json"), "utf8"));
+  const W = loadWidgetSection("// ---------- picking the day", "// ---------- widget", ["parseMeals", "pick", "mealFor", "mealText"]);
+
+  test("widget parameter picks the meals", () => {
+    assert.deepEqual([...W.parseMeals("")], ["breakfast", "lunch"]);
+    assert.deepEqual([...W.parseMeals(null)], ["breakfast", "lunch"]);
+    assert.deepEqual([...W.parseMeals("Lunch")], ["lunch"]);
+    assert.deepEqual([...W.parseMeals("all")], ["breakfast", "break", "lunch"]);
+    assert.deepEqual([...W.parseMeals("breakfast, break")], ["breakfast", "break"]);
+    assert.deepEqual([...W.parseMeals("nonsense")], ["breakfast", "lunch"]);
+  });
+
+  test("widget picks the day like the website", () => {
+    let p = W.pick(menu, new Date(2026, 10, 10, 7));
+    assert.equal(p.label, "Today · Tue");
+    assert.equal(W.mealFor(menu, "breakfast", p.day).items[0], "Yogurt Bar; Add Your Own Toppings!");
+    assert.equal(W.mealFor(menu, "lunch", p.day).items[0], "Cheeseburger");
+    assert.equal(W.mealFor(menu, "break", p.day).items[0], "Mini Pancakes");
+    p = W.pick(menu, new Date(2026, 10, 9, 15));
+    assert.equal(p.label, "Tomorrow · Tue");
+    p = W.pick(menu, new Date(2026, 10, 24, 15));
+    assert.equal(p.label, "Mon, Nov 30");
+    p = W.pick(menu, new Date(2026, 10, 30, 15));
+    assert.equal(p.ok, false);
+    assert.equal(p.day.getMonth(), 11);
+  });
+
+  // A stand-in for the bits of Scriptable the widget uses. It records what the widget draws.
+  function fakeScriptable({ now, param, family, inWidget = true, online = true, files = new Map() }) {
+    const texts = [], calls = { setWidget: 0, present: 0 };
+    class Stack {
+      constructor() { this.items = []; }
+      addStack() { const s = new Stack(); this.items.push(s); return s; }
+      addText(t) { const x = { text: String(t) }; texts.push(x); this.items.push(x); return x; }
+      addSpacer() {} setPadding() {} layoutHorizontally() {} layoutVertically() {}
+    }
+    class ListWidget extends Stack { async presentMedium() { calls.present++; } }
+    class Color { constructor(h) { this.hex = h; } static dynamic(a, b) { return { light: a, dark: b }; } }
+    const font = n => s => ({ name: n, size: s });
+    const Font = { heavySystemFont: font("heavy"), boldSystemFont: font("bold"), semiboldSystemFont: font("semibold"), systemFont: font("regular") };
+    class Request { constructor(u) { this.url = u; } async loadJSON() { if (!online) throw new Error("offline"); assert.equal(this.url, "https://hellgatelunch.github.io/data/menu.json"); return JSON.parse(JSON.stringify(menu)); } }
+    const fmApi = {
+      documentsDirectory: () => "/docs", joinPath: (a, b) => a + "/" + b,
+      fileExists: p => files.has(p) || p === "/docs/hellgate-lunch", createDirectory() {},
+      writeString: (p, s) => files.set(p, s), readString: p => { if (!files.has(p)) throw new Error("no file"); return files.get(p); },
+      listContents: () => [...files.keys()].map(k => k.split("/").pop()), remove: p => files.delete("/docs/hellgate-lunch/" + p.split("/").pop()),
+    };
+    const FIXED = now.getTime();
+    class FakeDate extends Date { constructor(...a) { if (a.length) super(...a); else super(FIXED); } static now() { return FIXED; } }
+    let widget = null;
+    const ctx = {
+      console, JSON, Math, Object, String, RegExp, Promise, Error, Date: FakeDate,
+      ListWidget, Color, Font, Request, FileManager: { local: () => fmApi },
+      config: { runsInWidget: inWidget, widgetFamily: family }, args: { widgetParameter: param },
+      Script: { setWidget(w) { calls.setWidget++; widget = w; }, complete() {} },
+    };
+    return { ctx, texts, calls, files, get widget() { return widget; } };
+  }
+  async function runWidget(opts) {
+    const f = fakeScriptable(opts);
+    vm.createContext(f.ctx);
+    await vm.runInContext("(async () => {\n" + fs.readFileSync(WIDGET_PATH, "utf8") + "\n})()", f.ctx);
+    return f;
+  }
+
+  await testAsync("small widget: tomorrow's breakfast and lunch", async () => {
+    const f = await runWidget({ now: new Date(2026, 10, 10, 15), param: "", family: "small" });
+    const t = f.texts.map(x => x.text);
+    assert.equal(f.calls.setWidget, 1);
+    assert.deepEqual(t, ["TOMORROW · WED", "BREAKFAST", "Honey Bun", "LUNCH", "Chicken Strips"]);
+    assert.equal(f.widget.url, "https://hellgatelunch.github.io/");
+    assert.ok(f.files.has("/docs/hellgate-lunch/menu.json"), "menu saved for offline use");
+  });
+
+  await testAsync("medium widget with all meals shows sides", async () => {
+    const f = await runWidget({ now: new Date(2026, 10, 10, 7), param: "all", family: "medium" });
+    const t = f.texts.map(x => x.text);
+    assert.deepEqual(t.slice(0, 4), ["TODAY · TUE", "BREAKFAST", "Yogurt Bar; Add Your Own Toppings!", "Mini Donuts · Mixed Berries"]);
+    assert.ok(t.includes("BREAK · MS") && t.includes("Mini Pancakes") && t.includes("Yogurt · Fruits · Milk"));
+    assert.ok(t.includes("Cheeseburger") && t.includes("Oven Fries · Strawberries"));
+  });
+
+  await testAsync("offline: uses the saved menu; with none, says so", async () => {
+    const files = new Map([["/docs/hellgate-lunch/menu.json", JSON.stringify(menu)], ["/docs/hellgate-lunch/2026-11-02.png", "old"]]);
+    let f = await runWidget({ now: new Date(2026, 10, 12, 8), param: "lunch", family: "small", online: false, files });
+    assert.deepEqual(f.texts.map(x => x.text), ["TODAY · THU", "LUNCH", "Corn Dog"]);
+    f = await runWidget({ now: new Date(2026, 10, 12, 8), param: "", family: "small", online: false });
+    assert.ok(f.texts.some(x => /Can't reach the menu/.test(x.text)));
+  });
+
+  await testAsync("old widget's day pictures are cleaned up", async () => {
+    const files = new Map([["/docs/hellgate-lunch/2026-11-02.png", "old"], ["/docs/hellgate-lunch/state.json", "{}"]]);
+    await runWidget({ now: new Date(2026, 10, 12, 8), param: "", family: "small", files });
+    assert.ok(!files.has("/docs/hellgate-lunch/2026-11-02.png") && !files.has("/docs/hellgate-lunch/state.json"));
+  });
+
+  await testAsync("December not posted yet", async () => {
+    const f = await runWidget({ now: new Date(2026, 10, 30, 15), param: "", family: "small" });
+    assert.deepEqual(f.texts.map(x => x.text), ["NEXT SCHOOL DAY", "December menu not posted yet"]);
+  });
+
+  await testAsync("run in the Scriptable app: shows a preview", async () => {
+    const f = await runWidget({ now: new Date(2026, 10, 10, 7), param: "", family: undefined, inWidget: false });
+    assert.equal(f.calls.present, 1);
+    assert.equal(f.calls.setWidget, 0);
   });
 }
 

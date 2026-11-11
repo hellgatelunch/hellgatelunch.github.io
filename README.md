@@ -1,42 +1,23 @@
 # Hellgate Lunch
 
-Two ways to see the Hellgate Elementary K-8 school meals:
+Breakfast, middle school Breakfast @ Break and lunch at Hellgate Elementary K-8 (Hawks), straight from the school's own monthly menus.
 
-- **The website: <https://hellgatelunch.github.io/>.** Breakfast, middle school Breakfast @ Break, and lunch. Open it on any phone or computer. On iPhone, tap Share → *Add to Home Screen*; on Android, tap *Install*. Either way it opens like an app and works offline. No setup. To spread the word, use the [printable flyer with a QR code](https://hellgatelunch.github.io/flyer.html) (for the school newsletter) or the site's *Share with other parents* button.
-- **The iPhone widget** (below). A home-screen widget that always shows the next lunch (lunch only).
+- **The website: <https://hellgatelunch.github.io/>.** Open it on any phone or computer. On iPhone, tap Share → *Add to Home Screen*; on Android, tap *Install*. It opens like an app and works offline. No setup.
+- **Your phone's calendar.** On the website, *Get it in your calendar* adds each school day's lunch to your calendar (and its widgets).
+- **The iPhone widget** (below). A home-screen widget with the next school day's breakfast and lunch.
 
-Both read the school's own monthly menus. The website shows each day's menu as text in its own style; the widget shows the day's box from the school's menu.
-
-## The website
-
-`web/` is a static site published with GitHub Pages. A GitHub Action (`.github/workflows/menu.yml`) runs every 6 hours. It reads the school's menu page and, for the monthly lunch and breakfast menus, reads the words in each day's box from the PDF's text layer (finding the boxes with the same grid code as the widget). It saves the result in `web/data/menu.json`, commits them if anything changed, and republishes the site. When the school posts next month's menu, the site picks it up within 6 hours, with nothing to tap.
-
-- Before 2 PM (Montana time) the top card shows today's meals; after 2 PM, the next school day.
-- Each meal has one color and icon everywhere: amber/sunrise for breakfast, teal/apple for Breakfast @ Break, orange/plate for lunch. The week is a timetable with the meal labels in one column.
-- Each day shows Breakfast, Breakfast @ Break (middle school) and Lunch. The chips at the top hide the ones a family doesn't need; the choice is remembered on that phone.
-- **Calendar feed:** the build also writes `web/calendar.ics` (`menu/calendar.mjs`): one all-day event per school day, titled with lunch ("Lunch: Cheeseburger"), with breakfast, break and lunch in the notes. Parents subscribe once from the site's *Get it in your calendar* card (iPhone `webcal://`, or Google Calendar), and it shows in their calendar widgets and refreshes on its own. Days off get no event.
-- **Pack or buy?:** parents tap the heart or thumbs-down on a food (in the top card, or by tapping a food in the week). Liked mains show "Favorite" and a heart; disliked lunches show "Maybe pack a lunch" / "Pack?". Ratings are stored only in that phone's browser (`localStorage`), never sent anywhere.
-- **Breakfast @ Break** isn't a monthly calendar: the school posts one sheet for the year with two weekly menus that alternate by month. It's typed into `menu/break.json`. If the school posts a different sheet, the Action logs a warning and the site links to the new sheet; then update `menu/break.json` from it (including its `source` address).
-- Below it is the week, with arrows (or ← →) to flip weeks.
-- To force a refresh, open the repository's **Actions** tab → *Refresh menu and publish site* → **Run workflow**.
-- GitHub pauses scheduled Actions in a repository with no activity for 60 days. Menu updates commit to the repository, so this shouldn't happen during the school year. After summer break, re-enable it from the Actions tab if needed.
-
-- If a menu's words can't be read (for example, a scanned PDF), that day falls back to a see-through picture of the school's box, drawn in the text color. The Action logs a notice when that happens.
-- `web/sw.js` (service worker) keeps the last menu so the app opens offline, and lets Android offer *Install*. If you change the app's own files in a way old copies would break, bump its `VERSION`.
-- `web/data/menu.json` is the one menu file everything reads. A future App Store / Google Play app can read the same file from the site.
-- `web/qr.svg` is made by `node tools/make-qr.mjs` (rerun it with a new address if the site ever moves).
-
-Preview switches: `?now=2026-11-24T15:00` pretends it's another time, and `?pictures` ignores the typed-in days and shows only the school's pictures.
+To spread the word, use the [printable flyer with a QR code](https://hellgatelunch.github.io/flyer.html) or the site's *Share with other parents* button.
 
 ## The iPhone widget
 
-A small (2×2) home screen widget that shows the Hellgate Elementary K-8 school lunch. Tap it to see the whole week.
+A home-screen widget that shows the next school day's **breakfast and lunch**. Tap it to open the full week on the website.
 
-- Before 2 PM it shows today's lunch. After 2 PM it switches to the next school day.
-- Each month it reads the new lunch menu straight from the school's website and shows that day's box from the school's own menu.
-- The full-week screen shows every day of the week, with arrows to flip between weeks.
+- Before 2 PM it shows today. After 2 PM it switches to the next school day, skipping weekends and days off.
+- New months appear on their own when the school posts them. There's nothing to tap or reload.
+- It keeps the last menu on the phone, so it still works without a connection.
+- Small or medium size. The medium size also shows the sides.
 
-It runs in **Scriptable**, a free app that lets you make your own widgets. You only need to set it up once.
+It runs in **Scriptable**, a free app that lets you make your own widgets. You set it up once.
 
 ### Set it up (about 5 minutes)
 
@@ -46,38 +27,68 @@ Get **Scriptable** (by Simon B. Støvring) from the App Store. It's free.
 #### 2. Add the script
 1. Open Scriptable and tap **+** in the top-right corner.
 2. Tap the title at the top ("Untitled Script") and rename it **Hellgate Lunch**.
-3. Copy all of the code in [`hellgate-lunch.js`](hellgate-lunch.js), from `// Hellgate Lunch` to the last line, and paste it into the script. If you already have the old version, replace all of it.
+3. Copy all of the code in [`hellgate-lunch.js`](hellgate-lunch.js), from `// Hellgate Lunch` to the last line, and paste it into the script. **If you have the old version, replace all of it.**
 4. Tap **Done**.
-5. To check it, tap the script once in Scriptable. The full-week menu should open. Tap **Close** when you're done looking.
+5. To check it, tap the script once in Scriptable. A preview of the widget opens. Close it when you're done looking.
 
 #### 3. Put the widget on your home screen
 1. Long-press an empty spot on the home screen until the apps jiggle.
 2. Tap **Edit** in the top-left corner, then **Add Widget**. On older iOS versions, tap **+** instead.
-3. Search for **Scriptable**, pick the small square size, and tap **Add Widget**.
+3. Search for **Scriptable**, pick the small square (or the medium) size, and tap **Add Widget**.
 4. While the apps are still jiggling, tap the new widget. If it doesn't open its settings, long-press it and choose **Edit Widget**.
 5. Set:
    - **Script:** Hellgate Lunch
-   - **When Interacting:** Run Script
+   - **When Interacting:** Open URL, with the URL `https://hellgatelunch.github.io/`
+   - **Parameter:** leave empty for breakfast and lunch. Or type `lunch`, `breakfast`, `all` (adds the middle school break), or a mix like `breakfast, break`.
 6. Tap outside the panel, then tap **Done**.
 
 The widget fills in within a few seconds.
 
-### Each month
-The widget checks the school's menu page a few times a day. When the next month's lunch menu is posted, the widget says **"Tap to load the December menu"** (or whichever month). Tap the widget once. It downloads the menu from the school's website and cuts out each day's box. That's it.
+**Updating from the old widget** (the one that said "Tap to load the December menu"): replace the script's code as in step 2.3, then long-press the widget › **Edit Widget** and change **When Interacting** to **Open URL** as above. The old widget's saved pictures are cleaned up on its own.
 
-Days the school marks off (like **NO SCHOOL**) show the school's own note. A day with nothing written in its box is skipped.
+## Calendar
 
-If the school ever changes the menu's layout so the boxes can't be found, the week screen says so and links straight to that month's menu.
+On the website, **Get it in your calendar**:
+
+- **iPhone:** tap **iPhone**, then **Subscribe**.
+- **Android / Google:** Google only lets you add a calendar from a computer.
+  1. On a computer signed in to Google, go to **hellgatelunch.github.io/google** and click **Add**.
+  2. On the Android phone, open **Google Calendar** › **Settings** › **Hellgate Lunch** and turn on **Sync**. New calendars often start with sync off.
+- **Samsung Calendar, Outlook, others:** add `https://hellgatelunch.github.io/calendar.ics` as a subscribed calendar ("from URL").
+
+Each school day gets an all-day event titled with lunch ("Lunch: Cheeseburger"), with breakfast, break and lunch in the notes. Days off get no event. It refreshes on its own.
 
 ---
 
 ## How it works (for whoever maintains this)
 
-- **Finding the menu.** The school's page (Finalsite) doesn't link to the menu. It shows the PDF as an `<img>` with an empty `src` and puts the file's addresses, URL-encoded, in `data-image-sizes`. The script reads those, along with ordinary links. It picks the file whose name says *lunch* (not *breakfast*) and names a month, for example `NovemberLUNCH2026docx.pdf`.
-- **Getting a picture.** Finalsite serves the original PDF at `…/images/v<version>/…/File.pdf`. With `f_auto,q_auto/` in front of the version, and an `Accept: image/png` header, it serves a 1650 px PNG of page 1. The script uses that PNG, falls back to the PDF (rendered with PDF.js, loaded only when needed), and after that tries a page that links to the file.
-- **Cutting boxes.** In a WebView canvas, `gridFind` finds the table's ruled lines (and the orange header band). `boxFor` maps each school day to its box, and `trimBox` crops it tight, dropping the date number on the first line. A box with only a date in it counts as "no lunch".
-- **Re-uploads.** The file address includes Finalsite's version stamp, so if the school re-uploads a corrected menu, the widget offers to load it again.
-- **Typed-in months.** Days in `MENU` at the top of the script are shown as text and take priority over the school's file. November 2026 is typed in. Later months come from the school's file automatically.
+`web/` is a static site published with GitHub Pages. A GitHub Action (`.github/workflows/menu.yml`) runs every 6 hours:
+
+1. `menu/build.mjs` reads the school's menu page and finds the monthly **lunch** and **breakfast** PDFs.
+2. For each new month, it finds the calendar's day boxes (grid code in `lib/school-menu.js`) and reads the words in each box from the PDF's text layer (`menu/pdf-text.mjs`, pdf.js).
+3. It writes `web/data/menu.json` (the one menu file the website and the widget read) and `web/calendar.ics` (`menu/calendar.mjs`).
+4. It commits anything that changed and republishes the site.
+
+Details:
+
+- **Finding the menu.** The school's page (Finalsite) doesn't link to the menus. It shows each PDF as an `<img>` with an empty `src`, with the file's addresses URL-encoded in `data-image-sizes`. `lib/school-menu.js` reads those and picks files by name and month (`NovemberLUNCH2026docx.pdf`, `November2026BREAKFASTdocx.pdf`).
+- **Getting a picture of the page.** Finalsite serves the original PDF at `…/images/v<version>/…/File.pdf`. With `f_auto,q_auto/` before the version and `Accept: image/png`, it serves a 1650 px PNG of page 1, which is used to find the grid.
+- **Re-uploads.** The file address includes Finalsite's version stamp, so a corrected re-upload gets read again.
+- **Scanned menus.** If a menu's words can't be read, that day falls back to a see-through picture of the school's box, drawn in the text color. The Action logs a notice.
+- **Breakfast @ Break** isn't a monthly calendar: the school posts one sheet for the year, with two weekly menus that alternate by month. It's typed into `menu/break.json`. If the school posts a different sheet, the Action warns and the site links to the new one; update `menu/break.json` from it (including its `source`).
+- **Typed-in days.** `MENU` at the top of `lib/school-menu.js` holds November 2026 lunch, typed in. Those days take priority and double as a test: the words read from the PDF must match them.
+
+The website:
+
+- Before 2 PM (Montana time) the top card shows today's meals; after 2 PM, the next school day. Below it is the week, with arrows (or ← →) to flip weeks.
+- Colors are Hawks green `#29610B` and gold `#FCD52D`. Each meal has one color and icon everywhere: gold/sunrise for breakfast, slate blue/apple for Breakfast @ Break, green/plate for lunch.
+- The *Show* chips hide meals a family doesn't need. **Pack or buy?**: the heart and thumbs-down mark foods a kid likes or not; disliked lunches show "Maybe pack a lunch". Both are stored only in that phone's browser.
+- `web/sw.js` (service worker) keeps the last menu so the app opens offline. Bump its `VERSION` when the app's own files change.
+- Logo and icons: `node tools/make-logo.mjs assets/hawks-logo-source.png`, then `node tools/make-icons.mjs`. QR code: `node tools/make-qr.mjs`.
+- To force a refresh: the repository's **Actions** tab → *Refresh menu and publish site* → **Run workflow**. If a run fails on GitHub's side ("artifact not found"), start a new run that way rather than re-running the failed one.
+- GitHub pauses scheduled Actions after 60 days without activity. Menu updates commit to the repository, so this shouldn't happen during the school year. After summer break, re-enable it from the Actions tab if needed.
+
+Preview switches: `?now=2026-11-24T15:00` pretends it's another time; `?pictures` ignores the typed-in days.
 
 ### Tests (on a computer, not the phone)
 
@@ -89,24 +100,16 @@ npm install
 npm test
 ```
 
-The tests load code straight out of `hellgate-lunch.js` and run it against saved copies of the school's real page and November 2026 menu (`test/fixtures/`, fetched Nov 9, 2026). They cover finding the menu, picking the day, and cutting boxes. The cut-out day pictures are written to `test/out/` so you can look at them.
+The tests run against saved copies of the school's real page and November 2026 menus (`test/fixtures/`). They cover finding the menus, cutting the grid, reading the words, the calendar feed, and the iPhone widget. The widget is run start to finish in a stand-in for Scriptable, to check what it draws and that it works offline.
 
-To rebuild the website's menu data by hand (`--force` re-cuts months that are already cut):
+To rebuild the menu data by hand (`--force` re-reads months that are already done):
 
 ```bash
 node menu/build.mjs
 ```
 
-To preview the website, serve `web/` with any static server, for example:
+To preview the website:
 
 ```bash
 python -m http.server 8788 --directory web
 ```
-
-To check the phone's canvas/PDF.js step in a browser:
-
-```bash
-node test/webview-server.mjs
-```
-
-Then open `http://localhost:8787/` (it processes the PNG, a 2200 px JPEG, and the PDF) or `http://localhost:8787/week?now=2026-11-23T15:00` (the week screen with every day drawn from cut-out pictures).

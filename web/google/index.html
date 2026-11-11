@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Add Hellgate Lunch to Google Calendar</title>
+<link rel="icon" href="../icons/favicon-32.png" type="image/png" sizes="32x32">
+<style>
+  :root { --bg: #F3F5EE; --card: #FFFFFF; --ink: #1E2A1C; --muted: #56634F; --green: #29610B; --gold: #FCD52D; }
+  @media (prefers-color-scheme: dark) { :root { --bg: #121711; --card: #1C231B; --ink: #EAF0E6; --muted: #A3AE9F; } }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; }
+  main { max-width: 520px; margin: 32px auto; padding: 0 16px; }
+  .card { background: var(--card); border-radius: 18px; overflow: hidden; }
+  .band { display: flex; align-items: center; gap: 14px; padding: 12px 18px; background: var(--green); border-bottom: 3px solid var(--gold); }
+  .band img { height: 52px; width: auto; display: block; }
+  .band span { color: var(--gold); font-size: 13px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+  .body { padding: 18px 20px 22px; }
+  h1 { margin: 0 0 6px; font-size: 22px; }
+  p { margin: 8px 0; }
+  ol { padding-left: 20px; }
+  .btn { display: inline-block; margin-top: 8px; padding: 10px 18px; border-radius: 999px; background: var(--green); color: #fff; font-weight: 700; text-decoration: none; }
+  .muted { color: var(--muted); font-size: 14px; }
+  a { color: inherit; }
+</style>
+</head>
+<body>
+<main>
+  <div class="card">
+    <div class="band"><img src="../img/hawks-logo.png" width="258" height="153" alt="Hellgate Hawks"><span>Lunch calendar</span></div>
+    <div class="body" id="body">
+      <h1>Add Hellgate Lunch to Google Calendar</h1>
+      <p>Opening Google Calendar… If nothing happens, use the button.</p>
+      <a class="btn" id="add" href="#">Open Google Calendar</a>
+      <ol>
+        <li>In Google Calendar, click <strong>Add</strong>.</li>
+        <li>On your Android phone, open <strong>Google Calendar</strong> › <strong>Settings</strong> › <strong>Hellgate Lunch</strong> and turn on <strong>Sync</strong>.</li>
+      </ol>
+      <p class="muted">Each school day then shows "Lunch: …" in your calendar, with breakfast and the middle school break in the details. It updates on its own.</p>
+    </div>
+  </div>
+</main>
+<script>
+  // The site's calendar feed, wherever the site is served from.
+  var feed = location.host + location.pathname.replace(/google\/?(index\.html)?$/, "") + "calendar.ics";
+  var url = "https://calendar.google.com/calendar/render?cid=" + encodeURIComponent("webcal://" + feed);
+  document.getElementById("add").href = url;
+  // Google only adds calendars on a computer: on a phone, say so instead of opening a page that can't do it.
+  if (/android|iphone|ipad|ipod|mobile/i.test(navigator.userAgent)) {
+    document.getElementById("body").innerHTML =
+      "<h1>Open this on a computer</h1>" +
+      "<p>Google only lets you add a calendar from a computer. On a computer signed in to the same Google account, go to:</p>" +
+      "<p><strong>" + location.host + location.pathname.replace(/index\.html$/, "") + "</strong></p>" +
+      "<p>Then, on this phone, open <strong>Google Calendar</strong> › <strong>Settings</strong> › <strong>Hellgate Lunch</strong> and turn on <strong>Sync</strong>.</p>" +
+      '<p class="muted">Using Samsung Calendar or another app? Add this link as a subscribed calendar: ' + location.protocol + "//" + feed + "</p>";
+  } else {
+    location.href = url;
+  }
+</script>
+</body>
+</html>

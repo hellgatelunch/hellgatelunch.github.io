@@ -50,7 +50,19 @@
     <p>Shows each day's lunch in your phone's calendar and its widgets. Updates on its own.</p>
     <div class="cal-buttons">
       <a id="cal-apple" class="btn" href="webcal://hellgatelunch.github.io/calendar.ics">iPhone</a>
-      <a id="cal-google" class="btn btn-quiet" href="https://calendar.google.com/calendar/render?cid=webcal%3A%2F%2Fhellgatelunch.github.io%2Fcalendar.ics">Google / Android</a>
+      <button id="cal-google" class="btn btn-quiet" type="button" aria-expanded="false" aria-controls="cal-google-help">Android / Google</button>
+    </div>
+    <div id="cal-google-help" class="cal-help" hidden>
+      <p class="cal-help-lead">Google only lets you add a calendar from a computer. It's a one-time, two-step setup:</p>
+      <ol>
+        <li>On a computer signed in to Google, go to <strong>hellgatelunch.github.io/google</strong> and click <em>Add</em>.</li>
+        <li>On your Android phone, open <strong>Google Calendar</strong> › <strong>Settings</strong> › <strong>Hellgate Lunch</strong> and turn on <strong>Sync</strong>.</li>
+      </ol>
+      <div class="cal-buttons">
+        <a id="cal-google-direct" class="btn btn-quiet" href="google/" target="_blank" rel="noopener">On a computer? Add it now</a>
+        <button id="cal-copy" class="btn btn-quiet" type="button">Copy calendar link</button>
+      </div>
+      <p class="cal-help-fine">Samsung Calendar, Outlook or another app: copy the calendar link and add it as a subscribed calendar ("add from URL").</p>
     </div>
   </section>
 

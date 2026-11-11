@@ -356,11 +356,22 @@
     window.addEventListener("load", function () { navigator.serviceWorker.register("sw.js").catch(function () {}); });
   }
 
-  // "Get it in your calendar": subscribe links to this site's calendar.ics.
+  // "Get it in your calendar". iPhone: one tap subscribes (webcal:). Google can only add a
+  // calendar from a computer, so its button opens the two-step how-to instead of a dead link.
   (function () {
-    var feed = location.host + location.pathname.replace(/[^/]*$/, "") + "calendar.ics";
-    $("cal-apple").href = "webcal://" + feed;
-    $("cal-google").href = "https://calendar.google.com/calendar/render?cid=" + encodeURIComponent("webcal://" + feed);
+    var base = location.host + location.pathname.replace(/[^/]*$/, "");
+    $("cal-apple").href = "webcal://" + base + "calendar.ics";
+    $("cal-google").onclick = function () {
+      var open = $("cal-google-help").hidden;
+      $("cal-google-help").hidden = !open;
+      $("cal-google").setAttribute("aria-expanded", String(open));
+    };
+    $("cal-copy").onclick = function () {
+      var url = location.protocol + "//" + base + "calendar.ics";
+      var done = function () { $("cal-copy").textContent = "Link copied"; setTimeout(function () { $("cal-copy").textContent = "Copy calendar link"; }, 2000); };
+      if (navigator.clipboard) navigator.clipboard.writeText(url).then(done, function () { prompt("Copy this calendar link:", url); });
+      else prompt("Copy this calendar link:", url);
+    };
   })();
 
   // Share the link with other parents (phones' share sheet; elsewhere, copy it).
