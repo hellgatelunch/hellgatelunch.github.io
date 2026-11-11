@@ -45,9 +45,9 @@
   try { var saved = JSON.parse(store("hl-meals") || "null"); if (saved) for (var s in show) if (has(saved, s)) show[s] = !!saved[s]; } catch (e) {}
 
   // One small line icon per meal (stroke = the meal's color).
-  // One food icon per meal (stroke = the meal's color): two halved boiled eggs, apple, fork and knife.
+  // One food icon per meal (stroke = the meal's color): a halved boiled egg, apple, fork and knife.
   var ICONS = {
-    breakfast: '<path d="M10.9 5.4C11.9 3.7 13.2 2.8 14.6 2.8c2.2 0 5.3 4.4 5.3 9.2 0 3.9-2.3 6.6-5.3 6.6"/><path d="M14.7 9a2.9 2.9 0 1 1 0 5.2z" fill="currentColor" stroke="none"/><path d="M9.4 4.6c-2.1 0-5.2 4.5-5.2 9.1 0 4 2.3 6.8 5.2 6.8s5.2-2.8 5.2-6.8c0-4.6-3.1-9.1-5.2-9.1z"/><circle cx="9.4" cy="14.5" r="3" fill="currentColor" stroke="none"/><path d="M8.2 13.2a1.6 1.6 0 0 1 1.4-.9" stroke="#fff" stroke-width="1.2"/>',
+    breakfast: '<path d="M12 3.2c-2.6 0-6.2 5.2-6.2 10.6 0 4.6 2.7 7.6 6.2 7.6s6.2-3 6.2-7.6c0-5.4-3.6-10.6-6.2-10.6z"/><circle cx="12" cy="14.6" r="3.6" fill="currentColor" stroke="none"/><path d="M10.5 13.1a2 2 0 0 1 1.8-1.2" stroke="#fff" stroke-width="1.3"/>',
     "break": '<path d="M12 7.5c-1.6-1.2-5.5-1.6-6.6 1.6-1.2 3.4.9 9.4 3.9 10.6 1.1.4 1.8-.3 2.7-.3s1.6.7 2.7.3c3-1.2 5.1-7.2 3.9-10.6-1.1-3.2-5-2.8-6.6-1.6z"/><path d="M12 7.5c0-2 .8-3.6 2.6-4.5"/>',
     lunch: '<path d="M6 3v5a2.5 2.5 0 0 0 5 0V3"/><path d="M8.5 3v18"/><path d="M17 21V3c2 1.2 3 3.8 3 8h-3"/>'
   };

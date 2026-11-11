@@ -81,7 +81,7 @@ Details:
 The website:
 
 - Before 2 PM (Montana time) the top card shows today's meals; after 2 PM, the next school day. Below it is the week, with arrows (or ← →) to flip weeks.
-- Colors are Hawks green `#29610B` and gold `#FCD52D`. Each meal has one color and icon everywhere: gold with two halved eggs for breakfast, slate blue with an apple for Breakfast @ Break, green with a fork and knife for lunch. The meal toggles are equal tiles: food icon on top, meal name below.
+- Colors are Hawks green `#29610B` and gold `#FCD52D`. Each meal has one color and icon everywhere: gold with a halved egg for breakfast, slate blue with an apple for Breakfast @ Break, green with a fork and knife for lunch. The meal toggles are equal tiles: food icon on top, meal name below.
 - The meal toggles (Breakfast / Break / Lunch tiles) hide meals a family doesn't need. **Pack or buy?**: the heart and thumbs-down mark foods a kid likes or not, saved separately for each meal; disliked lunches show "Maybe pack a lunch". Both are stored only in that phone's browser (the app asks the browser to keep them).
 - `web/sw.js` (service worker) keeps the last menu so the app opens offline. Bump its `VERSION` when the app's own files change.
 - Logo and icons: `node tools/make-logo.mjs assets/hawks-logo-source.png`, then `node tools/make-icons.mjs`. QR code: `node tools/make-qr.mjs`.
