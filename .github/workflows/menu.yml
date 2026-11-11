@@ -1,5 +1,13 @@
 name: Refresh menu and publish site
 
+# Three jobs, each with only the access it needs:
+#   build    reads the school's page and PDFs (files we don't control). It can't push, can't publish,
+#            and keeps no GitHub token, so a booby-trapped file can at most produce bad menu data.
+#   save     takes the build's changes, allows only menu data files, checks every field
+#            (menu/check.mjs), then commits them and packages the site from its own clean copy.
+#   deploy   publishes that package to GitHub Pages.
+# Actions are pinned to exact commits so a changed tag upstream can't change what runs here.
+
 on:
   schedule:
     - cron: "17 */6 * * *" # every 6 hours (UTC), like the widget
@@ -7,69 +15,113 @@ on:
   push:
     branches: [main]
 
-permissions:
-  contents: write # commit new menu pictures
-  pages: write
-  id-token: write
+permissions: {}
 
 concurrency:
   group: menu-and-pages
   cancel-in-progress: false
 
 jobs:
-  refresh:
+  build:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deploy.outputs.page_url || steps.deploy_retry.outputs.page_url }}
+    permissions:
+      contents: read
+    outputs:
+      changed: ${{ steps.diff.outputs.changed }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 22
           cache: npm
 
-      - run: npm ci
+      - run: npm ci --ignore-scripts
 
       - run: npm test
 
       - name: Read the school's menu
         run: node menu/build.mjs
 
-      - name: Save new menu data
-        id: save
+      - name: Package the menu changes
+        id: diff
         run: |
-          git add web/data web/calendar.ics
-          if git diff --cached --quiet; then
-            echo "No menu changes."
-            echo "changed=false" >> "$GITHUB_OUTPUT"
-          else
-            git config user.name "github-actions[bot]"
-            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git commit -m "Update lunch menu data"
-            git push
-            echo "changed=true" >> "$GITHUB_OUTPUT"
-          fi
+          git add -A web/data web/calendar.ics
+          git diff --cached --binary > "$RUNNER_TEMP/menu.patch"
+          if [ -s "$RUNNER_TEMP/menu.patch" ]; then echo "changed=true" >> "$GITHUB_OUTPUT"; else echo "No menu changes."; echo "changed=false" >> "$GITHUB_OUTPUT"; fi
 
-      # Scheduled runs only publish when the menu changed; pushes and manual runs always publish.
-      - uses: actions/configure-pages@v5
-        if: steps.save.outputs.changed == 'true' || github.event_name != 'schedule'
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: steps.diff.outputs.changed == 'true'
+        with:
+          name: menu-patch
+          path: ${{ runner.temp }}/menu.patch
+          retention-days: 3
 
-      - uses: actions/upload-pages-artifact@v3
-        if: steps.save.outputs.changed == 'true' || github.event_name != 'schedule'
+  save:
+    needs: build
+    # Scheduled runs only publish when the menu changed; pushes and manual runs always publish.
+    if: needs.build.outputs.changed == 'true' || github.event_name != 'schedule'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # commit new menu data
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        if: needs.build.outputs.changed == 'true'
+        with:
+          name: menu-patch
+          path: ${{ runner.temp }}/patch
+
+      - name: Apply and check the menu changes
+        if: needs.build.outputs.changed == 'true'
+        run: |
+          git apply --index "$RUNNER_TEMP/patch/menu.patch"
+          # Only menu data may change: menu.json, the calendar, and day pictures named by date.
+          bad=$(git diff --cached --name-only | grep -vE '^web/(data/menu\.json|data/cells(-breakfast)?/[0-9]{4}-[0-9]{2}-[0-9]{2}\.png|calendar\.ics)$' || true)
+          if [ -n "$bad" ]; then echo "::error::The build tried to change files it shouldn't: $bad"; exit 1; fi
+          # Plain files only (no links or executables).
+          modes=$(git diff --cached --raw | awk '{print $2}' | grep -vE '^(100644|000000)$' || true)
+          if [ -n "$modes" ]; then echo "::error::Unexpected file types in the menu changes"; exit 1; fi
+          node menu/check.mjs
+
+      - name: Save new menu data
+        if: needs.build.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Update lunch menu data"
+          git push
+
+      - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3
         with:
           path: web
+
+  deploy:
+    needs: save
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url || steps.deploy_retry.outputs.page_url }}
+    steps:
+      - uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
 
       # GitHub sometimes can't see the just-uploaded site package for a few seconds
       # ("No artifacts named github-pages"), so wait a moment, and retry once if it still fails.
       - name: Let the upload settle
-        if: steps.save.outputs.changed == 'true' || github.event_name != 'schedule'
         run: sleep 10
 
       - id: deploy
-        uses: actions/deploy-pages@v4
-        if: steps.save.outputs.changed == 'true' || github.event_name != 'schedule'
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4
         continue-on-error: true
 
       - name: Wait before retrying
@@ -77,5 +129,5 @@ jobs:
         run: sleep 30
 
       - id: deploy_retry
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4
         if: steps.deploy.outcome == 'failure'

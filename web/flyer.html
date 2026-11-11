@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Hawks Lunch flyer</title>
 <link rel="icon" href="icons/favicon-32.png" type="image/png" sizes="32x32">
@@ -41,7 +43,7 @@
 </head>
 <body>
 <div class="tools">
-  <button type="button" onclick="print()">Print</button>
+  <button type="button" id="print">Print</button>
   <a href="qr.svg" download="hawks-lunch-qr.svg">Download the QR code</a>
   <a href="./">Back to the menu</a>
 </div>
@@ -73,5 +75,6 @@
   <p class="fine">Prefer your calendar? Open the site and tap <em>Get it in your calendar</em> to see each day's lunch there.</p>
   <p class="fine">Free, no sign-up, no ads. All meals include 1% chocolate or white milk.</p>
 </main>
+<script src="flyer.js"></script>
 </body>
 </html>

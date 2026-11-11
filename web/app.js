@@ -25,9 +25,14 @@
   function has(o, k) { return Object.prototype.hasOwnProperty.call(o, k); }
   function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } }
 
-  // Today's date and hour in Montana. ?now=2026-11-23T15:00 pretends it's another time.
+  // Preview switches (?now=, ?pictures) work only on a test copy on this computer, so nobody can
+  // send a parent a link that shows another day's menu as "Today".
+  var LOCAL = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname);
+  function preview(name) { return LOCAL ? new URLSearchParams(location.search).get(name) : null; }
+
+  // Today's date and hour in Montana. ?now=2026-11-23T15:00 pretends it's another time (test copies only).
   function schoolNow() {
-    var q = new URLSearchParams(location.search).get("now");
+    var q = preview("now");
     if (q) {
       var m = q.match(/^(\d{4})-(\d\d)-(\d\d)(?:T(\d\d))?/);
       if (m) return { day: new Date(+m[1], +m[2] - 1, +m[3], 12), hour: +(m[4] || 9) };
@@ -114,6 +119,7 @@
   // ("lunch|cheeseburger"). Kept on this phone only; never sent anywhere.
   var likes = {};
   try { likes = JSON.parse(store("hl-likes") || "{}") || {}; } catch (e) { likes = {}; }
+  if (typeof likes !== "object" || Array.isArray(likes)) likes = {};
   function foodKey(s) { return String(s).toLowerCase().replace(/\s+/g, " ").trim(); }
   function likeKey(meal, s) { return meal + "|" + foodKey(s); }
   // Ratings saved before they were per meal ("cheeseburger") apply to every meal: convert them once.
@@ -157,10 +163,17 @@
   }
 
   // A picture of the school's box, drawn in the text color (no white box). scale is about the text size.
+  // Only the build's own picture names and plain numbers go into the style (nothing else from the data).
   function pic(p, alt, scale) {
-    var src = "url(data/" + esc(p.img) + ")";
-    return '<span class="pic" role="img" aria-label="' + esc(alt) + '" style="width:' + Math.round(p.w * scale) + "px;aspect-ratio:"
-      + p.w + "/" + p.h + ";-webkit-mask-image:" + src + ";mask-image:" + src + '"></span>';
+    var w = Math.round(+p.w), h = Math.round(+p.h);
+    if (!/^cells(-breakfast)?\/\d{4}-\d\d-\d\d\.png$/.test(p.img) || !(w > 0 && w < 5000) || !(h > 0 && h < 5000)) return '<span class="none">See the school&#39;s menu</span>';
+    var src = "url(data/" + p.img + ")";
+    return '<span class="pic" role="img" aria-label="' + esc(alt) + '" style="width:' + Math.round(w * scale) + "px;aspect-ratio:"
+      + w + "/" + h + ";-webkit-mask-image:" + src + ";mask-image:" + src + '"></span>';
+  }
+  // A link to the school's file, only if it's an https address on the school's file hosts.
+  function schoolUrl(u) {
+    try { var x = new URL(u); return x.protocol === "https:" && /(^|\.)(finalsite\.net|hellgate\.k12\.mt\.us)$/.test(x.hostname) ? x.href : null; } catch (e) { return null; }
   }
 
   function mealName(id) { return id === "lunch" ? "Lunch" : id === "breakfast" ? "Breakfast" : "Breakfast @ Break"; }
@@ -173,7 +186,10 @@
     var wrap = function (cls, html) { return "<" + t + ' class="' + cls + '">' + html + "</" + t + ">"; };
     if (!l) return wrap("none", notPosted(id, d));
     if (l.off) return wrap("none", esc(l.off));
-    if (l.unreadable) return wrap("none", "Couldn't read this menu. <a href=\"" + esc(l.unreadable.source) + "\">Open the school's menu</a>");
+    if (l.unreadable) {
+      var src = schoolUrl(l.unreadable.source);
+      return wrap("none", "Couldn't read this menu." + (src ? ' <a href="' + esc(src) + '" rel="noopener">Open the school&#39;s menu</a>' : ""));
+    }
     if (l.pic) return pic(l.pic, alt, big ? 0.95 : 0.72);
     var main = l.items[0], sides = l.items.length > 1 ? esc(l.items.slice(1).join(" · ")) : "";
     if (big) {
@@ -236,7 +252,8 @@
       return;
     }
     rate(b.getAttribute("data-meal"), b.getAttribute("data-food"), +b.getAttribute("data-v"));
-    var sel = '.rate-btn[data-meal="' + b.getAttribute("data-meal") + '"][data-food="' + b.getAttribute("data-food").replace(/"/g, '\\"') + '"][data-v="' + b.getAttribute("data-v") + '"]';
+    var q = function (v) { return '"' + (window.CSS && CSS.escape ? CSS.escape(v) : String(v).replace(/["\\]/g, "\\$&")) + '"'; };
+    var sel = ".rate-btn[data-meal=" + q(b.getAttribute("data-meal")) + "][data-food=" + q(b.getAttribute("data-food")) + "][data-v=" + q(b.getAttribute("data-v")) + "]";
     var inHero = !!b.closest("#hero");
     renderHero(); renderWeek();
     // Keep keyboard users on the button they pressed (a tap doesn't need the focus ring).
@@ -348,7 +365,7 @@
     // Links opened from the Google app, Gmail, Messages, a QR scan, Facebook... open in that app's
     // built-in browser, which looks like Chrome to the page but has no "Add to Home screen". So the
     // first step is always "be in Chrome", with a button that hands the page to the real Chrome app.
-    var chrome = "intent://" + location.host + location.pathname + "#Intent;scheme=https;package=com.android.chrome;end";
+    var chrome = "intent://" + esc(location.host + location.pathname) + "#Intent;scheme=https;package=com.android.chrome;end";
     return "<li>Make sure you're in <strong>Chrome</strong>. If this page opened inside another app, its "
       + glyph(VDOTS) + " menu says <strong>Open in Chrome</strong>: tap that, or this button."
       + '<a class="btn btn-quiet open-chrome" href="' + chrome + '">Open in Chrome</a></li>'
@@ -452,7 +469,7 @@
     .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
     .then(function (data) {
       // ?pictures previews how months without typed-in days look (all from the school's pictures).
-      var pictures = new URLSearchParams(location.search).has("pictures");
+      var pictures = preview("pictures") !== null;
       var empty = { months: {}, days: {}, noLunch: [] };
       M = {
         typed: pictures ? {} : data.typed || {},

@@ -11,7 +11,7 @@ export async function linesInBoxes(pdfBytes, pngWidth, boxes) {
   try { pdfjs = await import("pdfjs-dist/legacy/build/pdf.mjs"); } catch (e) { return null; }
   let page;
   try {
-    const doc = await pdfjs.getDocument({ data: new Uint8Array(pdfBytes), disableFontFace: true, verbosity: 0 }).promise;
+    const doc = await pdfjs.getDocument({ data: new Uint8Array(pdfBytes), disableFontFace: true, isEvalSupported: false, enableXfa: false, verbosity: 0 }).promise;
     page = await doc.getPage(1);
   } catch (e) { return null; }
   const vp = page.getViewport({ scale: pngWidth / page.getViewport({ scale: 1 }).width });

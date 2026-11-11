@@ -89,7 +89,16 @@ The website:
 - To force a refresh: the repository's **Actions** tab → *Refresh menu and publish site* → **Run workflow**. Publishing waits a moment and retries once if GitHub briefly can't find the uploaded site ("artifact not found"). If a run still fails that way, start a new run rather than re-running the failed one.
 - GitHub pauses scheduled Actions after 60 days without activity. Menu updates commit to the repository, so this shouldn't happen during the school year. After summer break, re-enable it from the Actions tab if needed.
 
-Preview switches: `?now=2026-11-24T15:00` pretends it's another time; `?pictures` ignores the typed-in days.
+### Security
+
+Nobody can change the menu from the website: it's static files with no logins, forms or server. Ratings and meal choices live only in each phone's browser. The menu changes only when the school's own PDFs change or someone with write access to this repository pushes.
+
+- **The build trusts nothing it reads.** `menu/build.mjs` only fetches `https://` files from the school's site and its file host (`resources.finalsite.net`), with size and time limits, and reads PDFs with pdf.js's script features off.
+- **Least-privilege Action.** The job that reads the school's files can't push or publish and keeps no GitHub token. A second job accepts only menu data files from it (menu.json, calendar.ics, date-named PNGs), checks every field with `menu/check.mjs` (plain short text, school links only, calendar matching the menu), then commits and packages the site. A third job publishes. Actions are pinned to exact commits.
+- **The pages.** Every page has a Content-Security-Policy (own scripts only, no inline scripts). The app escapes all menu text, accepts only date-named pictures, and only links to the school's own https addresses.
+- **No spoof links.** The preview switches below work only on a copy served from `localhost` / `127.0.0.1`, so nobody can send a link that shows another day's menu as "Today".
+
+Preview switches (on a local copy only): `?now=2026-11-24T15:00` pretends it's another time; `?pictures` ignores the typed-in days.
 
 ### Tests (on a computer, not the phone)
 

@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Add Hawks Lunch to Google Calendar</title>
 <link rel="icon" href="../icons/favicon-32.png" type="image/png" sizes="32x32">
@@ -39,24 +41,15 @@
       </ol>
       <p class="muted">Each school day then shows "Lunch: …" in your calendar, with breakfast and the middle school break in the details. It updates on its own.</p>
     </div>
+    <div class="body" id="phone" hidden>
+      <h1>Open this on a computer</h1>
+      <p>Google only lets you add a calendar from a computer. On a computer signed in to the same Google account, go to:</p>
+      <p><strong id="here"></strong></p>
+      <p>Then, on this phone, open the <strong>Google Calendar</strong> app › <strong>☰</strong> › <strong>Settings</strong>. Under your account (tap <strong>Show more</strong> if needed), tap <strong>Hawks Lunch</strong> (or <strong>Hellgate Lunch</strong>, or <strong>hellgatelunch.github.io</strong>) and turn on <strong>Sync</strong>. Then in <strong>☰</strong>, tick that calendar and tap <strong>Refresh</strong>.</p>
+      <p class="muted">Using Samsung Calendar or another app? Add this link as a subscribed calendar: <span id="feed"></span></p>
+    </div>
   </div>
 </main>
-<script>
-  // The site's calendar feed, wherever the site is served from.
-  var feed = location.host + location.pathname.replace(/google\/?(index\.html)?$/, "") + "calendar.ics";
-  var url = "https://calendar.google.com/calendar/render?cid=" + encodeURIComponent("webcal://" + feed);
-  document.getElementById("add").href = url;
-  // Google only adds calendars on a computer: on a phone, say so instead of opening a page that can't do it.
-  if (/android|iphone|ipad|ipod|mobile/i.test(navigator.userAgent)) {
-    document.getElementById("body").innerHTML =
-      "<h1>Open this on a computer</h1>" +
-      "<p>Google only lets you add a calendar from a computer. On a computer signed in to the same Google account, go to:</p>" +
-      "<p><strong>" + location.host + location.pathname.replace(/index\.html$/, "") + "</strong></p>" +
-      "<p>Then, on this phone, open the <strong>Google Calendar</strong> app › <strong>☰</strong> › <strong>Settings</strong>. Under your account (tap <strong>Show more</strong> if needed), tap <strong>Hawks Lunch</strong> (or <strong>Hellgate Lunch</strong>, or <strong>hellgatelunch.github.io</strong>) and turn on <strong>Sync</strong>. Then in <strong>☰</strong>, tick that calendar and tap <strong>Refresh</strong>.</p>" +
-      '<p class="muted">Using Samsung Calendar or another app? Add this link as a subscribed calendar: ' + location.protocol + "//" + feed + "</p>";
-  } else {
-    location.href = url;
-  }
-</script>
+<script src="google.js"></script>
 </body>
 </html>

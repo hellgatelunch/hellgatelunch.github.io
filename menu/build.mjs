@@ -35,10 +35,31 @@ const opt = n => { const i = args.indexOf("--" + n); return i < 0 ? null : (args
 
 const now = opt("now") ? new Date(opt("now") + "T12:00:00") : new Date();
 
+// Only the school's own site and its file host are ever fetched (https, size-capped), so a stray
+// link on the school's page can't make the build download something from anywhere else.
+const MAX_BYTES = 30 * 1024 * 1024;
+export function schoolHost(url) {
+  try {
+    const u = new URL(url);
+    return u.protocol === "https:" && !u.username && !u.password && !u.port
+      && /^(resources\.finalsite\.net|(www\.)?hellgate\.k12\.mt\.us)$/i.test(u.hostname);
+  } catch (e) { return false; }
+}
 async function get(url, accept) {
-  const r = await fetch(url, { headers: { "User-Agent": UA, "Accept": accept || "*/*" }, redirect: "follow" });
+  if (!schoolHost(url)) throw new Error(`not a school address: ${url}`);
+  const r = await fetch(url, { headers: { "User-Agent": UA, "Accept": accept || "*/*" }, redirect: "follow", signal: AbortSignal.timeout(60000) });
   if (!r.ok) throw new Error(`${r.status} for ${url}`);
-  return Buffer.from(await r.arrayBuffer());
+  if (!schoolHost(r.url)) throw new Error(`redirected away from the school: ${r.url}`);
+  if (+r.headers.get("content-length") > MAX_BYTES) throw new Error(`too big: ${url}`);
+  const buf = Buffer.from(await r.arrayBuffer());
+  if (buf.length > MAX_BYTES) throw new Error(`too big: ${url}`);
+  return buf;
+}
+// A PNG's size from its header, before decoding it (refuse absurd sizes).
+function pngSizeOk(buf) {
+  if (buf.length < 24) return false;
+  const w = buf.readUInt32BE(16), h = buf.readUInt32BE(20);
+  return w > 0 && h > 0 && w <= 6000 && h <= 6000;
 }
 
 function readJson(file) {
@@ -84,7 +105,7 @@ async function updateMeal(meal, links, data, wanted) {
     data.noLunch = data.noLunch.filter(k => !k.startsWith(item.mk));
     for (const f of fs.readdirSync(cellsDir)) if (f.startsWith(item.mk)) fs.rmSync(path.join(cellsDir, f));
     let res = null;
-    if (buf.subarray(0, 4).toString("latin1") === "\x89PNG") res = await cutMonth(PNG.sync.read(buf), pdf, item.year, item.month, dir);
+    if (buf.subarray(0, 4).toString("latin1") === "\x89PNG" && pngSizeOk(buf)) res = await cutMonth(PNG.sync.read(buf), pdf, item.year, item.month, dir);
     if (res && Object.keys(res.days).length) {
       Object.assign(data.days, res.days);
       data.noLunch.push(...res.noLunch);
@@ -122,7 +143,7 @@ async function main() {
     console.log(`::warning::Couldn't reach the school's menu page (${e.message}). Keeping the saved menu.`);
     return;
   }
-  const sortedLinks = sortLinks(S.extractLinks(html, S.PAGE_URL), now);
+  const sortedLinks = sortLinks(S.extractLinks(html, S.PAGE_URL).filter(l => schoolHost(l.url)), now);
 
   // Last month, this month, next month.
   const wanted = [-1, 0, 1].map(o => { const d = new Date(now.getFullYear(), now.getMonth() + o, 1); return S.monthKey(d.getFullYear(), d.getMonth()); });
@@ -156,4 +177,4 @@ async function main() {
   console.log(`Wrote ${path.relative(ROOT, CALENDAR)}: ${(ics.match(/BEGIN:VEVENT/g) || []).length} school days`);
 }
 
-main().catch(e => { console.error(e); process.exit(1); });
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) main().catch(e => { console.error(e); process.exit(1); });

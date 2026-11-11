@@ -383,5 +383,72 @@ console.log("iPhone widget (hellgate-lunch.js, with a stand-in for Scriptable)")
   });
 }
 
+{
+  console.log("\nSecurity: only school files in, only plain menu data out");
+  const { checkMenu, schoolUrl, plainText } = await import("../menu/check.mjs");
+  const { schoolHost } = await import("../menu/build.mjs");
+  const { makeIcs } = await import("../menu/calendar.mjs");
+  const real = JSON.parse(fs.readFileSync(path.join(FIXTURES, "menu-2026-11.json"), "utf8"));
+  const copy = () => JSON.parse(JSON.stringify(real));
+
+  test("the real November menu passes the safety check", () => {
+    assert.deepEqual(checkMenu(real), []);
+  });
+
+  test("the build only fetches https files from the school's hosts", () => {
+    assert.ok(schoolHost("https://resources.finalsite.net/images/v1/hellgatek12mtus/x/NovemberLUNCH2026.pdf"));
+    assert.ok(schoolHost("https://www.hellgate.k12.mt.us/departments/food-services"));
+    for (const u of ["http://resources.finalsite.net/x.pdf", "https://evil.example/NovemberLUNCH2026.pdf",
+      "https://resources.finalsite.net.evil.example/x.pdf", "https://user@resources.finalsite.net/x.pdf",
+      "https://resources.finalsite.net:8443/x.pdf", "file:///etc/passwd", "javascript:alert(1)", "not a url"]) {
+      assert.ok(!schoolHost(u), u);
+      assert.ok(!schoolUrl(u), u);
+    }
+  });
+
+  test("markup, scripts and odd fields in the menu are refused", () => {
+    const cases = [
+      m => { m.days["2026-11-10"].items[0] = '<img src=x onerror=alert(1)>'; },
+      m => { m.days["2026-11-10"].items[0] = "Pizza\r\nBEGIN:VEVENT"; },
+      m => { m.days["2026-11-10"].items = "Pizza"; },
+      m => { m.days["2026-11-10"].evil = 1; },
+      m => { m.days["2026-11-10"] = { img: "../../index.html", w: 10, h: 10, mask: true }; },
+      m => { m.days["2026-11-10"] = { img: "cells/2026-11-10.png", w: "10;background:url(//evil)", h: 10, mask: true }; },
+      m => { m.months["2026-11"].source = "javascript:alert(1)"; },
+      m => { m.months["2026-11"].source = "https://evil.example/menu.pdf"; },
+      m => { m.page = "https://evil.example/"; },
+      m => { m.extra = true; },
+      m => { m.typed["2026-11-10"] = ["x".repeat(500)]; },
+    ];
+    cases.forEach((f, i) => { const m = copy(); f(m); assert.ok(checkMenu(m).length > 0, "case " + i + " was accepted"); });
+    assert.ok(plainText("Sweet & Sour Chicken/Rice"));
+    assert.ok(plainText("Yogurt Bar; Add Your Own Toppings!"));
+  });
+
+  test("calendar text can't break out of its event", () => {
+    const m = { typed: { "2026-11-10": ["Pizza\r\nEND:VEVENT\r\nBEGIN:VEVENT\r\nSUMMARY:Fake", "Milk;x,y\\z"] }, days: {}, months: {} };
+    const ics = makeIcs(m, "https://hellgatelunch.github.io/").replace(/\r\n /g, ""); // unfolded
+    assert.equal((ics.match(/^BEGIN:VEVENT/gm) || []).length, 1);
+    assert.ok(!/^SUMMARY:Fake/m.test(ics));
+    assert.ok(ics.includes("Milk\\;x\\,y\\\\z"));
+  });
+
+  test("the app ignores ?now= and ?pictures on the real site", () => {
+    const app = fs.readFileSync(path.join(path.dirname(FIXTURES), "..", "web", "app.js"), "utf8");
+    assert.match(app, /var LOCAL = \/\^\(localhost\|127/);
+    assert.ok(!/URLSearchParams\(location\.search\)\.(get|has)\("(now|pictures)"\)/.test(app));
+  });
+
+  test("every page has a Content-Security-Policy and no inline scripts", () => {
+    const web = path.join(path.dirname(FIXTURES), "..", "web");
+    for (const f of ["index.html", "flyer.html", "google/index.html"]) {
+      const html = fs.readFileSync(path.join(web, f), "utf8");
+      assert.match(html, /http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self';/, f);
+      assert.ok(!/<script(?![^>]*\bsrc=)[^>]*>/.test(html), f + " has an inline script");
+      assert.ok(!/\son[a-z]+\s*=/.test(html), f + " has an inline event handler");
+    }
+  });
+}
+
 console.log(failed ? `\n${failed} failed` : "\nAll passed. Day crops are in test/out/.");
 process.exit(failed ? 1 : 0);
