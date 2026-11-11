@@ -6,7 +6,7 @@ Breakfast, middle school Breakfast @ Break and lunch at Hellgate Elementary K-8 
 - **Your phone's calendar.** On the website, *Get it in your calendar* adds each school day's lunch to your calendar (and its widgets).
 - **The iPhone widget** (below). A home-screen widget with the next school day's breakfast and lunch.
 
-To spread the word, use the [printable flyer with a QR code](https://hellgatelunch.github.io/flyer.html) or the site's *Share with other parents* button.
+To spread the word, use the [printable flyer with a QR code](https://hellgatelunch.github.io/flyer.html) (not linked from the app itself).
 
 ## The iPhone widget
 

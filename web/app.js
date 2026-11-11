@@ -305,26 +305,6 @@
     });
   }
 
-  function renderSource() {
-    var names = [];
-    ["breakfast", "lunch"].forEach(function (id) {
-      var ms = M[id].months, list = Object.keys(ms).sort().filter(function (mk) { return ms[mk].ok; });
-      if (list.length) names.push(id);
-    });
-    var months = {};
-    [M.breakfast.months, M.lunch.months].forEach(function (ms) {
-      Object.keys(ms).forEach(function (mk) { if (ms[mk].ok) months[mk] = ms[mk].name.replace(/ \d{4}$/, ""); });
-    });
-    var mlist = Object.keys(months).sort().map(function (mk) { return months[mk]; });
-    $("source").textContent = names.length
-      ? "From the school's " + mlist.join(" and ") + " " + names.join(" and ") + " menus."
-      : "";
-    var b = M.brk;
-    $("break-note").innerHTML = b ? esc(b.note) + (b.newSheet
-      ? ' <strong>The school posted a new Breakfast @ Break menu:</strong> <a href="' + esc(b.newSheet) + '">see it here</a>.' : "") : "";
-    if (M.page) $("page-link").href = M.page;
-  }
-
   function go(n) { week = n === 0 ? monday(picked.day) : add(week, 7 * n); renderWeek(); }
   $("prev").onclick = function () { go(-1); };
   $("next").onclick = function () { go(1); };
@@ -339,7 +319,7 @@
     now = schoolNow();
     picked = pick(now);
     week = monday(picked.day);
-    renderToggles(); renderHero(); renderWeek(); renderSource();
+    renderToggles(); renderHero(); renderWeek();
   }
 
   // Offer "Add to Home Screen": on iPhone as instructions (Safari has no install button),
@@ -385,15 +365,6 @@
       else prompt("Copy this calendar link:", url);
     };
   })();
-
-  // Share the link with other parents (phones' share sheet; elsewhere, copy it).
-  $("share").onclick = function () {
-    var url = location.origin + location.pathname;
-    if (navigator.share) { navigator.share({ title: "Hellgate Lunch", text: "Breakfast and lunch at Hellgate K-8", url: url }).catch(function () {}); return; }
-    var done = function () { $("share").textContent = "Link copied"; setTimeout(function () { $("share").textContent = "Share with other parents"; }, 2000); };
-    if (navigator.clipboard) navigator.clipboard.writeText(url).then(done, function () { prompt("Copy this link:", url); });
-    else prompt("Copy this link:", url);
-  };
 
   fetch("data/menu.json", { cache: "no-cache" })
     .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })

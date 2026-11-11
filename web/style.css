@@ -225,9 +225,6 @@ h2 { font-size: 20px; }
   border: 0; background: none;
   color: var(--muted); font-size: 22px; cursor: pointer;
 }
-.fine { margin-top: 24px; font-size: 13px; color: var(--muted); }
-.fine p { margin: 6px 0; }
-.share-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; margin-bottom: 14px !important; }
 
 /* Pack or buy?: rating buttons and verdicts */
 .meal-head { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 10px; }
