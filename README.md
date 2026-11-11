@@ -53,7 +53,8 @@ On the website, **Get it in your calendar**:
 - **iPhone:** tap **iPhone**, then **Subscribe**.
 - **Android / Google:** Google only lets you add a calendar from a computer.
   1. On a computer signed in to Google, go to **hellgatelunch.github.io/google** and click **Add**.
-  2. On the Android phone, open **Google Calendar** › **Settings** › **Hawks Lunch** and turn on **Sync**. New calendars often start with sync off.
+  2. On the Android phone, open the **Google Calendar** app › **☰** › **Settings**. Under the account (tap **Show more** if needed), tap **Hawks Lunch** and turn on **Sync**. Calendars added from a computer start with sync off. Calendars subscribed before the rename are called **Hellgate Lunch** (or show the web address).
+  3. Back in **☰**, make sure the calendar is ticked, then tap **Refresh**.
 - **Samsung Calendar, Outlook, others:** add `https://hellgatelunch.github.io/calendar.ics` as a subscribed calendar ("from URL").
 
 Each school day gets an all-day event titled with lunch ("Lunch: Cheeseburger"), with breakfast, break and lunch in the notes. Days off get no event. It refreshes on its own.
