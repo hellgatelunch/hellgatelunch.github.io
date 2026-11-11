@@ -45,10 +45,10 @@
   try { var saved = JSON.parse(store("hl-meals") || "null"); if (saved) for (var s in show) if (has(saved, s)) show[s] = !!saved[s]; } catch (e) {}
 
   // One small line icon per meal (stroke = the meal's color).
-  // One food icon per meal (stroke = the meal's color): fried egg, muffin, fork and knife.
+  // One food icon per meal (stroke = the meal's color): bacon and eggs, apple, fork and knife.
   var ICONS = {
-    breakfast: '<path d="M5.8 6.6c2.2-3 7-3.8 9.9-1.4 3.1.2 5.3 3 4.4 6.1-.6 2.2-2.1 3.2-3.6 3.5-.8 2.8-4 4.6-7.4 3.5-2.7-.9-3.7-2.8-3.4-4.6-1.9-1.6-1.9-4.9.1-7.1z"/><circle cx="10.6" cy="10.4" r="3" fill="currentColor" stroke="none"/>',
-    "break": '<path d="M5.5 11.5a6.5 6 0 0 1 13 0"/><path d="M5.5 11.5h13"/><path d="M6.5 11.5L8 20h8l1.5-8.5"/><path d="M10.5 11.5L11 20M13.5 11.5L13 20"/>',
+    breakfast: '<path d="M2.6 10.2c.1-2.9 2.6-5 5.4-4.7 2.2.2 3.8 1.9 4.1 3.9 1 1 1.3 2.6.7 3.9-.7 1.6-2.4 2.4-4 2.2-1.2 1.3-3.3 1.6-4.8.6-1.4-1-1.9-2.6-1.6-4 .1-.6.1-1.3.2-1.9z"/><circle cx="7.6" cy="10.4" r="2.2" fill="currentColor" stroke="none"/><path d="M16 3c-1.4 2 1.4 4 0 6s1.4 4 0 6 1.4 4 0 6"/><path d="M21.5 3c-1.4 2 1.4 4 0 6s1.4 4 0 6 1.4 4 0 6"/><path d="M16 3h5.5M16 21h5.5"/><path d="M18.75 5.2c-1 1.5 1 2.8 0 4.3s1 2.8 0 4.3 1 2.8 0 4.3"/>',
+    "break": '<path d="M12 7.5c-1.6-1.2-5.5-1.6-6.6 1.6-1.2 3.4.9 9.4 3.9 10.6 1.1.4 1.8-.3 2.7-.3s1.6.7 2.7.3c3-1.2 5.1-7.2 3.9-10.6-1.1-3.2-5-2.8-6.6-1.6z"/><path d="M12 7.5c0-2 .8-3.6 2.6-4.5"/>',
     lunch: '<path d="M6 3v5a2.5 2.5 0 0 0 5 0V3"/><path d="M8.5 3v18"/><path d="M17 21V3c2 1.2 3 3.8 3 8h-3"/>'
   };
   function icon(id) { return '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true">' + ICONS[id] + "</svg>"; }
