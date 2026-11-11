@@ -256,7 +256,14 @@
   ]
  },
  "breakfast": {
-  "months": {},
+  "months": {
+   "2026-11": {
+    "name": "November 2026",
+    "source": "https://resources.finalsite.net/images/v1793201252/hellgatek12mtus/twuuwxln6jhm3sul79la/November2026BREAKFASTdocx.pdf",
+    "cut": "2026-11-11",
+    "ok": true
+   }
+  },
   "days": {
    "2026-11-02": {
     "items": [
