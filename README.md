@@ -1,4 +1,4 @@
-# Hellgate Lunch
+# Hawks Lunch
 
 Breakfast, middle school Breakfast @ Break and lunch at Hellgate Elementary K-8 (Hawks), straight from the school's own monthly menus.
 
@@ -26,8 +26,8 @@ Get **Scriptable** (by Simon B. Støvring) from the App Store. It's free.
 
 #### 2. Add the script
 1. Open Scriptable and tap **+** in the top-right corner.
-2. Tap the title at the top ("Untitled Script") and rename it **Hellgate Lunch**.
-3. Copy all of the code in [`hellgate-lunch.js`](hellgate-lunch.js), from `// Hellgate Lunch` to the last line, and paste it into the script. **If you have the old version, replace all of it.**
+2. Tap the title at the top ("Untitled Script") and rename it **Hawks Lunch**.
+3. Copy all of the code in [`hellgate-lunch.js`](hellgate-lunch.js), from `// Hawks Lunch` to the last line, and paste it into the script. **If you have the old version, replace all of it.**
 4. Tap **Done**.
 5. To check it, tap the script once in Scriptable. A preview of the widget opens. Close it when you're done looking.
 
@@ -37,7 +37,7 @@ Get **Scriptable** (by Simon B. Støvring) from the App Store. It's free.
 3. Search for **Scriptable**, pick the small square (or the medium) size, and tap **Add Widget**.
 4. While the apps are still jiggling, tap the new widget. If it doesn't open its settings, long-press it and choose **Edit Widget**.
 5. Set:
-   - **Script:** Hellgate Lunch
+   - **Script:** Hawks Lunch
    - **When Interacting:** Open URL, with the URL `https://hellgatelunch.github.io/`
    - **Parameter:** leave empty for breakfast and lunch. Or type `lunch`, `breakfast`, `all` (adds the middle school break), or a mix like `breakfast, break`.
 6. Tap outside the panel, then tap **Done**.
@@ -53,7 +53,7 @@ On the website, **Get it in your calendar**:
 - **iPhone:** tap **iPhone**, then **Subscribe**.
 - **Android / Google:** Google only lets you add a calendar from a computer.
   1. On a computer signed in to Google, go to **hellgatelunch.github.io/google** and click **Add**.
-  2. On the Android phone, open **Google Calendar** › **Settings** › **Hellgate Lunch** and turn on **Sync**. New calendars often start with sync off.
+  2. On the Android phone, open **Google Calendar** › **Settings** › **Hawks Lunch** and turn on **Sync**. New calendars often start with sync off.
 - **Samsung Calendar, Outlook, others:** add `https://hellgatelunch.github.io/calendar.ics` as a subscribed calendar ("from URL").
 
 Each school day gets an all-day event titled with lunch ("Lunch: Cheeseburger"), with breakfast, break and lunch in the notes. Days off get no event. It refreshes on its own.

@@ -1,4 +1,4 @@
-// Hellgate Lunch — web app. Reads data/menu.json, which a scheduled GitHub Action builds
+// Hawks Lunch — web app. Reads data/menu.json, which a scheduled GitHub Action builds
 // from the school's monthly breakfast and lunch menus (see menu/build.mjs).
 (function () {
   "use strict";

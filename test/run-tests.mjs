@@ -262,7 +262,7 @@ console.log("Calendar feed (website)");
     assert.ok(!/[^\r]\n/.test(ics), "bare LF");
     for (const l of ics.split("\r\n")) assert.ok(Buffer.byteLength(l) <= 75, l);
     assert.match(ics, /Yogurt Bar\\; Add/);
-    assert.match(ics, /^X-WR-CALNAME:Hellgate Lunch\r$/m);
+    assert.match(ics, /^X-WR-CALNAME:Hawks Lunch\r$/m);
   });
 
   test("the same menu always gives the same feed (no needless commits)", () => {

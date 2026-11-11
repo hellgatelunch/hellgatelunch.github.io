@@ -52,10 +52,10 @@ export function makeIcs(menu, site = "https://hellgatelunch.github.io/") {
   const lines = [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
-    `PRODID:-//Hellgate Lunch//${host}//EN`,
+    `PRODID:-//Hawks Lunch//${host}//EN`,
     "CALSCALE:GREGORIAN",
     "METHOD:PUBLISH",
-    "X-WR-CALNAME:Hellgate Lunch",
+    "X-WR-CALNAME:Hawks Lunch",
     "X-WR-CALDESC:" + esc("Breakfast and lunch at Hellgate Elementary K-8, from the school's menus. " + site),
     "X-WR-TIMEZONE:America/Denver",
     "REFRESH-INTERVAL;VALUE=DURATION:PT6H",

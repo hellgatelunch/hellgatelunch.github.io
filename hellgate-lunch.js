@@ -1,4 +1,4 @@
-// Hellgate Lunch — Scriptable widget (small or medium)
+// Hawks Lunch — Scriptable widget (small or medium)
 // Shows the next school day's breakfast and lunch at Hellgate Elementary K-8 (Hawks).
 // Tap it to open the full week at hellgatelunch.github.io.
 //
@@ -131,7 +131,7 @@ function buildWidget(menu, now, meals, family) {
   w.url = SITE;
 
   // Hawks-green band with the day, like the website's header.
-  const p = menu ? pick(menu, now) : { ok: false, day: midnight(now), label: "Hellgate Lunch" };
+  const p = menu ? pick(menu, now) : { ok: false, day: midnight(now), label: "Hawks Lunch" };
   const band = w.addStack();
   band.backgroundColor = C.band;
   band.setPadding(7, 12, 6, 12);
