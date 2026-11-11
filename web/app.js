@@ -20,7 +20,16 @@
   function key(d) { return d.getFullYear() + "-" + p2(d.getMonth() + 1) + "-" + p2(d.getDate()); }
   function add(d, n) { var x = new Date(d); x.setDate(x.getDate() + n); return x; }
   function monday(d) { return add(d, -((d.getDay() + 6) % 7)); }
-  function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;"); }
+  function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;"); }
+  // A day picture's name, e.g. "cells/2026-11-10.png" (same rule as PICTURE in menu/schema.mjs; a test keeps them equal).
+  var PICTURE = /^cells(-breakfast)?\/\d{4}-\d\d-\d\d\.png$/;
+  // JSON.parse that refuses keys which could change an object's prototype.
+  function safeParse(text) {
+    return JSON.parse(text, function (k, v) {
+      if (k === "__proto__" || k === "constructor" || k === "prototype") throw new Error("refused key " + k);
+      return v;
+    });
+  }
   function weekend(d) { return d.getDay() === 0 || d.getDay() === 6; }
   function has(o, k) { return Object.prototype.hasOwnProperty.call(o, k); }
   function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } }
@@ -166,7 +175,7 @@
   // Only the build's own picture names and plain numbers go into the style (nothing else from the data).
   function pic(p, alt, scale) {
     var w = Math.round(+p.w), h = Math.round(+p.h);
-    if (!/^cells(-breakfast)?\/\d{4}-\d\d-\d\d\.png$/.test(p.img) || !(w > 0 && w < 5000) || !(h > 0 && h < 5000)) return '<span class="none">See the school&#39;s menu</span>';
+    if (!PICTURE.test(p.img) || !(w > 0 && w < 5000) || !(h > 0 && h < 5000)) return '<span class="none">See the school&#39;s menu</span>';
     var src = "url(data/" + p.img + ")";
     return '<span class="pic" role="img" aria-label="' + esc(alt) + '" style="width:' + Math.round(w * scale) + "px;aspect-ratio:"
       + w + "/" + h + ";-webkit-mask-image:" + src + ";mask-image:" + src + '"></span>';
@@ -466,7 +475,8 @@
   })();
 
   fetch("data/menu.json", { cache: "no-cache" })
-    .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); })
+    .then(safeParse)
     .then(function (data) {
       // ?pictures previews how months without typed-in days look (all from the school's pictures).
       var pictures = preview("pictures") !== null;

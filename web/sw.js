@@ -1,6 +1,6 @@
 // Service worker: lets the app open offline (showing the last menu it saw) and lets
 // Android offer "Install app". Bump VERSION when the app's own files change shape.
-var VERSION = "v25";
+var VERSION = "v26";
 var SHELL = "hellgate-shell-" + VERSION;
 var DATA = "hellgate-data";
 var SHELL_FILES = ["./", "index.html", "style.css", "app.js", "manifest.webmanifest",
@@ -25,21 +25,12 @@ function networkFirst(req, cacheName) {
   }).catch(function () { return caches.match(req, { ignoreSearch: true }); });
 }
 
-// Saved copy right away, refreshed in the background (for day pictures).
-function staleWhileRevalidate(req, cacheName) {
-  return caches.open(cacheName).then(function (c) {
-    return c.match(req, { ignoreSearch: true }).then(function (hit) {
-      var net = fetch(req).then(function (res) { if (res.ok) c.put(req, res.clone()); return res; }).catch(function () { return hit; });
-      return hit || net;
-    });
-  });
-}
-
 self.addEventListener("fetch", function (e) {
   var req = e.request, url = new URL(req.url);
   if (req.method !== "GET" || url.origin !== location.origin) return;
   if (url.pathname.endsWith("/data/menu.json")) return e.respondWith(networkFirst(req, DATA));
-  if (url.pathname.indexOf("/data/cells") >= 0) return e.respondWith(staleWhileRevalidate(req, DATA));
+  // Day pictures: fresh when online too (a re-cut month reuses the same names), saved copy offline.
+  if (url.pathname.indexOf("/data/cells") >= 0) return e.respondWith(networkFirst(req, DATA));
   // The app's own files: fresh when online (so a new page never meets an old script), saved copy offline.
   e.respondWith(networkFirst(req, SHELL));
 });

@@ -15,6 +15,7 @@ import { PNG } from "pngjs";
 import { readMonth } from "./read-month.mjs";
 import { S, sortLinks } from "./sources.mjs";
 import { makeIcs } from "./calendar.mjs";
+import { schoolUrl, cleanText, safeParse } from "./schema.mjs";
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
 const DATA = path.join(ROOT, "web", "data");
@@ -37,23 +38,28 @@ const now = opt("now") ? new Date(opt("now") + "T12:00:00") : new Date();
 
 // Only the school's own site and its file host are ever fetched (https, size-capped), so a stray
 // link on the school's page can't make the build download something from anywhere else.
+// The cap counts bytes as they arrive after decompression, so a small compressed "bomb" can't
+// blow up past it, and each run fetches at most MAX_FETCHES files.
 const MAX_BYTES = 30 * 1024 * 1024;
-export function schoolHost(url) {
-  try {
-    const u = new URL(url);
-    return u.protocol === "https:" && !u.username && !u.password && !u.port
-      && /^(resources\.finalsite\.net|(www\.)?hellgate\.k12\.mt\.us)$/i.test(u.hostname);
-  } catch (e) { return false; }
-}
+const MAX_FETCHES = 20;
+let fetches = 0;
+export const schoolHost = url => schoolUrl(url) || schoolUrl(safeHref(url));
+function safeHref(u) { try { return new URL(u).href; } catch (e) { return null; } }
 async function get(url, accept) {
   if (!schoolHost(url)) throw new Error(`not a school address: ${url}`);
+  if (++fetches > MAX_FETCHES) throw new Error("too many downloads in one run");
   const r = await fetch(url, { headers: { "User-Agent": UA, "Accept": accept || "*/*" }, redirect: "follow", signal: AbortSignal.timeout(60000) });
   if (!r.ok) throw new Error(`${r.status} for ${url}`);
   if (!schoolHost(r.url)) throw new Error(`redirected away from the school: ${r.url}`);
   if (+r.headers.get("content-length") > MAX_BYTES) throw new Error(`too big: ${url}`);
-  const buf = Buffer.from(await r.arrayBuffer());
-  if (buf.length > MAX_BYTES) throw new Error(`too big: ${url}`);
-  return buf;
+  const parts = [];
+  let total = 0;
+  for await (const chunk of r.body) {
+    total += chunk.length;
+    if (total > MAX_BYTES) { await r.body.cancel().catch(() => {}); throw new Error(`too big: ${url}`); }
+    parts.push(chunk);
+  }
+  return Buffer.concat(parts.map(c => Buffer.from(c)));
 }
 // A PNG's size from its header, before decoding it (refuse absurd sizes).
 function pngSizeOk(buf) {
@@ -63,7 +69,7 @@ function pngSizeOk(buf) {
 }
 
 function readJson(file) {
-  try { return JSON.parse(fs.readFileSync(file, "utf8")); } catch (e) { return {}; }
+  try { return safeParse(fs.readFileSync(file, "utf8")); } catch (e) { return {}; }
 }
 
 // Reads one month: words for each day from the PDF; a picture only where words can't be read.
@@ -127,6 +133,14 @@ async function updateMeal(meal, links, data, wanted) {
 }
 
 const sorted = o => Object.fromEntries(Object.entries(o).sort(([a], [b]) => a.localeCompare(b)));
+// Every string written out is NFC with invisible, direction-changing and control characters
+// removed (the school's PDFs sometimes carry them), so the checks before publishing pass on real menus.
+function clean(v) {
+  if (typeof v === "string") return cleanText(v);
+  if (Array.isArray(v)) return v.map(clean);
+  if (v && typeof v === "object") return Object.fromEntries(Object.entries(v).map(([k, x]) => [k, clean(x)]));
+  return v;
+}
 const mealOut = d => ({ months: sorted(d.months), days: sorted(d.days), noLunch: [...new Set(d.noLunch)].sort() });
 
 async function main() {
@@ -161,14 +175,14 @@ async function main() {
   if (changed) console.log(`::warning::The school posted a new Breakfast @ Break sheet: ${posted}. Update menu/break.json from it.`);
   console.log(`Breakfast @ Break: ${posted ? (changed ? "school posted a NEW sheet" : "matches the typed-in sheet") : "sheet not on the page"}`);
 
-  const out = {
+  const out = clean({
     page: S.PAGE_URL,
     // Lunch stays at the top level so older cached copies of the app keep working.
     ...mealOut(lunch),
     typed: sorted(typed),
     breakfast: mealOut(breakfast),
     break: { note: br.note, always: br.always, menus: br.menus, source: br.source, ...(changed ? { newSheet: posted } : {}) },
-  };
+  });
   fs.writeFileSync(MENU_JSON, JSON.stringify(out, null, 1) + "\n");
   console.log(`Wrote ${path.relative(ROOT, MENU_JSON)}: ${Object.keys(out.days).length} lunch days, ${Object.keys(out.breakfast.days).length} breakfast days`);
   // The same menu as a calendar feed parents can subscribe to (web/calendar.ics).

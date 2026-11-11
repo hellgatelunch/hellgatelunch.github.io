@@ -93,10 +93,17 @@ The website:
 
 Nobody can change the menu from the website: it's static files with no logins, forms or server. Ratings and meal choices live only in each phone's browser. The menu changes only when the school's own PDFs change or someone with write access to this repository pushes.
 
-- **The build trusts nothing it reads.** `menu/build.mjs` only fetches `https://` files from the school's site and its file host (`resources.finalsite.net`), with size and time limits, and reads PDFs with pdf.js's script features off.
-- **Least-privilege Action.** The job that reads the school's files can't push or publish and keeps no GitHub token. A second job accepts only menu data files from it (menu.json, calendar.ics, date-named PNGs), checks every field with `menu/check.mjs` (plain short text, school links only, calendar matching the menu), then commits and packages the site. A third job publishes. Actions are pinned to exact commits.
-- **The pages.** Every page has a Content-Security-Policy (own scripts only, no inline scripts). The app escapes all menu text, accepts only date-named pictures, and only links to the school's own https addresses.
+- **The rules live in one place.** `menu/schema.mjs` says which addresses may be fetched, which files may be handed over, what a real date and a day-picture name are, and what counts as plain menu text. `web/app.js` keeps a copy of the picture rule, and a test fails if the two differ.
+- **The build trusts nothing it reads.** `menu/build.mjs` only fetches `https://` files from the school's site and its file host (`resources.finalsite.net`): at most 20 per run, 60 s each, with a 30 MB cap counted after decompression. pdf.js runs with its script features off. Every string it writes is normalized (NFC), and invisible, direction-changing and control characters are removed.
+- **Least-privilege Action.** The job that reads the school's files can't push or publish and keeps no GitHub token. It hands over plain files, never a patch. The publishing job:
+  - refuses any file not on the allow-list (menu.json, calendar.ics, date-named PNGs), plus links and folders;
+  - checks every field with `menu/accept.mjs` and `menu/check.mjs`, running with an empty environment. Text must be short and plain, dates real, links on the school's sites only, pictures plain PNGs (chunk by chunk, CRCs checked), and the calendar exactly what menu.json says;
+  - commits, retrying on top of any newer push.
+
+  Its token is never written to disk; only the push step sees it. A third job publishes. Actions are pinned to exact commits. If any check fails, nothing is committed or published, and the site keeps the previous menu.
+- **The pages.** Every page has a Content-Security-Policy (own scripts only, no inline scripts). The app escapes all menu text, refuses JSON keys like `__proto__`, accepts only date-named pictures, and only links to the school's own https addresses.
 - **No spoof links.** The preview switches below work only on a copy served from `localhost` / `127.0.0.1`, so nobody can send a link that shows another day's menu as "Today".
+- **Never rename, transfer or delete the `hellgatelunch` organization or this repository.** Installed apps, iPhone widgets and calendar subscriptions all point at `hellgatelunch.github.io`. If that name were ever given up, anyone could register it and serve their own "menu" to every family. The organization's GitHub ID is `354728507`: if the name ever stops resolving to that ID, treat it as compromised.
 
 Preview switches (on a local copy only): `?now=2026-11-24T15:00` pretends it's another time; `?pictures` ignores the typed-in days.
 

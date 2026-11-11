@@ -450,5 +450,123 @@ console.log("iPhone widget (hellgate-lunch.js, with a stand-in for Scriptable)")
   });
 }
 
+{
+  console.log("\nSecurity: shared rules, hand-off, pictures");
+  const schema = await import("../menu/schema.mjs");
+  const { accept } = await import("../menu/accept.mjs");
+  const { checkMenu } = await import("../menu/check.mjs");
+  const { PNG } = await import("pngjs");
+  const os = await import("node:os");
+  const WEB = path.join(path.dirname(FIXTURES), "..", "web");
+  const real = JSON.parse(fs.readFileSync(path.join(FIXTURES, "menu-2026-11.json"), "utf8"));
+  const copy = () => JSON.parse(JSON.stringify(real));
+
+  test("invisible, direction-changing and un-normalized text is refused, and the build strips it", () => {
+    for (const s of ["Pizza‮", "Pi​zza", "﻿Pizza", "Pizza⁦x⁩", "Café", "Soft­taco"]) {
+      assert.ok(!schema.plainText(s), JSON.stringify(s));
+      assert.ok(schema.plainText(schema.cleanText(s)), "cleaned " + JSON.stringify(s));
+    }
+    const m = copy(); m.days["2026-11-10"].items[0] = "Cheese​burger";
+    assert.ok(checkMenu(m).length > 0);
+  });
+
+  test("dates must be real days", () => {
+    assert.ok(schema.isDate("2026-11-10") && schema.isDate("2028-02-29"));
+    for (const d of ["2026-02-30", "2026-13-01", "2026-00-10", "2027-02-29", "26-11-10", "2026-11-10T00"]) assert.ok(!schema.isDate(d), d);
+    const m = copy(); m.days["2026-02-30"] = { items: ["Pizza"] };
+    assert.ok(checkMenu(m).length > 0);
+  });
+
+  test("JSON with __proto__ / constructor keys is refused", () => {
+    for (const t of ['{"__proto__":{"x":1}}', '{"a":{"constructor":{"prototype":{}}}}']) assert.throws(() => schema.safeParse(t));
+    assert.deepEqual(schema.safeParse('{"a":[1,"b"]}'), { a: [1, "b"] });
+  });
+
+  test("day pictures must be plain PNGs (no animation, profiles, text or bad CRCs)", () => {
+    const good = PNG.sync.write(new PNG({ width: 6, height: 4 }));
+    assert.equal(schema.pngProblem(good), null);
+    // Insert a chunk right after IHDR (8 + 25 bytes).
+    const chunk = (type, data) => {
+      const head = Buffer.alloc(8); head.writeUInt32BE(data.length, 0); head.write(type, 4, "latin1");
+      const body = Buffer.concat([head.subarray(4), data]);
+      let c = 0xffffffff; for (const b of body) { c ^= b; for (let k = 0; k < 8; k++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1; }
+      const crc = Buffer.alloc(4); crc.writeUInt32BE((c ^ 0xffffffff) >>> 0, 0);
+      return Buffer.concat([head, data, crc]);
+    };
+    const withChunk = (type, data) => Buffer.concat([good.subarray(0, 33), chunk(type, data), good.subarray(33)]);
+    assert.match(schema.pngProblem(withChunk("acTL", Buffer.alloc(8))), /acTL/);
+    assert.match(schema.pngProblem(withChunk("iCCP", Buffer.from("x\0\0abc"))), /iCCP/);
+    assert.match(schema.pngProblem(withChunk("tEXt", Buffer.from("k\0v"))), /tEXt/);
+    const crc = Buffer.from(good); crc[30] ^= 1;
+    assert.match(schema.pngProblem(crc), /CRC/);
+    assert.ok(schema.pngProblem(Buffer.concat([good, Buffer.from("<script>")])));
+    assert.ok(schema.pngProblem(Buffer.from("<svg onload=alert(1)>")));
+  });
+
+  test("the web app's picture rule is the same as the shared one", () => {
+    const app = fs.readFileSync(path.join(WEB, "app.js"), "utf8");
+    const m = app.match(/var PICTURE = (\/.+\/);/);
+    assert.ok(m, "PICTURE not found in app.js");
+    assert.equal(m[1], String(schema.PICTURE));
+    assert.match(app, /\.then\(safeParse\)/);
+  });
+
+  // A hand-off folder like the build job uploads, from the repository's current data.
+  const handoff = () => {
+    const d = fs.mkdtempSync(path.join(os.tmpdir(), "hl-handoff-"));
+    fs.mkdirSync(path.join(d, "data", "cells"), { recursive: true });
+    fs.mkdirSync(path.join(d, "data", "cells-breakfast"), { recursive: true });
+    fs.copyFileSync(path.join(WEB, "data", "menu.json"), path.join(d, "data", "menu.json"));
+    fs.copyFileSync(path.join(WEB, "calendar.ics"), path.join(d, "calendar.ics"));
+    return d;
+  };
+  const site = () => {
+    const w = fs.mkdtempSync(path.join(os.tmpdir(), "hl-web-"));
+    fs.mkdirSync(path.join(w, "data", "cells"), { recursive: true });
+    fs.writeFileSync(path.join(w, "data", "menu.json"), "OLD");
+    return w;
+  };
+
+  test("a good hand-off is taken in", () => {
+    const d = handoff(), w = site();
+    assert.deepEqual(accept(d, w), []);
+    assert.equal(fs.readFileSync(path.join(w, "data", "menu.json"), "utf8"), fs.readFileSync(path.join(WEB, "data", "menu.json"), "utf8"));
+  });
+
+  test("a bad hand-off is refused and nothing is written (the site keeps the old menu)", () => {
+    const cases = {
+      "extra page": d => fs.writeFileSync(path.join(d, "data", "evil.html"), "<script>"),
+      "app code": d => fs.writeFileSync(path.join(d, "app.js"), "alert(1)"),
+      "git folder": d => { fs.mkdirSync(path.join(d, ".git", "hooks"), { recursive: true }); fs.writeFileSync(path.join(d, ".git", "hooks", "post-commit"), "x"); },
+      "odd picture name": d => fs.writeFileSync(path.join(d, "data", "cells", "x.png"), PNG.sync.write(new PNG({ width: 2, height: 2 }))),
+      "not a PNG": d => fs.writeFileSync(path.join(d, "data", "cells", "2026-11-10.png"), "<svg/>"),
+      "script in menu": d => { const p = path.join(d, "data", "menu.json"); fs.writeFileSync(p, fs.readFileSync(p, "utf8").replace("Cheeseburger", "<img src=x onerror=alert(1)>")); },
+      "calendar edited": d => fs.appendFileSync(path.join(d, "calendar.ics"), "X-EVIL:1\r\n"),
+      "menu missing": d => fs.rmSync(path.join(d, "data", "menu.json")),
+      "prototype key": d => { const p = path.join(d, "data", "menu.json"); fs.writeFileSync(p, fs.readFileSync(p, "utf8").replace('"page"', '"__proto__": {}, "page"')); },
+    };
+    for (const [name, spoil] of Object.entries(cases)) {
+      const d = handoff(), w = site();
+      spoil(d);
+      assert.ok(accept(d, w).length > 0, name + " was accepted");
+      assert.equal(fs.readFileSync(path.join(w, "data", "menu.json"), "utf8"), "OLD", name + " wrote something");
+    }
+    // A link (where this computer allows making one).
+    const d = handoff(), w = site();
+    let linked = false;
+    try { fs.symlinkSync(path.join(WEB, "index.html"), path.join(d, "data", "cells", "2026-11-10.png")); linked = true; } catch (e) {}
+    if (linked) assert.ok(accept(d, w).some(p => /link/.test(p)));
+  });
+
+  test("the publishing Action keeps no token on disk and never applies patches", () => {
+    const yml = fs.readFileSync(path.join(WEB, "..", ".github", "workflows", "menu.yml"), "utf8");
+    assert.equal((yml.match(/persist-credentials: false/g) || []).length, 2);
+    assert.ok(!/git apply/.test(yml));
+    assert.match(yml, /env -i PATH="\$PATH" HOME="\$HOME" node menu\/accept\.mjs/);
+    assert.match(yml, /^permissions: \{\}$/m);
+    for (const u of yml.match(/uses: \S+/g)) assert.match(u, /@[0-9a-f]{40}$/, u + " isn't pinned to a commit");
+  });
+}
+
 console.log(failed ? `\n${failed} failed` : "\nAll passed. Day crops are in test/out/.");
 process.exit(failed ? 1 : 0);
