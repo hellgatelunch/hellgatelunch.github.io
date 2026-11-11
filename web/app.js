@@ -345,10 +345,15 @@
       return "<li>Tap the menu " + glyph(VDOTS) + " in Firefox.</li>"
         + "<li>Tap <strong>Add app to Home screen</strong> (or <strong>Install</strong>).</li>" + done;
     }
-    var inApp = /; wv\)|FBAN|FB_IAB|FBAV|Instagram|GSA\/|Line\/|Snapchat|LinkedInApp|Pinterest/i.test(ua);
-    return (inApp ? "<li>First open this page in <strong>Chrome</strong>: tap " + glyph(VDOTS) + " in this app and choose <strong>Open in Chrome</strong> (or <em>Open in browser</em>).</li>" : "")
-      + "<li>Tap the menu " + glyph(VDOTS) + " at the top right of Chrome.</li>"
-      + "<li>Tap <strong>Add to Home screen</strong>. It may say <strong>Install app</strong>.</li>" + done;
+    // Links opened from the Google app, Gmail, Messages, a QR scan, Facebook... open in that app's
+    // built-in browser, which looks like Chrome to the page but has no "Add to Home screen". So the
+    // first step is always "be in Chrome", with a button that hands the page to the real Chrome app.
+    var chrome = "intent://" + location.host + location.pathname + "#Intent;scheme=https;package=com.android.chrome;end";
+    return "<li>Make sure you're in <strong>Chrome</strong>. If this page opened inside another app, its "
+      + glyph(VDOTS) + " menu says <strong>Open in Chrome</strong>: tap that, or this button."
+      + '<a class="btn btn-quiet open-chrome" href="' + chrome + '">Open in Chrome</a></li>'
+      + "<li>In Chrome, tap the menu " + glyph(VDOTS) + " (top right, or bottom right if your address bar is at the bottom).</li>"
+      + "<li>Tap <strong>Add to Home screen</strong> (it may say <strong>Install app</strong>), then <strong>Install</strong> or <strong>Add</strong>. The Hawks icon appears on your home screen.</li>";
   }
 
   // Which steps fit this phone and browser.
