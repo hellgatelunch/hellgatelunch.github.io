@@ -353,7 +353,7 @@
       + glyph(VDOTS) + " menu says <strong>Open in Chrome</strong>: tap that, or this button."
       + '<a class="btn btn-quiet open-chrome" href="' + chrome + '">Open in Chrome</a></li>'
       + "<li>In Chrome, tap the menu " + glyph(VDOTS) + " (top right, or bottom right if your address bar is at the bottom).</li>"
-      + "<li>Tap <strong>Add to Home screen</strong> (it may say <strong>Install app</strong>), then <strong>Install</strong> or <strong>Add</strong>. The Hawks icon appears on your home screen.</li>";
+      + "<li>Tap <strong>Install and create shortcut</strong> (on older Chrome: <strong>Add to Home screen</strong> or <strong>Install app</strong>). If it asks, choose <strong>Install</strong>. The Hawks Lunch icon appears on your home screen.</li>";
   }
 
   // Which steps fit this phone and browser.

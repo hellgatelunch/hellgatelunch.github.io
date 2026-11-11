@@ -26,14 +26,16 @@ function sample(x, y) {
   return out;
 }
 
-function icon(size, file) {
+// opts.maskable: Android crops app icons to its own shape (circle, squircle...), keeping only the
+// middle 80% circle. So the maskable icon has no stripe and a smaller logo that fits inside it.
+function icon(size, file, opts = {}) {
   const png = new PNG({ width: size, height: size });
-  const lw = size * 0.8, lh = lw * logo.height / logo.width;     // logo: 80% of the width
-  const stripe = Math.max(2, Math.round(size * 0.045));           // gold stripe at the bottom
+  const lw = size * (opts.maskable ? 0.62 : 0.8), lh = lw * logo.height / logo.width; // logo width
+  const stripe = opts.maskable ? 0 : Math.max(2, Math.round(size * 0.045));         // gold stripe at the bottom
   const lx = (size - lw) / 2, ly = (size - stripe - lh) / 2;     // centered above the stripe
   const scale = logo.width / lw, S = 4;                           // 4x4 samples per pixel
   for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) {
-    const bg = y >= size - stripe ? GOLD : GREEN;
+    const bg = stripe && y >= size - stripe ? GOLD : GREEN;
     let acc = [0, 0, 0];
     for (let sy = 0; sy < S; sy++) for (let sx = 0; sx < S; sx++) {
       const px = x + (sx + 0.5) / S, py = y + (sy + 0.5) / S;
@@ -54,4 +56,6 @@ icon(32, "favicon-32.png");
 icon(180, "apple-touch-icon.png");
 icon(192, "icon-192.png");
 icon(512, "icon-512.png");
+icon(192, "icon-maskable-192.png", { maskable: true });
+icon(512, "icon-maskable-512.png", { maskable: true });
 console.log("Wrote icons to web/icons/");
