@@ -69,14 +69,18 @@ a { color: var(--brand); }
 /* Header: a slim Hawks-green band, so the brand is there but today's answer still comes first */
 .top { margin: 0 0 12px; }
 .brand-band {
-  display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 2px 12px;
-  padding: 10px 16px;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 8px 18px 8px 12px;
   border-radius: 16px;
   background: var(--band);
   border-bottom: 3px solid var(--band-accent);
 }
-.brand-band .b-name { color: var(--on-band); font-size: 18px; font-weight: 800; letter-spacing: .01em; }
-.brand-band .b-sub { color: var(--band-accent); font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.brand-band .b-logo { display: block; height: 64px; width: auto; }
+.brand-band .b-sub {
+  color: var(--band-accent);
+  font-size: 13px; font-weight: 800; letter-spacing: .08em; line-height: 1.25; text-transform: uppercase;
+  text-align: right;
+}
 
 /* Meal toggles, under the top card */
 .show-row { display: flex; align-items: center; gap: 10px; margin: 0 0 22px; }
