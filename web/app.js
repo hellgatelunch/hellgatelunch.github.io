@@ -322,25 +322,82 @@
     renderToggles(); renderHero(); renderWeek();
   }
 
-  // Offer "Add to Home Screen": on iPhone as instructions (Safari has no install button),
-  // on Android/Chrome as a real Install button. Hidden once dismissed or installed.
+  // "Add to your home screen". Android/Chrome: a real Install prompt. iPhone: Apple doesn't let a
+  // site add itself, so Add shows the steps for Safari's Share menu (and, inside apps like Gmail,
+  // Facebook or the Google app, says to open the page in Safari first). Hidden once the app runs
+  // from the home screen, or after "×".
   var installEvent = null;
-  window.addEventListener("beforeinstallprompt", function (e) { e.preventDefault(); installEvent = e; installHint(); });
-  window.addEventListener("appinstalled", function () { $("install").hidden = true; store("hl-install-hint", "1"); });
-  function installHint() {
-    var ios = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
-    var standalone = navigator.standalone || matchMedia("(display-mode: standalone)").matches;
-    if (standalone || store("hl-install-hint") === "1" || !M || (!ios && !installEvent)) return;
-    if (installEvent) {
-      $("install-text").innerHTML = "<strong>Put it on your home screen</strong> to open it like an app.";
-      $("install-go").hidden = false;
-      $("install-go").onclick = function () {
-        installEvent.prompt();
-        installEvent.userChoice.then(function () { installEvent = null; $("install").hidden = true; });
-      };
+  var SHARE = '<svg viewBox="0 0 24 24"><path d="M12 15V3"/><path d="M8 7l4-4 4 4"/><path d="M7 10H6a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2h-1"/></svg>';
+  var PLUS = '<svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3.5"/><path d="M12 8.5v7M8.5 12h7"/></svg>';
+  var DOTS = '<svg viewBox="0 0 24 24"><circle cx="5.5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="18.5" cy="12" r="1.4"/></svg>';
+  function glyph(s) { return '<span class="glyph" aria-hidden="true">' + s + "</span>"; }
+
+  // Which steps fit this phone and browser.
+  function installSteps(ua) {
+    var addSteps = "<li>Scroll down and tap <strong>Add to Home Screen</strong> " + glyph(PLUS) + "</li>"
+      + "<li>Tap <strong>Add</strong>. The Hawks icon appears on your home screen.</li>";
+    if (/CriOS|FxiOS|EdgiOS/.test(ua)) {
+      return "<li>Tap <strong>Share</strong> " + glyph(SHARE) + " in the address bar.</li>" + addSteps;
     }
-    $("install").hidden = false;
-    $("install-close").onclick = function () { $("install").hidden = true; store("hl-install-hint", "1"); };
+    // Apps that open links in their own browser (Facebook, Instagram, the Google app...) have no Add to Home Screen.
+    var inApp = /FBAN|FBAV|Instagram|GSA\/|Line\/|Snapchat|LinkedInApp|Pinterest|Twitter/i.test(ua) || !/Safari\//.test(ua);
+    var openInSafari = inApp
+      ? "<li>First open this page in <strong>Safari</strong>: tap " + glyph(DOTS) + " or the share icon in this app and choose <strong>Open in Safari</strong> (or <em>Open in Browser</em>).</li>"
+      : "";
+    return openInSafari
+      + "<li>Tap <strong>Share</strong> " + glyph(SHARE) + " at the bottom of Safari."
+      + '<span class="tip">Don\'t see it? Tap ' + glyph(DOTS) + " first, then Share.</span></li>"
+      + addSteps;
+  }
+
+  window.addEventListener("beforeinstallprompt", function (e) { e.preventDefault(); installEvent = e; installCard(); });
+  window.addEventListener("appinstalled", function () { $("install").hidden = true; $("install-again").hidden = true; });
+
+  // Can this phone add the app to its home screen, and hasn't it already?
+  function canInstall() {
+    var ua = navigator.userAgent;
+    var ios = /iphone|ipad|ipod/i.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+    var standalone = navigator.standalone || matchMedia("(display-mode: standalone)").matches;
+    return !standalone && (ios || !!installEvent);
+  }
+
+  // The card under the meal tiles. "×" tucks it away into a small link at the bottom of the page,
+  // which brings it back (with the steps open).
+  function installCard(openSteps) {
+    if (!M || !canInstall()) { $("install").hidden = true; $("install-again").hidden = true; return; }
+    var tucked = store("hl-install-dismissed") === "1";
+    $("install").hidden = tucked;
+    $("install-again").hidden = !tucked;
+    var go = $("install-go"), steps = $("install-steps");
+    if (installEvent) {
+      // Android / Chrome: the browser's own install prompt.
+      go.textContent = "Install";
+      go.removeAttribute("aria-expanded");
+      steps.hidden = true;
+      go.onclick = function () {
+        installEvent.prompt();
+        installEvent.userChoice.then(function () { installEvent = null; installCard(); });
+      };
+    } else {
+      steps.innerHTML = installSteps(navigator.userAgent);
+      var setOpen = function (open) {
+        steps.hidden = !open;
+        go.setAttribute("aria-expanded", String(open));
+        go.textContent = open ? "Done" : "Add"; // "Done" only folds the steps away
+      };
+      setOpen(!!openSteps);
+      go.onclick = function () { setOpen(steps.hidden); };
+    }
+    $("install-close").onclick = function () {
+      store("hl-install-dismissed", "1");
+      installCard();
+    };
+    $("install-again-btn").onclick = function () {
+      store("hl-install-dismissed", "0");
+      installCard(true);
+      $("install").scrollIntoView({ behavior: "smooth", block: "center" });
+      $("install-go").focus({ preventScroll: true });
+    };
   }
 
   // Works offline after the first visit (and lets Android offer to install it).
@@ -380,7 +437,7 @@
         page: data.page,
       };
       render();
-      installHint();
+      installCard();
       // Coming back to the app later in the day (or the next day): recompute.
       var lastKey = key(now.day) + now.hour;
       document.addEventListener("visibilitychange", function () {

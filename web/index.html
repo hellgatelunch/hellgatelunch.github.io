@@ -32,6 +32,19 @@
     <div id="toggles" class="toggles" role="group" aria-label="Meals to show"></div>
   </div>
 
+  <section id="install" class="install" aria-labelledby="install-title" hidden>
+    <div class="install-row">
+      <img class="install-icon" src="icons/apple-touch-icon.png" width="44" height="44" alt="">
+      <div class="install-text">
+        <h2 id="install-title">Add to your home screen</h2>
+        <p>Opens like an app, one tap away.</p>
+      </div>
+      <button id="install-go" class="btn" type="button" aria-expanded="false" aria-controls="install-steps">Add</button>
+      <button id="install-close" type="button" aria-label="Don't show this again">×</button>
+    </div>
+    <ol id="install-steps" class="install-steps" hidden></ol>
+  </section>
+
   <section class="week" aria-labelledby="week-title">
     <div class="week-head">
       <h2 id="week-title">This week</h2>
@@ -65,11 +78,10 @@
     </div>
   </section>
 
-  <aside id="install" class="install" hidden>
-    <p id="install-text"><strong>Put it on your home screen:</strong> tap <span class="share-word">Share</span>, then <em>Add to Home Screen</em>.</p>
-    <button id="install-go" class="btn" type="button" hidden>Install</button>
-    <button id="install-close" type="button" aria-label="Dismiss">×</button>
-  </aside>
+  <p id="install-again" class="install-again" hidden>
+    <button id="install-again-btn" type="button"><img src="icons/favicon-32.png" width="20" height="20" alt="">Add to your home screen</button>
+  </p>
+
 
 </main>
 <script src="app.js"></script>
