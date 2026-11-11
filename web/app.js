@@ -322,18 +322,38 @@
     renderToggles(); renderHero(); renderWeek();
   }
 
-  // "Add to your home screen". Android/Chrome: a real Install prompt. iPhone: Apple doesn't let a
-  // site add itself, so Add shows the steps for Safari's Share menu (and, inside apps like Gmail,
-  // Facebook or the Google app, says to open the page in Safari first). Hidden once the app runs
-  // from the home screen, or after "×".
+  // "Add to your home screen". When Chrome offers its own installer, the button is a real Install.
+  // Otherwise (always on iPhone; often on Android, where Chrome waits until a site has been used a
+  // while, and Samsung Internet, Firefox and in-app browsers never offer it) Add shows the menu
+  // steps for this browser. Hidden once the app runs from the home screen; "×" tucks it away.
   var installEvent = null;
   var SHARE = '<svg viewBox="0 0 24 24"><path d="M12 15V3"/><path d="M8 7l4-4 4 4"/><path d="M7 10H6a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2h-1"/></svg>';
   var PLUS = '<svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3.5"/><path d="M12 8.5v7M8.5 12h7"/></svg>';
   var DOTS = '<svg viewBox="0 0 24 24"><circle cx="5.5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="18.5" cy="12" r="1.4"/></svg>';
+  var VDOTS = '<svg viewBox="0 0 24 24"><circle cx="12" cy="5.5" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="12" cy="18.5" r="1.4"/></svg>';
+  var MENU = '<svg viewBox="0 0 24 24"><path d="M5 7h14M5 12h14M5 17h14"/></svg>';
   function glyph(s) { return '<span class="glyph" aria-hidden="true">' + s + "</span>"; }
+
+  // Android: steps for Chrome, Samsung Internet or Firefox; inside other apps, open in Chrome first.
+  function androidSteps(ua) {
+    var done = "<li>Tap <strong>Install</strong> or <strong>Add</strong>. The Hawks icon appears on your home screen.</li>";
+    if (/SamsungBrowser/.test(ua)) {
+      return "<li>Tap the menu " + glyph(MENU) + " at the bottom of Samsung Internet.</li>"
+        + "<li>Tap <strong>Add page to</strong>, then <strong>Home screen</strong>.</li>" + done;
+    }
+    if (/Firefox\//.test(ua)) {
+      return "<li>Tap the menu " + glyph(VDOTS) + " in Firefox.</li>"
+        + "<li>Tap <strong>Add app to Home screen</strong> (or <strong>Install</strong>).</li>" + done;
+    }
+    var inApp = /; wv\)|FBAN|FB_IAB|FBAV|Instagram|GSA\/|Line\/|Snapchat|LinkedInApp|Pinterest/i.test(ua);
+    return (inApp ? "<li>First open this page in <strong>Chrome</strong>: tap " + glyph(VDOTS) + " in this app and choose <strong>Open in Chrome</strong> (or <em>Open in browser</em>).</li>" : "")
+      + "<li>Tap the menu " + glyph(VDOTS) + " at the top right of Chrome.</li>"
+      + "<li>Tap <strong>Add to Home screen</strong>. It may say <strong>Install app</strong>.</li>" + done;
+  }
 
   // Which steps fit this phone and browser.
   function installSteps(ua) {
+    if (/android/i.test(ua)) return androidSteps(ua);
     var addSteps = "<li>Scroll down and tap <strong>Add to Home Screen</strong> " + glyph(PLUS) + "</li>"
       + "<li>Tap <strong>Add</strong>. The Hawks icon appears on your home screen.</li>";
     if (/CriOS|FxiOS|EdgiOS/.test(ua)) {
@@ -358,7 +378,7 @@
     var ua = navigator.userAgent;
     var ios = /iphone|ipad|ipod/i.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
     var standalone = navigator.standalone || matchMedia("(display-mode: standalone)").matches;
-    return !standalone && (ios || !!installEvent);
+    return !standalone && (ios || /android/i.test(ua) || !!installEvent);
   }
 
   // The card under the meal tiles. "×" tucks it away into a small link at the bottom of the page,
