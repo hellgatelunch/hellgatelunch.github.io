@@ -8,6 +8,6 @@ import QRCode from "qrcode";
 const SITE = process.argv[2] || "https://hellgatelunch.github.io/";
 const OUT = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "web", "qr.svg");
 
-const svg = await QRCode.toString(SITE, { type: "svg", errorCorrectionLevel: "M", margin: 2, color: { dark: "#1D2A24", light: "#FFFFFF" } });
+const svg = await QRCode.toString(SITE, { type: "svg", errorCorrectionLevel: "M", margin: 2, color: { dark: "#1E2A1C", light: "#FFFFFF" } });
 fs.writeFileSync(OUT, svg);
 console.log(`Wrote web/qr.svg for ${SITE}`);

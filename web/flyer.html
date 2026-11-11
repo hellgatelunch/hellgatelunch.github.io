@@ -6,13 +6,16 @@
 <title>Hellgate Lunch flyer</title>
 <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
 <style>
-  :root { --ink: #1D2A24; --muted: #5D6B63; --accent: #C9541A; --bg: #F4F1EA; }
+  :root { --ink: #1E2A1C; --muted: #56634F; --accent: #29610B; --gold: #FCD52D; --bg: #F3F5EE; }
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; }
   .tools { max-width: 640px; margin: 0 auto; padding: 16px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; font-size: 14px; }
   .tools button { border: 0; border-radius: 999px; padding: 9px 16px; background: var(--accent); color: #fff; font: inherit; font-weight: 650; cursor: pointer; }
   .tools a { color: var(--accent); }
-  .sheet { max-width: 640px; margin: 0 auto 32px; background: #fff; border-radius: 18px; padding: 36px 36px 30px; }
+  .sheet { max-width: 640px; margin: 0 auto 32px; background: #fff; border-radius: 18px; padding: 0 36px 30px; overflow: hidden; }
+  .band { margin: 0 -36px 26px; padding: 18px 36px 14px; background: var(--accent); border-bottom: 5px solid var(--gold); color: #fff; }
+  .band .eyebrow { color: var(--gold); }
+  .band h1 { color: #fff; }
   .eyebrow { margin: 0; font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
   h1 { margin: 4px 0 6px; font-size: 38px; line-height: 1.1; }
   .lede { margin: 0 0 22px; font-size: 18px; }
@@ -25,6 +28,7 @@
   .url { margin: 22px 0 0; font-size: 17px; font-weight: 700; word-break: break-all; }
   .fine { margin: 8px 0 0; font-size: 12px; color: var(--muted); }
   @media print {
+    .band { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     @page { margin: 12mm; }
     body { background: #fff; }
     .tools { display: none; }
@@ -39,8 +43,10 @@
   <a href="./">Back to the menu</a>
 </div>
 <main class="sheet">
-  <p class="eyebrow">Hellgate Elementary K-8</p>
-  <h1>School breakfast &amp; lunch, on your phone</h1>
+  <div class="band">
+    <p class="eyebrow">Hellgate Hawks · Elementary K-8</p>
+    <h1>School breakfast &amp; lunch, on your phone</h1>
+  </div>
   <p class="lede">See today's breakfast, lunch and middle school Breakfast @ Break, plus the whole week, taken from the school's own menus and updated when new ones are posted.</p>
   <div class="row">
     <div class="qr"><img src="qr.svg" alt="QR code for the Hellgate Lunch website"></div>

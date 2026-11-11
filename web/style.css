@@ -1,36 +1,51 @@
-/* Hellgate meals. Each meal has one color, used for its label, bar, chip and icon,
-   so parents learn "amber = breakfast, teal = break, orange = lunch" at a glance. */
+/* Hellgate Hawks meals. Brand: Hawks green #29610B, gold #FCD52D, charcoal #313D30.
+   Each meal has one color, used for its label, bar, chip and icon:
+   gold = breakfast, slate blue = break, Hawks green = lunch. */
 :root {
-  --bg: #F4F1EA;
+  --bg: #F3F5EE;
   --card: #FFFFFF;
-  --ink: #1D2A24;
-  --muted: #5D6B63;
-  --line: #E6E1D6;
-  --brand: #B8481A;        /* links and the share button */
+  --ink: #1E2A1C;
+  --muted: #56634F;
+  --line: #E1E6DA;
+  --hawks-green: #29610B;
+  --hawks-gold: #FCD52D;
+  --band: #29610B;          /* header band */
+  --on-band: #FFFFFF;
+  --band-accent: #FCD52D;
+  --brand: #29610B;         /* buttons, links, today */
   --on-brand: #FFFFFF;
-  --breakfast: #9A5F0E;
-  --breakfast-tint: #FBEFD9;
-  --break: #2A7364;
-  --break-tint: #E0F0EB;
-  --lunch: #B8481A;
-  --lunch-tint: #FBE7DC;
+  --breakfast: #7A5E00;     /* label text (gold, darkened to read on white) */
+  --breakfast-bar: #E0B419;
+  --breakfast-tint: #FFF4C2;
+  --break: #2B5B86;
+  --break-bar: #2B5B86;
+  --break-tint: #E2ECF6;
+  --lunch: #29610B;
+  --lunch-bar: #29610B;
+  --lunch-tint: #E2EFD8;
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #151A17;
-    --card: #1E2622;
-    --ink: #E9EEE9;
-    --muted: #9EAAA3;
-    --line: #2C3631;
-    --brand: #F08A4B;
-    --on-brand: #1A120D;
-    --breakfast: #E8B04B;
-    --breakfast-tint: #3A2F1A;
-    --break: #6CC3AE;
-    --break-tint: #1B3631;
-    --lunch: #F08A4B;
-    --lunch-tint: #3A2A20;
+    --bg: #121711;
+    --card: #1C231B;
+    --ink: #EAF0E6;
+    --muted: #A3AE9F;
+    --line: #2B3429;
+    --band: #1F4A08;
+    --on-band: #FFFFFF;
+    --band-accent: #F2CC3D;
+    --brand: #F2CC3D;
+    --on-brand: #17200F;
+    --breakfast: #F2CC3D;
+    --breakfast-bar: #F2CC3D;
+    --breakfast-tint: #3A3317;
+    --break: #8DB9E6;
+    --break-bar: #8DB9E6;
+    --break-tint: #1D2B3A;
+    --lunch: #8DCB62;
+    --lunch-bar: #8DCB62;
+    --lunch-tint: #22341A;
     color-scheme: dark;
   }
 }
@@ -51,10 +66,17 @@ p, h1, h2, h3 { margin: 0; }
 }
 a { color: var(--brand); }
 
-/* Header: one quiet line, so today's answer is the first thing you see */
-.top { margin: 0 0 10px; }
-.brand-line { font-size: 15px; font-weight: 500; color: var(--muted); }
-.brand-line strong { color: var(--ink); font-weight: 750; }
+/* Header: a slim Hawks-green band, so the brand is there but today's answer still comes first */
+.top { margin: 0 0 12px; }
+.brand-band {
+  display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 2px 12px;
+  padding: 10px 16px;
+  border-radius: 16px;
+  background: var(--band);
+  border-bottom: 3px solid var(--band-accent);
+}
+.brand-band .b-name { color: var(--on-band); font-size: 18px; font-weight: 800; letter-spacing: .01em; }
+.brand-band .b-sub { color: var(--band-accent); font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
 
 /* Meal toggles, under the top card */
 .show-row { display: flex; align-items: center; gap: 10px; margin: 0 0 22px; }
@@ -62,9 +84,9 @@ a { color: var(--brand); }
 .show-row .toggles { flex: 1; margin: 0; }
 
 /* Meal colors, by class */
-.m-breakfast { --meal: var(--breakfast); --meal-tint: var(--breakfast-tint); }
-.m-break { --meal: var(--break); --meal-tint: var(--break-tint); }
-.m-lunch { --meal: var(--lunch); --meal-tint: var(--lunch-tint); }
+.m-breakfast { --meal: var(--breakfast); --meal-bar: var(--breakfast-bar); --meal-tint: var(--breakfast-tint); }
+.m-break { --meal: var(--break); --meal-bar: var(--break-bar); --meal-tint: var(--break-tint); }
+.m-lunch { --meal: var(--lunch); --meal-bar: var(--lunch-bar); --meal-tint: var(--lunch-tint); }
 .icon { width: 1em; height: 1em; flex: none; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
 
 /* Meal on/off chips */
@@ -119,10 +141,10 @@ a { color: var(--brand); }
   padding: 16px 18px 6px;
   margin-bottom: 28px;
 }
-.when { font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.when { font-size: 12px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--brand); }
 .date { margin-top: 1px; font-size: 25px; font-weight: 750; letter-spacing: -.01em; }
 .hero .meal {
-  border-left: 4px solid var(--meal);
+  border-left: 4px solid var(--meal-bar);
   border-radius: 0;
   padding: 2px 0 2px 12px;
   margin: 16px 0;
@@ -152,11 +174,11 @@ h2 { font-size: 20px; }
 
 .days { display: grid; gap: 10px; }
 .card { background: var(--card); border-radius: 16px; padding: 12px 14px 8px; }
-.card.hl { box-shadow: inset 0 0 0 2px var(--ink); }
+.card.hl { box-shadow: inset 0 0 0 2px var(--brand); }
 .card.off { padding-bottom: 12px; }
 .head { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 700; color: var(--ink); }
 .off .head { color: var(--muted); }
-.pill { padding: 2px 8px; border-radius: 999px; background: var(--ink); color: var(--card); font-size: 11px; font-weight: 700; }
+.pill { padding: 2px 8px; border-radius: 999px; background: var(--brand); color: var(--on-brand); font-size: 11px; font-weight: 700; }
 /* One row per meal: label column, then what's served. Labels line up down the whole week. */
 .row {
   display: grid;
@@ -260,7 +282,7 @@ h2 { font-size: 20px; }
   border-radius: 12px; background: var(--bg);
   font-size: 13.5px; color: var(--muted);
 }
-.hint .icon { font-size: 16px; color: var(--lunch); flex: none; }
+.hint .icon { font-size: 16px; color: var(--brand); flex: none; }
 .hint span { flex: 1; }
 .hint button {
   flex: none; border: 0; border-radius: 999px; padding: 6px 12px;

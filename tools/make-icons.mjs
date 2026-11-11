@@ -1,4 +1,4 @@
-// Draws the app icons (a plate on orange) as PNGs into web/icons/. Run: node tools/make-icons.mjs
+// Draws the app icons (a white plate with a gold rim on Hawks green) as PNGs into web/icons/. Run: node tools/make-icons.mjs
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -7,7 +7,7 @@ import { PNG } from "pngjs";
 const DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "web", "icons");
 fs.mkdirSync(DIR, { recursive: true });
 
-const ORANGE = [201, 84, 26], WHITE = [255, 255, 255], RIM = [246, 226, 212];
+const GREEN = [41, 97, 11], WHITE = [255, 255, 255], RIM = [252, 213, 45];
 
 function icon(size, file) {
   const png = new PNG({ width: size, height: size });
@@ -16,7 +16,7 @@ function icon(size, file) {
     let acc = [0, 0, 0];
     for (let sy = 0; sy < S; sy++) for (let sx = 0; sx < S; sx++) {
       const px = x + (sx + 0.5) / S, py = y + (sy + 0.5) / S, r = Math.hypot(px - c, py - c) / size;
-      let col = ORANGE;
+      let col = GREEN;
       if (r < 0.36) col = WHITE;          // plate
       if (r < 0.36 && r > 0.33) col = RIM; // rim line
       if (r < 0.24 && r > 0.225) col = RIM; // inner well
