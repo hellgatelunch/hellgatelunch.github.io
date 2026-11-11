@@ -91,24 +91,23 @@ a { color: var(--brand); }
 .m-breakfast { --meal: var(--breakfast); --meal-bar: var(--breakfast-bar); --meal-tint: var(--breakfast-tint); }
 .m-break { --meal: var(--break); --meal-bar: var(--break-bar); --meal-tint: var(--break-tint); }
 .m-lunch { --meal: var(--lunch); --meal-bar: var(--lunch-bar); --meal-tint: var(--lunch-tint); }
-.icon { width: 1em; height: 1em; flex: none; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.icon { width: 1em; height: 1em; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
 /* Meal on/off chips */
 .toggles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin: 0 0 16px; }
+/* Equal tiles: food icon on top, meal name below */
 .chip {
-  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px;
-  min-height: 44px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+  min-height: 60px;
   border: 1.5px solid var(--line);
   border-radius: 14px;
-  padding: 5px 4px;
+  padding: 6px 4px;
   background: transparent;
   color: var(--muted);
   font: inherit; font-size: 14px; font-weight: 650;
   cursor: pointer;
 }
-.chip-name { display: inline-flex; align-items: center; gap: 6px; }
-.chip-sub { font-size: 11px; font-weight: 500; color: var(--muted); }
-.chip .icon { font-size: 15px; color: var(--meal); }
+.chip .icon { font-size: 24px; color: var(--meal); }
 .chip[aria-pressed="true"] { background: var(--meal-tint); border-color: var(--meal-tint); color: var(--ink); }
 .chip[aria-pressed="false"] .icon { color: var(--muted); }
 .chip:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
