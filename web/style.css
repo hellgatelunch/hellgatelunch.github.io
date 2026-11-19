@@ -84,7 +84,7 @@ a { color: var(--brand); }
 }
 .brand-band .b-logo { display: block; height: 64px; width: auto; }
 .brand-band .b-sub {
-  color: var(--band-accent);
+  color: #FFFFFF;
   font-size: 13px; font-weight: 800; letter-spacing: .08em; line-height: 1.25; text-transform: uppercase;
   text-align: right;
 }
