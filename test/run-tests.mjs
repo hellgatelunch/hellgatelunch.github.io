@@ -315,7 +315,7 @@ console.log("iPhone widget (hellgate-lunch.js, with a stand-in for Scriptable)")
     class Color { constructor(h) { this.hex = h; } static dynamic(a, b) { return { light: a, dark: b }; } }
     const font = n => s => ({ name: n, size: s });
     const Font = { heavySystemFont: font("heavy"), boldSystemFont: font("bold"), semiboldSystemFont: font("semibold"), systemFont: font("regular") };
-    class Request { constructor(u) { this.url = u; } async loadJSON() { if (!online) throw new Error("offline"); assert.equal(this.url, "https://hellgatelunch.github.io/data/menu.json"); return JSON.parse(JSON.stringify(menu)); } }
+    class Request { constructor(u) { this.url = u; } async loadJSON() { if (!online) throw new Error("offline"); assert.equal(this.url, "https://hawkslunch.netlify.app/data/menu.json"); return JSON.parse(JSON.stringify(menu)); } }
     const fmApi = {
       documentsDirectory: () => "/docs", joinPath: (a, b) => a + "/" + b,
       fileExists: p => files.has(p) || p === "/docs/hellgate-lunch", createDirectory() {},
@@ -345,7 +345,7 @@ console.log("iPhone widget (hellgate-lunch.js, with a stand-in for Scriptable)")
     const t = f.texts.map(x => x.text);
     assert.equal(f.calls.setWidget, 1);
     assert.deepEqual(t, ["TOMORROW · WED", "BREAKFAST", "Honey Bun", "LUNCH", "Chicken Strips"]);
-    assert.equal(f.widget.url, "https://hellgatelunch.github.io/");
+    assert.equal(f.widget.url, "https://hawkslunch.netlify.app/");
     assert.ok(f.files.has("/docs/hellgate-lunch/menu.json"), "menu saved for offline use");
   });
 

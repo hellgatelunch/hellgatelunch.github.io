@@ -2,11 +2,11 @@
 
 Breakfast, middle school Breakfast @ Break and lunch at Hellgate Elementary K-8 (Hawks), straight from the school's own monthly menus.
 
-- **The website: <https://hellgatelunch.github.io/>.** Open it on any phone or computer. On iPhone, tap Share → *Add to Home Screen*; on Android, tap *Install*. It opens like an app and works offline. No setup.
+- **The website: <https://hawkslunch.netlify.app/>.** Open it on any phone or computer. On iPhone, tap Share → *Add to Home Screen*; on Android, tap *Install*. It opens like an app and works offline. No setup.
 - **Your phone's calendar.** On the website, *Get it in your calendar* adds each school day's lunch to your calendar (and its widgets).
 - **The iPhone widget** (below). A home-screen widget with the next school day's breakfast and lunch.
 
-To spread the word, use the [printable flyer with a QR code](https://hellgatelunch.github.io/flyer.html) (not linked from the app itself).
+To spread the word, use the [printable flyer with a QR code](https://hawkslunch.netlify.app/flyer.html) (not linked from the app itself).
 
 ## The iPhone widget
 
@@ -38,7 +38,7 @@ Get **Scriptable** (by Simon B. Støvring) from the App Store. It's free.
 4. While the apps are still jiggling, tap the new widget. If it doesn't open its settings, long-press it and choose **Edit Widget**.
 5. Set:
    - **Script:** Hawks Lunch
-   - **When Interacting:** Open URL, with the URL `https://hellgatelunch.github.io/`
+   - **When Interacting:** Open URL, with the URL `https://hawkslunch.netlify.app/`
    - **Parameter:** leave empty for breakfast and lunch. Or type `lunch`, `breakfast`, `all` (adds the middle school break), or a mix like `breakfast, break`.
 6. Tap outside the panel, then tap **Done**.
 
@@ -52,10 +52,10 @@ On the website, **Get it in your calendar**:
 
 - **iPhone:** tap **iPhone**, then **Subscribe**.
 - **Android / Google:** Google only lets you add a calendar from a computer.
-  1. On a computer signed in to Google, go to **hellgatelunch.github.io/google** and click **Add**.
+  1. On a computer signed in to Google, go to **hawkslunch.netlify.app/google** and click **Add**.
   2. On the Android phone, open the **Google Calendar** app › **☰** › **Settings**. Under the account (tap **Show more** if needed), tap **Hawks Lunch** and turn on **Sync**. Calendars added from a computer start with sync off. Calendars subscribed before the rename are called **Hellgate Lunch** (or show the web address).
   3. Back in **☰**, make sure the calendar is ticked, then tap **Refresh**.
-- **Samsung Calendar, Outlook, others:** add `https://hellgatelunch.github.io/calendar.ics` as a subscribed calendar ("from URL").
+- **Samsung Calendar, Outlook, others:** add `https://hawkslunch.netlify.app/calendar.ics` as a subscribed calendar ("from URL").
 
 Each school day gets an all-day event titled with lunch ("Lunch: Cheeseburger"), with breakfast, break and lunch in the notes. Days off get no event. It refreshes on its own.
 
@@ -83,7 +83,7 @@ The website:
 
 - Before 2 PM (Montana time) the top card shows today's meals; after 2 PM, the next school day. Below it is the week, with arrows (or ← →) to flip weeks.
 - Colors are Hawks green `#29610B` and gold `#FCD52D`. Each meal has one color and icon everywhere: gold with a halved egg for breakfast, slate blue with an apple for Breakfast @ Break, green with a fork and knife for lunch. The meal toggles are equal tiles: food icon on top, meal name below.
-- The meal toggles (Breakfast / Break / Lunch tiles) hide meals a family doesn't need. **Pack or buy?**: the heart and thumbs-down mark foods a kid likes or not, saved separately for each meal; disliked lunches show "Maybe pack a lunch". Both are stored only in that phone's browser (the app asks the browser to keep them).
+- The meal toggles (Breakfast / Break / Lunch tiles) hide meals a family doesn't need. A **heart** on every meal marks a kid's favorite foods (remembered per food, so it shows again whenever that food comes back). Each school day's lunch has a **School | Home** switch, and the week ends with a tally ("3 at school · 2 from home"). All of it is stored only in that phone's browser (the app asks the browser to keep it).
 - `web/sw.js` (service worker) keeps the last menu so the app opens offline. Bump its `VERSION` when the app's own files change.
 - Logo and icons: `node tools/make-logo.mjs assets/hawks-logo-source.png`, then `node tools/make-icons.mjs` (also makes the Android "maskable" icons, with the logo sized to survive Android's circle/squircle crop). QR code: `node tools/make-qr.mjs`.
 - To force a refresh: the repository's **Actions** tab → *Refresh menu and publish site* → **Run workflow**. Publishing waits a moment and retries once if GitHub briefly can't find the uploaded site ("artifact not found"). If a run still fails that way, start a new run rather than re-running the failed one.

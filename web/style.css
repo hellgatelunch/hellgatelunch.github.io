@@ -237,54 +237,41 @@ h2 { font-size: 20px; }
   color: var(--muted); font-size: 22px; line-height: 1; cursor: pointer;
 }
 
-/* Pack or buy?: rating buttons and verdicts */
+/* Favorites (heart on every meal) and School / Home for each lunch */
 .meal-head { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 10px; }
 .main-line { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-.rate { display: inline-flex; gap: 2px; flex: none; margin: -6px -8px -6px 0; }
-.row-rate .rate { margin: 0; }
-.rate-btn {
-  width: 40px; height: 40px;
+.fav-btn {
+  flex: none; width: 40px; height: 40px; margin: -6px -8px -6px 0;
   display: inline-flex; align-items: center; justify-content: center;
-  border: 0; border-radius: 12px;
-  background: transparent;
-  color: var(--muted);
-  font-size: 20px;
-  cursor: pointer;
+  border: 0; border-radius: 12px; background: transparent;
+  color: var(--muted); font-size: 20px; cursor: pointer;
 }
-.rate-btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 1px; }
-.rate-btn.like[aria-pressed="true"] { color: var(--meal); background: var(--meal-tint); }
-.rate-btn.like[aria-pressed="true"] .icon { fill: currentColor; }
-.rate-btn.nope[aria-pressed="true"] { color: var(--ink); background: var(--line); }
-.rate-btn.nope[aria-pressed="true"] .icon { fill: currentColor; }
+.fav-btn:focus-visible, .plan-btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 1px; }
+.fav-btn[aria-pressed="true"] { color: var(--meal); }
+.fav-btn[aria-pressed="true"] .icon { fill: currentColor; }
+.row .fav-btn { width: 32px; height: 32px; margin: -6px -4px -6px 0; font-size: 16px; vertical-align: middle; }
 .icon.filled { fill: currentColor; }
-.verdict {
-  display: inline-flex; align-items: center; gap: 5px;
-  padding: 2px 9px; border-radius: 999px;
-  font-size: 12px; font-weight: 700; letter-spacing: 0; text-transform: none;
-}
-.verdict .icon { font-size: 13px; }
-.verdict.fav { background: var(--meal-tint); color: var(--ink); }
-.verdict.fav .icon { color: var(--meal); }
-.verdict.pack { background: var(--ink); color: var(--card); }
-.verdict.meh { background: var(--line); color: var(--muted); }
 
-/* Week: the main item is a quiet button that opens the rating buttons */
-.main-btn {
-  display: inline; padding: 0; border: 0; background: none;
-  color: inherit; font: inherit; font-weight: 700; text-align: left;
-  cursor: pointer;
+.plan-line { display: block; margin-top: 10px; }
+.row .plan-line { margin-top: 6px; }
+.plan { display: inline-flex; border-radius: 999px; background: var(--bg); padding: 3px; gap: 2px; }
+.plan-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  min-height: 36px; padding: 0 14px;
+  border: 0; border-radius: 999px; background: transparent;
+  color: var(--muted); font: inherit; font-size: 14px; font-weight: 650; cursor: pointer;
 }
-.main-btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; border-radius: 4px; }
-.mark { display: inline-flex; vertical-align: -2px; margin-left: 5px; }
-.mark.fav { color: var(--meal); font-size: 14px; }
-.mark.meh { color: var(--muted); font-size: 13px; }
-.mark.pack {
-  padding: 0 7px; border-radius: 999px;
-  background: var(--ink); color: var(--card);
-  font-size: 11px; font-weight: 700; line-height: 18px; vertical-align: 1px;
-}
-.row-rate { display: flex; align-items: center; gap: 6px; margin-top: 4px; }
-.rate-help { font-size: 12.5px; color: var(--muted); }
+.plan-btn .icon { font-size: 16px; }
+.plan-btn.school[aria-pressed="true"] { background: var(--lunch-tint); color: var(--ink); }
+.plan-btn.school[aria-pressed="true"] .icon { color: var(--lunch); }
+.plan-btn.home[aria-pressed="true"] { background: var(--breakfast-tint); color: var(--ink); }
+.plan-btn.home[aria-pressed="true"] .icon { color: var(--breakfast); }
+.plan-sm .plan-btn { min-height: 30px; padding: 0 11px; font-size: 13px; }
+.plan-sm .plan-btn .icon { font-size: 14px; }
+
+/* Week tally */
+.tally { margin: 12px 4px 0; font-size: 15px; color: var(--ink); }
+.tally strong { font-weight: 700; }
 
 /* First-time hint */
 .hint {

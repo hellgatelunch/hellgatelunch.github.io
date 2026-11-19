@@ -1,11 +1,11 @@
 // Hawks Lunch — Scriptable widget (small or medium)
 // Shows the next school day's breakfast and lunch at Hellgate Elementary K-8 (Hawks).
-// Tap it to open the full week at hellgatelunch.github.io.
+// Tap it to open the full week at hawkslunch.netlify.app.
 //
 // Which meals: long-press the widget › Edit Widget › Parameter. Leave it empty for
 // breakfast and lunch, or type: lunch · breakfast · break · all · "breakfast, break"
 
-const SITE = "https://hellgatelunch.github.io/";
+const SITE = "https://hawkslunch.netlify.app/";
 const MENU_URL = SITE + "data/menu.json";
 const SWITCH_HOUR = 14; // after 2 PM, show the next school day
 

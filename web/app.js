@@ -124,8 +124,8 @@
     return "No salad bar Tue";
   }
 
-  // Foods the kid likes (1) or doesn't (-1), saved separately for each meal
-  // ("lunch|cheeseburger"). Kept on this phone only; never sent anywhere.
+  // Favorite foods, saved separately for each meal ("lunch|cheeseburger" → 1), so a favorite
+  // shows again whenever that food comes back. Kept on this phone only; never sent anywhere.
   var likes = {};
   try { likes = JSON.parse(store("hl-likes") || "{}") || {}; } catch (e) { likes = {}; }
   if (typeof likes !== "object" || Array.isArray(likes)) likes = {};
@@ -137,38 +137,55 @@
     MEALS.forEach(function (m) { if (!has(likes, m.id + "|" + k)) likes[m.id + "|" + k] = likes[k]; });
     delete likes[k];
   });
-  function liking(meal, s) { var k = likeKey(meal, s); return has(likes, k) ? likes[k] : 0; }
-  function rate(meal, s, v) {
+  // Only favorites are kept now (the old thumbs-down ratings are dropped).
+  Object.keys(likes).forEach(function (k) { if (likes[k] !== 1) delete likes[k]; });
+  function isFav(meal, s) { var k = likeKey(meal, s); return has(likes, k) && likes[k] === 1; }
+  function toggleFav(meal, s) {
     var k = likeKey(meal, s);
-    if (likes[k] === v) delete likes[k]; else likes[k] = v; // tapping again clears it
+    if (has(likes, k)) delete likes[k]; else likes[k] = 1;
     store("hl-likes", JSON.stringify(likes));
     store("hl-likes-hint", "1");
   }
+
+  // Each school day's lunch: eaten at school or brought from home ("2026-11-20" → "school" | "home").
+  var plan = {};
+  try { plan = safeParse(store("hl-plan") || "{}") || {}; } catch (e) { plan = {}; }
+  if (typeof plan !== "object" || Array.isArray(plan)) plan = {};
+  function planFor(d) { var v = has(plan, key(d)) ? plan[key(d)] : null; return v === "school" || v === "home" ? v : null; }
+  function setPlan(k, v) {
+    if (plan[k] === v) delete plan[k]; else plan[k] = v; // tapping the chosen one again clears it
+    store("hl-plan", JSON.stringify(plan));
+    store("hl-likes-hint", "1");
+  }
+  // Forget choices older than about three months.
+  function prunePlan(today) {
+    var cut = key(add(today, -90)), changed = false;
+    Object.keys(plan).forEach(function (k) { if (!/^\d{4}-\d\d-\d\d$/.test(k) || k < cut) { delete plan[k]; changed = true; } });
+    if (changed) store("hl-plan", JSON.stringify(plan));
+  }
   // Ask the browser to keep this site's saved data (ratings, meal choices) instead of clearing it when space runs low.
   try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(function () {}); } catch (e) {}
-  var openRow = null; // the week row whose rating buttons are showing
 
   var HEART = '<path d="M12 20s-7-4.4-9-8.6C1.6 8.4 3.4 5 6.8 5c2 0 3.3 1.1 5.2 3 1.9-1.9 3.2-3 5.2-3 3.4 0 5.2 3.4 3.8 6.4C19 15.6 12 20 12 20z"/>';
-  var THUMB = '<path d="M7 13V5a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h3a4 4 0 0 1 4 4v1a2 2 0 0 0 4 0v-5h3a2 2 0 0 0 2-2l-1-5a2 3 0 0 0-2-2h-7a3 3 0 0 0-3 3"/>';
+  var SCHOOL = '<path d="M3 20.5h18"/><path d="M5 20.5V10l7-5 7 5v10.5"/><path d="M10 20.5v-5h4v5"/><circle cx="12" cy="10.5" r="1.6"/>';
+  var HOME = '<path d="M3.5 11 12 4l8.5 7"/><path d="M5.5 9.5v11h13v-11"/><path d="M10 20.5v-6h4v6"/>';
   function svg(paths, cls) { return '<svg class="icon ' + (cls || "") + '" viewBox="0 0 24 24" aria-hidden="true">' + paths + "</svg>"; }
 
-  // The two rating buttons for a food.
-  function rateButtons(meal, name) {
-    var v = liking(meal, name), f = esc(name), at = ' data-meal="' + meal + '" data-food="' + f + '"';
-    return '<span class="rate">'
-      + '<button type="button" class="rate-btn like"' + at + ' data-v="1" aria-pressed="' + (v > 0) + '" aria-label="Likes ' + f + '">' + svg(HEART) + "</button>"
-      + '<button type="button" class="rate-btn nope"' + at + ' data-v="-1" aria-pressed="' + (v < 0) + '" aria-label="Doesn\'t like ' + f + '">' + svg(THUMB) + "</button>"
-      + "</span>";
+  // The heart for a food: tap to mark it a favorite (filled), tap again to clear.
+  function favButton(meal, name) {
+    var f = esc(name);
+    return '<button type="button" class="fav-btn" data-meal="' + meal + '" data-food="' + f + '" aria-pressed="' + isFav(meal, name)
+      + '" aria-label="Favorite: ' + f + '">' + svg(HEART) + "</button>";
   }
 
-  // The verdict for a meal's main item: big tag in the top card, small mark in the week.
-  function verdict(id, l, big) {
-    if (!l || !l.items) return "";
-    var v = liking(id, l.items[0]);
-    if (!v) return "";
-    if (v > 0) return big ? '<span class="verdict fav">' + svg(HEART, "filled") + "Favorite</span>" : '<span class="mark fav" title="Favorite">' + svg(HEART, "filled") + "</span>";
-    if (id === "lunch") return big ? '<span class="verdict pack">Maybe pack a lunch</span>' : '<span class="mark pack">Pack?</span>';
-    return big ? '<span class="verdict meh">Not a favorite</span>' : '<span class="mark meh" title="Not a favorite">' + svg(THUMB) + "</span>";
+  // School or Home for one day's lunch.
+  function planSwitch(d, small) {
+    var k = key(d), v = planFor(d);
+    var label = "Lunch on " + DOW[d.getDay()] + ", " + MON[d.getMonth()] + " " + d.getDate();
+    return '<span class="plan' + (small ? " plan-sm" : "") + '" role="group" aria-label="' + label + '">'
+      + '<button type="button" class="plan-btn school" data-day="' + k + '" data-v="school" aria-pressed="' + (v === "school") + '">' + svg(SCHOOL) + "School</button>"
+      + '<button type="button" class="plan-btn home" data-day="' + k + '" data-v="home" aria-pressed="' + (v === "home") + '">' + svg(HOME) + "Home</button>"
+      + "</span>";
   }
 
   // A picture of the school's box, drawn in the text color (no white box). scale is about the text size.
@@ -189,7 +206,7 @@
   function notPosted(id, d) { return MONL[d.getMonth()] + " " + (id === "break" ? "Breakfast @ Break" : mealName(id).toLowerCase()) + " menu not posted yet"; }
 
   // What's served, as the top card shows it (big) or as a compact week row.
-  function food(id, d, l, big, rowKey) {
+  function food(id, d, l, big) {
     var alt = mealName(id) + " for " + DOW[d.getDay()] + ", " + MONL[d.getMonth()] + " " + d.getDate() + ", from the school's menu";
     var t = big ? "p" : "span";
     var wrap = function (cls, html) { return "<" + t + ' class="' + cls + '">' + html + "</" + t + ">"; };
@@ -202,14 +219,11 @@
     if (l.pic) return pic(l.pic, alt, big ? 0.95 : 0.72);
     var main = l.items[0], sides = l.items.length > 1 ? esc(l.items.slice(1).join(" · ")) : "";
     if (big) {
-      return '<div class="main-line"><p class="main">' + esc(main) + "</p>" + rateButtons(id, main) + "</div>"
+      return '<div class="main-line"><p class="main">' + esc(main) + "</p>" + favButton(id, main) + "</div>"
         + (sides ? '<p class="sides">' + sides + "</p>" : "");
     }
-    // Week: tap the main item to rate it; marks show what's already rated.
-    return '<button type="button" class="main main-btn" data-row="' + rowKey + '" aria-expanded="' + (openRow === rowKey) + '">' + esc(main) + "</button>"
-      + verdict(id, l, false)
-      + (sides ? '<span class="sides">' + sides + "</span>" : "")
-      + (openRow === rowKey ? '<span class="row-rate">' + rateButtons(id, main) + '<span class="rate-help">Does your kid like it?</span></span>' : "");
+    return '<span class="main">' + esc(main) + "</span>" + favButton(id, main)
+      + (sides ? '<span class="sides">' + sides + "</span>" : "");
   }
 
   function mealLabel(m, big) {
@@ -236,33 +250,35 @@
       if (!show[m.id]) return;
       var l = mealFor(m.id, d);
       if (m.id === "break" && !l) return; // no break menu for this month: leave it out
-      var extra = m.id === "lunch" && real(l) ? '<p class="salad">' + salad(d.getDay()) + "</p>" : "";
+      var lunchDay = m.id === "lunch" && real(l);
       html += big
-        ? '<section class="meal m-' + m.id + '"><h3 class="meal-head">' + mealLabel(m, true) + verdict(m.id, l, true) + "</h3>"
-          + food(m.id, d, l, true) + extra + "</section>"
+        ? '<section class="meal m-' + m.id + '"><h3 class="meal-head">' + mealLabel(m, true) + "</h3>"
+          + food(m.id, d, l, true)
+          + (lunchDay ? '<p class="salad">' + salad(d.getDay()) + "</p>" + '<div class="plan-line">' + planSwitch(d, false) + "</div>" : "")
+          + "</section>"
         : '<div class="row m-' + m.id + '"><span class="label-col">' + mealLabel(m, false) + '</span><span class="what">'
-          + food(m.id, d, l, false, key(d) + "/" + m.id) + "</span></div>";
+          + food(m.id, d, l, false)
+          + (lunchDay ? '<span class="plan-line">' + planSwitch(d, true) + "</span>" : "")
+          + "</span></div>";
     });
     return html || '<p class="none">Turn on a meal below to see it here.</p>';
   }
 
-  // One handler for every rating button and tappable week item (they're redrawn often).
+  // One handler for every heart and School/Home button (they're redrawn often).
   document.addEventListener("click", function (e) {
-    var b = e.target.closest && e.target.closest(".rate-btn, .main-btn, #hint-close");
+    var b = e.target.closest && e.target.closest(".fav-btn, .plan-btn, #hint-close");
     if (!b) return;
     var byKeyboard = e.detail === 0; // Enter/Space on a focused button, not a tap
     if (b.id === "hint-close") { store("hl-likes-hint", "1"); renderHero(); return; }
-    if (b.classList.contains("main-btn")) {
-      var r = b.getAttribute("data-row");
-      openRow = openRow === r ? null : r;
-      renderWeek();
-      var again = document.querySelector('.main-btn[data-row="' + r + '"]');
-      if (again && byKeyboard) again.focus();
-      return;
-    }
-    rate(b.getAttribute("data-meal"), b.getAttribute("data-food"), +b.getAttribute("data-v"));
     var q = function (v) { return '"' + (window.CSS && CSS.escape ? CSS.escape(v) : String(v).replace(/["\\]/g, "\\$&")) + '"'; };
-    var sel = ".rate-btn[data-meal=" + q(b.getAttribute("data-meal")) + "][data-food=" + q(b.getAttribute("data-food")) + "][data-v=" + q(b.getAttribute("data-v")) + "]";
+    var sel;
+    if (b.classList.contains("plan-btn")) {
+      setPlan(b.getAttribute("data-day"), b.getAttribute("data-v"));
+      sel = ".plan-btn[data-day=" + q(b.getAttribute("data-day")) + "][data-v=" + q(b.getAttribute("data-v")) + "]";
+    } else {
+      toggleFav(b.getAttribute("data-meal"), b.getAttribute("data-food"));
+      sel = ".fav-btn[data-meal=" + q(b.getAttribute("data-meal")) + "][data-food=" + q(b.getAttribute("data-food")) + "]";
+    }
     var inHero = !!b.closest("#hero");
     renderHero(); renderWeek();
     // Keep keyboard users on the button they pressed (a tap doesn't need the focus ring).
@@ -283,7 +299,7 @@
       + '<p class="date">' + DOW[d.getDay()] + ", " + MON[d.getMonth()] + " " + d.getDate() + "</p>"
       + dayHTML(d, true)
       + (store("hl-likes-hint") !== "1" && !Object.keys(likes).length
-        ? '<p class="hint">' + svg(HEART) + "<span>Tap the heart on foods your kid likes. Thumbs down flags lunches to pack.</span>"
+        ? '<p class="hint">' + svg(HEART) + "<span>Tap the heart on foods your kid loves. Pick School or Home for each lunch.</span>"
           + '<button type="button" id="hint-close">Got it</button></p>'
         : "");
   }
@@ -306,10 +322,26 @@
       html += '<article class="card' + (hl ? " hl" : "") + (schoolDay(d) ? "" : " off") + '"><h3 class="head">'
         + DOW[d.getDay()] + ", " + MON[d.getMonth()] + " " + d.getDate() + pill + "</h3>" + dayHTML(d, false) + "</article>";
     }
-    $("days").innerHTML = html;
+    $("days").innerHTML = html + tally(week);
     $("prev").disabled = !hasData(add(week, -7));
     $("next").disabled = !hasData(add(week, 7));
     $("today").hidden = home;
+  }
+
+  // How the week's lunches add up: at school, from home, not chosen yet. Days off don't count.
+  function tally(mon) {
+    if (!show.lunch) return "";
+    var n = { school: 0, home: 0, none: 0 }, days = 0;
+    for (var i = 0; i < 5; i++) {
+      var d = add(mon, i);
+      if (!schoolDay(d) || !real(mealFor("lunch", d))) continue;
+      days++;
+      n[planFor(d) || "none"]++;
+    }
+    if (!days) return "";
+    var parts = [n.school + " at school", n.home + " from home"];
+    if (n.none) parts.push(n.none + " not set");
+    return '<p class="tally"><strong>Lunches:</strong> ' + parts.join(" · ") + "</p>";
   }
 
   function renderToggles() {
@@ -343,6 +375,7 @@
 
   function render() {
     now = schoolNow();
+    prunePlan(now.day);
     picked = pick(now);
     week = monday(picked.day);
     renderToggles(); renderHero(); renderWeek();
