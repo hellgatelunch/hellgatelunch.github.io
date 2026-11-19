@@ -23,6 +23,10 @@
   --lunch: #29610B;
   --lunch-bar: #29610B;
   --lunch-tint: #E2EFD8;
+  --school-fill: #29610B;   /* week tally: School (Hawks green) */
+  --school-on: #FFFFFF;
+  --home-fill: #FCD52D;     /* week tally: Home (Hawks gold) */
+  --home-on: #1E2A1C;
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
@@ -46,6 +50,10 @@
     --lunch: #8DCB62;
     --lunch-bar: #8DCB62;
     --lunch-tint: #22341A;
+    --school-fill: #8DCB62;
+    --school-on: #17200F;
+    --home-fill: #F2CC3D;
+    --home-on: #17200F;
     color-scheme: dark;
   }
 }
@@ -269,9 +277,19 @@ h2 { font-size: 20px; }
 .plan-sm .plan-btn { min-height: 30px; padding: 0 11px; font-size: 13px; }
 .plan-sm .plan-btn .icon { font-size: 14px; }
 
-/* Week tally */
-.tally { margin: 12px 4px 0; font-size: 15px; color: var(--ink); }
-.tally strong { font-weight: 700; }
+/* Week tally: two bold color-coded counts */
+.tally { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 14px 2px 0; }
+.tally-label { font-size: 15px; font-weight: 700; color: var(--ink); margin-right: 2px; }
+.tally-pill {
+  display: inline-flex; align-items: center; gap: 8px;
+  min-height: 44px; padding: 0 18px 0 14px; border-radius: 999px;
+  font-size: 16px; font-weight: 700;
+}
+.tally-pill .icon { font-size: 20px; }
+.tally-n { font-size: 20px; font-weight: 800; }
+.tally-pill.school { background: var(--school-fill); color: var(--school-on); }
+.tally-pill.home { background: var(--home-fill); color: var(--home-on); }
+.tally-none { font-size: 14px; color: var(--muted); }
 
 /* First-time hint */
 .hint {

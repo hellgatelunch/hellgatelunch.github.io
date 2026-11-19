@@ -339,9 +339,15 @@
       n[planFor(d) || "none"]++;
     }
     if (!days) return "";
-    var parts = [n.school + " at school", n.home + " from home"];
-    if (n.none) parts.push(n.none + " not set");
-    return '<p class="tally"><strong>Lunches:</strong> ' + parts.join(" · ") + "</p>";
+    var pill = function (cls, icon, count, word) {
+      return '<span class="tally-pill ' + cls + '">' + svg(icon) + '<span class="tally-n">' + count + "</span>" + word + "</span>";
+    };
+    return '<div class="tally" role="group" aria-label="Lunches this week: ' + n.school + " at school, " + n.home + " from home"
+      + (n.none ? ", " + n.none + " not set" : "") + '">'
+      + '<span class="tally-label" aria-hidden="true">Lunches</span>'
+      + pill("school", SCHOOL, n.school, "School") + pill("home", HOME, n.home, "Home")
+      + (n.none ? '<span class="tally-none" aria-hidden="true">' + n.none + " not set</span>" : "")
+      + "</div>";
   }
 
   function renderToggles() {
