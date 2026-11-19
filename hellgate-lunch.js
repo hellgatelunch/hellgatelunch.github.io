@@ -16,8 +16,8 @@ const MON_LONG = ["January", "February", "March", "April", "May", "June", "July"
 // In the order they're served. Colors match the website (light, dark).
 const MEALS = [
   { id: "breakfast", label: "BREAKFAST", color: ["#7A5E00", "#F2CC3D"] },
-  { id: "break", label: "BREAK · MS", color: ["#2B5B86", "#8DB9E6"] },
-  { id: "lunch", label: "LUNCH", color: ["#29610B", "#8DCB62"] },
+  { id: "break", label: "BREAK · MS", color: ["#6A7066", "#9DA399"] },
+  { id: "lunch", label: "LUNCH", color: ["#29610B", "#43961A"] },
 ];
 
 const pad2 = n => String(n).padStart(2, "0");
@@ -116,11 +116,11 @@ async function loadMenu() {
 
 const dyn = (light, dark) => Color.dynamic(new Color(light), new Color(dark));
 const C = {
-  bg: dyn("#FFFFFF", "#1C231B"),
-  ink: dyn("#1E2A1C", "#EAF0E6"),
-  muted: dyn("#56634F", "#A3AE9F"),
-  band: dyn("#29610B", "#1F4A08"),
-  gold: new Color("#FCD52D"),
+  bg: dyn("#FFFFFF", "#1A1D19"),
+  ink: dyn("#161A15", "#EEF0EC"),
+  muted: dyn("#6A7066", "#9DA399"),
+  band: dyn("#29610B", "#29610B"),
+  white: new Color("#FFFFFF"),
 };
 
 function buildWidget(menu, now, meals, family) {
@@ -138,7 +138,7 @@ function buildWidget(menu, now, meals, family) {
   band.layoutHorizontally();
   const when = band.addText(p.label.toUpperCase());
   when.font = Font.heavySystemFont(11);
-  when.textColor = C.gold;
+  when.textColor = C.white;
   when.lineLimit = 1;
   when.minimumScaleFactor = 0.8;
   band.addSpacer();

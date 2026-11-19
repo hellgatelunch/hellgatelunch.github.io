@@ -1,10 +1,11 @@
 // Service worker: lets the app open offline (showing the last menu it saw) and lets
 // Android offer "Install app". Bump VERSION when the app's own files change shape.
-var VERSION = "v33";
+var VERSION = "v34";
 var SHELL = "hellgate-shell-" + VERSION;
 var DATA = "hellgate-data";
 var SHELL_FILES = ["./", "index.html", "style.css", "app.js", "manifest.webmanifest",
-  "icons/favicon-32.png", "icons/icon-192.png", "icons/icon-512.png", "icons/icon-maskable-192.png", "icons/icon-maskable-512.png", "icons/apple-touch-icon.png", "img/hawks-logo.png"];
+  "icons/favicon-32.png", "icons/icon-192.png", "icons/icon-512.png", "icons/icon-maskable-192.png", "icons/icon-maskable-512.png", "icons/apple-touch-icon.png", "img/hawks-logo.png",
+  "fonts/roboto-latin-400-normal.woff2", "fonts/roboto-latin-500-normal.woff2", "fonts/roboto-latin-700-normal.woff2", "fonts/roboto-latin-900-normal.woff2"];
 
 self.addEventListener("install", function (e) {
   e.waitUntil(caches.open(SHELL).then(function (c) { return c.addAll(SHELL_FILES); }).then(function () { return self.skipWaiting(); }));

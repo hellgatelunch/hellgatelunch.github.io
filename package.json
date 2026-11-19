@@ -9,6 +9,7 @@
     "netlify": "npx -y netlify-cli@27.20.1"
   },
   "devDependencies": {
+    "@fontsource/roboto": "5.2.8",
     "ical.js": "^2.1.0",
     "qrcode": "^1.5.4"
   },

@@ -342,9 +342,9 @@
     var pill = function (cls, icon, count, word) {
       return '<span class="tally-pill ' + cls + '">' + svg(icon) + '<span class="tally-n">' + count + "</span>" + word + "</span>";
     };
-    return '<div class="tally" role="group" aria-label="Week at a glance: lunch ' + n.school + " at school, " + n.home + " from home"
+    return '<div class="tally" role="group" aria-label="Week At A Glance: lunch ' + n.school + " at school, " + n.home + " from home"
       + (n.none ? ", " + n.none + " not set" : "") + '">'
-      + '<span class="tally-label" aria-hidden="true">Week at a glance</span>'
+      + '<span class="tally-label" aria-hidden="true">Week At A Glance</span>'
       + pill("school", SCHOOL, n.school, "School") + pill("home", HOME, n.home, "Home")
       + (n.none ? '<span class="tally-none" aria-hidden="true">' + n.none + " not set</span>" : "")
       + "</div>";

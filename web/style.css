@@ -1,59 +1,53 @@
-/* Hellgate Hawks meals. Brand: Hawks green #29610B, gold #FCD52D, charcoal #313D30.
-   Each meal has one color, used for its label, bar, chip and icon:
-   gold = breakfast, slate blue = break, Hawks green = lunch. */
+/* Hellgate Hawks meals. A small palette: Hawks green (header and lunch), yellow (breakfast,
+   and everything you tap or choose), and grays. Break is gray, told apart by its icon.
+   Font: Roboto (web/fonts, SIL Open Font License), bundled so nothing loads from elsewhere. */
+@font-face { font-family: "Roboto"; font-style: normal; font-weight: 400; font-display: swap; src: url(fonts/roboto-latin-400-normal.woff2) format("woff2"); }
+@font-face { font-family: "Roboto"; font-style: normal; font-weight: 500; font-display: swap; src: url(fonts/roboto-latin-500-normal.woff2) format("woff2"); }
+@font-face { font-family: "Roboto"; font-style: normal; font-weight: 700; font-display: swap; src: url(fonts/roboto-latin-700-normal.woff2) format("woff2"); }
+@font-face { font-family: "Roboto"; font-style: normal; font-weight: 900; font-display: swap; src: url(fonts/roboto-latin-900-normal.woff2) format("woff2"); }
 :root {
-  --bg: #F3F5EE;
+  --bg: #F2F3F1;
   --card: #FFFFFF;
-  --ink: #1E2A1C;
-  --muted: #56634F;
-  --line: #E1E6DA;
-  --hawks-green: #29610B;
-  --hawks-gold: #FCD52D;
-  --band: #29610B;          /* header band */
-  --on-band: #FFFFFF;
-  --band-accent: #FCD52D;
-  --brand: #29610B;         /* buttons, links, today */
-  --on-brand: #FFFFFF;
-  --breakfast: #7A5E00;     /* label text (gold, darkened to read on white) */
-  --breakfast-bar: #E0B419;
-  --breakfast-tint: #FFF4C2;
-  --break: #2B5B86;
-  --break-bar: #2B5B86;
-  --break-tint: #E2ECF6;
+  --ink: #161A15;
+  --muted: #6A7066;
+  --line: #E6E8E4;
+  --band: #29610B;          /* header band (Hawks green) */
+  --brand: #29610B;         /* green accents: links, small icons */
+  --hi: #F2C200;            /* yellow: buttons, chosen School/Home, filled hearts */
+  --on-hi: #161A15;
+  --breakfast: #7A5E00;     /* label text (yellow, darkened to read on white) */
+  --breakfast-bar: #F2C200;
+  --break: #6A7066;
+  --break-bar: #6A7066;
   --lunch: #29610B;
   --lunch-bar: #29610B;
-  --lunch-tint: #E2EFD8;
-  --school-fill: #29610B;   /* week tally: School (Hawks green) */
-  --school-on: #FFFFFF;
-  --home-fill: #FCD52D;     /* week tally: Home (Hawks gold) */
-  --home-on: #1E2A1C;
+  --school-fill: #F2C200;   /* Week At A Glance: School */
+  --school-on: #161A15;
+  --home-fill: #161A15;     /* Week At A Glance: Home */
+  --home-on: #FFFFFF;
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #121711;
-    --card: #1C231B;
-    --ink: #EAF0E6;
-    --muted: #A3AE9F;
-    --line: #2B3429;
-    --band: #1F4A08;
-    --on-band: #FFFFFF;
-    --band-accent: #F2CC3D;
-    --brand: #F2CC3D;
-    --on-brand: #17200F;
+    --bg: #0F110F;
+    --card: #1A1D19;
+    --ink: #EEF0EC;
+    --muted: #9DA399;
+    --line: #2A2E29;
+    --band: #29610B;
+    --brand: #43961A;       /* the Hawks green, a touch brighter so small text reads on black */
+    --hi: #F2CC3D;
+    --on-hi: #0F110F;
     --breakfast: #F2CC3D;
     --breakfast-bar: #F2CC3D;
-    --breakfast-tint: #3A3317;
-    --break: #8DB9E6;
-    --break-bar: #8DB9E6;
-    --break-tint: #1D2B3A;
-    --lunch: #8DCB62;
-    --lunch-bar: #8DCB62;
-    --lunch-tint: #22341A;
-    --school-fill: #8DCB62;
-    --school-on: #17200F;
-    --home-fill: #F2CC3D;
-    --home-on: #17200F;
+    --break: #9DA399;
+    --break-bar: #9DA399;
+    --lunch: #43961A;
+    --lunch-bar: #29610B;
+    --school-fill: #F2CC3D;
+    --school-on: #0F110F;
+    --home-fill: #EEF0EC;
+    --home-on: #0F110F;
     color-scheme: dark;
   }
 }
@@ -64,7 +58,7 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--ink);
-  font: 16px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  font: 16px/1.4 "Roboto", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
 }
 p, h1, h2, h3 { margin: 0; }
 .wrap {
@@ -85,7 +79,7 @@ a { color: var(--brand); }
 .brand-band .b-logo { display: block; height: 64px; width: auto; }
 .brand-band .b-sub {
   color: #FFFFFF;
-  font-size: 13px; font-weight: 800; letter-spacing: .08em; line-height: 1.25; text-transform: uppercase;
+  font-size: 13px; font-weight: 700; letter-spacing: .1em; line-height: 1.25; text-transform: uppercase;
   text-align: right;
 }
 
@@ -94,9 +88,9 @@ a { color: var(--brand); }
 .show-row .toggles { margin: 0; }
 
 /* Meal colors, by class */
-.m-breakfast { --meal: var(--breakfast); --meal-bar: var(--breakfast-bar); --meal-tint: var(--breakfast-tint); }
-.m-break { --meal: var(--break); --meal-bar: var(--break-bar); --meal-tint: var(--break-tint); }
-.m-lunch { --meal: var(--lunch); --meal-bar: var(--lunch-bar); --meal-tint: var(--lunch-tint); }
+.m-breakfast { --meal: var(--breakfast); --meal-bar: var(--breakfast-bar); --meal-icon: var(--breakfast-bar); }
+.m-break { --meal: var(--break); --meal-bar: var(--break-bar); --meal-icon: var(--break); }
+.m-lunch { --meal: var(--lunch); --meal-bar: var(--lunch-bar); --meal-icon: var(--lunch); }
 .icon { width: 1em; height: 1em; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
 /* Meal on/off chips */
@@ -110,11 +104,11 @@ a { color: var(--brand); }
   padding: 6px 4px;
   background: transparent;
   color: var(--muted);
-  font: inherit; font-size: 14px; font-weight: 650;
+  font: inherit; font-size: 14px; font-weight: 700;
   cursor: pointer;
 }
-.chip .icon { font-size: 24px; color: var(--meal); }
-.chip[aria-pressed="true"] { background: var(--meal-tint); border-color: var(--meal-tint); color: var(--ink); }
+.chip .icon { font-size: 24px; color: var(--meal-icon); }
+.chip[aria-pressed="true"] { background: var(--card); border-color: var(--card); color: var(--ink); }
 .chip[aria-pressed="false"] .icon { color: var(--muted); }
 .chip:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 
@@ -122,15 +116,15 @@ a { color: var(--brand); }
 .label {
   display: flex; align-items: center; gap: 6px;
   color: var(--meal);
-  font-size: 12px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase;
+  font-size: 12px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase;
 }
 .label .icon { font-size: 16px; }
 .ms {
   padding: 1px 7px; border-radius: 999px;
-  background: var(--meal-tint); color: var(--ink);
-  font-size: 11px; font-weight: 600; letter-spacing: 0; text-transform: none;
+  background: var(--line); color: var(--muted);
+  font-size: 11px; font-weight: 700; letter-spacing: 0; text-transform: none;
 }
-.main { font-weight: 750; }
+.main { font-weight: 700; }
 .sides { color: var(--muted); }
 .none { color: var(--muted); }
 
@@ -150,8 +144,8 @@ a { color: var(--brand); }
   padding: 16px 18px 6px;
   margin-bottom: 28px;
 }
-.when { font-size: 12px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--brand); }
-.date { margin-top: 1px; font-size: 25px; font-weight: 750; letter-spacing: -.01em; }
+.when { font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.date { margin-top: 1px; font-size: 25px; font-weight: 700; letter-spacing: -.01em; }
 .hero .meal {
   border-left: 4px solid var(--meal-bar);
   border-radius: 0;
@@ -183,11 +177,11 @@ h2 { font-size: 20px; }
 
 .days { display: grid; gap: 10px; }
 .card { background: var(--card); border-radius: 16px; padding: 12px 14px 8px; }
-.card.hl { box-shadow: inset 0 0 0 2px var(--brand); }
+.card.hl { box-shadow: inset 0 0 0 2px var(--hi); }
 .card.off { padding-bottom: 12px; }
 .head { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 700; color: var(--ink); }
 .off .head { color: var(--muted); }
-.pill { padding: 2px 8px; border-radius: 999px; background: var(--brand); color: var(--on-brand); font-size: 11px; font-weight: 700; }
+.pill { padding: 2px 8px; border-radius: 999px; background: var(--hi); color: var(--on-hi); font-size: 11px; font-weight: 700; }
 /* One row per meal: label column, then what's served. Labels line up down the whole week. */
 .row {
   display: grid;
@@ -225,8 +219,8 @@ h2 { font-size: 20px; }
 .btn {
   border: 0; border-radius: 999px;
   padding: 9px 16px;
-  background: var(--brand); color: var(--on-brand);
-  font: inherit; font-size: 14px; font-weight: 650;
+  background: var(--hi); color: var(--on-hi);
+  font: inherit; font-size: 14px; font-weight: 700;
   cursor: pointer;
 }
 .install .btn { flex: none; padding: 9px 18px; }
@@ -255,7 +249,7 @@ h2 { font-size: 20px; }
   color: var(--muted); font-size: 20px; cursor: pointer;
 }
 .fav-btn:focus-visible, .plan-btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 1px; }
-.fav-btn[aria-pressed="true"] { color: var(--meal); }
+.fav-btn[aria-pressed="true"] { color: var(--hi); }
 .fav-btn[aria-pressed="true"] .icon { fill: currentColor; }
 .row .fav-btn { width: 32px; height: 32px; margin: -6px -4px -6px 0; font-size: 16px; vertical-align: middle; }
 .icon.filled { fill: currentColor; }
@@ -267,26 +261,23 @@ h2 { font-size: 20px; }
   display: inline-flex; align-items: center; gap: 6px;
   min-height: 36px; padding: 0 14px;
   border: 0; border-radius: 999px; background: transparent;
-  color: var(--muted); font: inherit; font-size: 14px; font-weight: 650; cursor: pointer;
+  color: var(--muted); font: inherit; font-size: 14px; font-weight: 500; cursor: pointer;
 }
 .plan-btn .icon { font-size: 16px; }
-.plan-btn.school[aria-pressed="true"] { background: var(--lunch-tint); color: var(--ink); }
-.plan-btn.school[aria-pressed="true"] .icon { color: var(--lunch); }
-.plan-btn.home[aria-pressed="true"] { background: var(--breakfast-tint); color: var(--ink); }
-.plan-btn.home[aria-pressed="true"] .icon { color: var(--breakfast); }
+.plan-btn[aria-pressed="true"] { background: var(--hi); color: var(--on-hi); font-weight: 700; }
 .plan-sm .plan-btn { min-height: 30px; padding: 0 11px; font-size: 13px; }
 .plan-sm .plan-btn .icon { font-size: 14px; }
 
-/* Week tally: two bold color-coded counts */
+/* Week At A Glance: two counts, the same size as the School / Home buttons */
 .tally { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 14px 2px 0; }
 .tally-label { flex-basis: 100%; font-size: 15px; font-weight: 700; color: var(--ink); }
 .tally-pill {
-  display: inline-flex; align-items: center; gap: 8px;
-  min-height: 44px; padding: 0 18px 0 14px; border-radius: 999px;
-  font-size: 16px; font-weight: 700;
+  display: inline-flex; align-items: center; gap: 6px;
+  min-height: 36px; padding: 0 14px; border-radius: 999px;
+  font-size: 14px; font-weight: 700;
 }
-.tally-pill .icon { font-size: 20px; }
-.tally-n { font-size: 20px; font-weight: 800; }
+.tally-pill .icon { font-size: 16px; }
+.tally-n { font-size: 14px; font-weight: 700; }
 .tally-pill.school { background: var(--school-fill); color: var(--school-on); }
 .tally-pill.home { background: var(--home-fill); color: var(--home-on); }
 .tally-none { font-size: 14px; color: var(--muted); }
@@ -294,7 +285,7 @@ h2 { font-size: 20px; }
 /* Evening reminder card */
 .reminder { margin: -8px 0 22px; padding: 12px; border-radius: 16px; background: var(--card); }
 .reminder-row { display: flex; align-items: center; gap: 12px; }
-.reminder-icon { width: 44px; height: 44px; border-radius: 10px; flex: none; display: flex; align-items: center; justify-content: center; background: var(--brand); color: var(--on-brand); }
+.reminder-icon { width: 44px; height: 44px; border-radius: 10px; flex: none; display: flex; align-items: center; justify-content: center; background: var(--band); color: #FFFFFF; }
 .reminder-icon svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .reminder-text { flex: 1; min-width: 0; }
 .reminder-text h2 { font-size: 15px; }
