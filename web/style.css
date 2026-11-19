@@ -280,7 +280,7 @@ h2 { font-size: 20px; }
 
 /* Week tally: two bold color-coded counts */
 .tally { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 14px 2px 0; }
-.tally-label { font-size: 15px; font-weight: 700; color: var(--ink); margin-right: 2px; }
+.tally-label { flex-basis: 100%; font-size: 15px; font-weight: 700; color: var(--ink); }
 .tally-pill {
   display: inline-flex; align-items: center; gap: 8px;
   min-height: 44px; padding: 0 18px 0 14px; border-radius: 999px;
