@@ -111,9 +111,21 @@ jobs:
           done
           echo "::error::Couldn't push the menu update"; exit 1
 
+      # The app now lives at https://hawkslunch.netlify.app. This old address serves pages that
+      # forward there (github-pages/), plus fresh menu data and calendar for existing iPhone
+      # widgets and calendar subscriptions, which can't be forwarded.
+      - name: Assemble the old-address site
+        run: |
+          site="$RUNNER_TEMP/old-address"
+          mkdir -p "$site"
+          cp -r github-pages/. "$site/"
+          rm -f "$site/README.md"
+          cp -r web/data "$site/data"
+          cp web/calendar.ics "$site/"
+
       - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3
         with:
-          path: web
+          path: ${{ runner.temp }}/old-address
 
   deploy:
     needs: save
