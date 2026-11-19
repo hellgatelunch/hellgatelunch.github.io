@@ -81,7 +81,6 @@ a { color: var(--brand); }
   padding: 8px 18px 8px 12px;
   border-radius: 16px;
   background: var(--band);
-  border-bottom: 3px solid var(--band-accent);
 }
 .brand-band .b-logo { display: block; height: 64px; width: auto; }
 .brand-band .b-sub {
