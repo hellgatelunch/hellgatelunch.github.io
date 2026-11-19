@@ -490,8 +490,92 @@
     };
   }
 
+  // ---------- Evening reminder: 7:30 PM on school nights, with tomorrow's lunch ----------
+  // The phone's notification service gives an anonymous delivery address, which is sent to
+  // /api/reminder (netlify/functions/reminder-signup.mjs). Turning it off deletes it there.
+  // Same value as menu/vapid-public.mjs (the private half lives only in Netlify's settings).
+  var VAPID_PUBLIC_KEY = "BDZ_lxRBCVWJ4mvP50jNwTQCW-FnV3Esu9wsjQthnH58gTIjX2vpMcGNhyBHWBNDozxsC2iUKqJCGmpoFFb9LZk";
+  function b64urlToBytes(s) {
+    s = s.replace(/-/g, "+").replace(/_/g, "/");
+    while (s.length % 4) s += "=";
+    var raw = atob(s), out = new Uint8Array(raw.length);
+    for (var i = 0; i < raw.length; i++) out[i] = raw.charCodeAt(i);
+    return out;
+  }
+  function pushSupported() {
+    return "serviceWorker" in navigator && "PushManager" in window && "Notification" in window && (location.protocol === "https:" || LOCAL);
+  }
+  function reminderApi(method, body) {
+    return fetch("api/reminder", { method: method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) })
+      .then(function (r) { if (!r.ok) throw new Error("server " + r.status); });
+  }
+  // Draws the card for this phone's situation. note: a message to show instead of the usual line.
+  function reminderCard(note) {
+    var card = $("reminder"), btn = $("reminder-go"), status = $("reminder-status");
+    if (!card) return;
+    var ua = navigator.userAgent;
+    var ios = /iphone|ipad|ipod/i.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+    var standalone = navigator.standalone || matchMedia("(display-mode: standalone)").matches;
+    if (!pushSupported()) {
+      // iPhone: notifications only work from the home-screen app.
+      card.hidden = !(ios && !standalone && location.protocol === "https:");
+      btn.hidden = true;
+      status.textContent = "On iPhone, add Hawks Lunch to your home screen first, then turn this on from the home-screen app.";
+      return;
+    }
+    card.hidden = false;
+    if (Notification.permission === "denied") {
+      btn.hidden = true;
+      status.textContent = note || "Notifications are blocked for Hawks Lunch. Allow them in your phone's settings to get the reminder.";
+      return;
+    }
+    btn.hidden = false;
+    navigator.serviceWorker.ready.then(function (reg) { return reg.pushManager.getSubscription(); }).then(function (sub) {
+      var on = !!sub && store("hl-reminder") === "on";
+      btn.textContent = on ? "Turn off" : "Turn on";
+      btn.className = on ? "btn btn-quiet" : "btn";
+      btn.disabled = false;
+      status.textContent = note || (on ? "On: 7:30 PM on school nights, with tomorrow's lunch." : "7:30 PM on school nights, with tomorrow's lunch.");
+      btn.onclick = on ? reminderOff : reminderOn;
+    });
+  }
+  function reminderOn() {
+    var btn = $("reminder-go");
+    btn.disabled = true;
+    $("reminder-status").textContent = "Turning on…";
+    Notification.requestPermission().then(function (p) {
+      if (p !== "granted") throw new Error("permission");
+      return navigator.serviceWorker.ready;
+    }).then(function (reg) {
+      return reg.pushManager.getSubscription().then(function (s) {
+        return s || reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64urlToBytes(VAPID_PUBLIC_KEY) });
+      });
+    }).then(function (sub) {
+      return reminderApi("POST", { subscription: sub.toJSON() });
+    }).then(function () {
+      store("hl-reminder", "on");
+      reminderCard("Done. You'll get it at 7:30 PM on school nights.");
+    }).catch(function (e) {
+      store("hl-reminder", "off");
+      reminderCard(e && e.message === "permission"
+        ? "No problem. Tap Turn on again if you change your mind."
+        : "Couldn't turn it on. Check your connection and try again.");
+    });
+  }
+  function reminderOff() {
+    var btn = $("reminder-go");
+    btn.disabled = true;
+    navigator.serviceWorker.ready.then(function (reg) { return reg.pushManager.getSubscription(); }).then(function (sub) {
+      if (!sub) return;
+      return reminderApi("DELETE", { endpoint: sub.endpoint }).catch(function () {}).then(function () { return sub.unsubscribe(); });
+    }).catch(function () {}).then(function () {
+      store("hl-reminder", "off");
+      reminderCard("Reminder off.");
+    });
+  }
+
   // Works offline after the first visit (and lets Android offer to install it).
-  if ("serviceWorker" in navigator && location.protocol === "https:") {
+  if ("serviceWorker" in navigator && (location.protocol === "https:" || LOCAL)) {
     window.addEventListener("load", function () { navigator.serviceWorker.register("sw.js").catch(function () {}); });
   }
 
@@ -529,6 +613,7 @@
       };
       render();
       installCard();
+      reminderCard();
       // Coming back to the app later in the day (or the next day): recompute.
       var lastKey = key(now.day) + now.hour;
       document.addEventListener("visibilitychange", function () {

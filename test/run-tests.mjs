@@ -648,5 +648,96 @@ console.log("iPhone widget (hellgate-lunch.js, with a stand-in for Scriptable)")
   });
 }
 
+{
+  console.log("\nEvening reminder (7:30 PM, with tomorrow's lunch)");
+  const R = await import("../menu/reminder.mjs");
+  const { VAPID_PUBLIC_KEY } = await import("../menu/vapid-public.mjs");
+  const menu = JSON.parse(fs.readFileSync(path.join(FIXTURES, "menu-2026-11.json"), "utf8"));
+  const memStore = () => {
+    const m = new Map();
+    return { m, async get(k) { return m.has(k) ? m.get(k) : null; }, async set(k, v) { m.set(k, v); }, async delete(k) { m.delete(k); }, async list() { return { blobs: [...m.keys()].map(key => ({ key })) }; } };
+  };
+  const goodSub = (n = 1) => ({ endpoint: `https://fcm.googleapis.com/fcm/send/abc${n}`, keys: { p256dh: Buffer.alloc(65, 4).toString("base64url"), auth: Buffer.alloc(16, 7).toString("base64url") }, expirationTime: null });
+
+  test("only real notification services and well-formed keys are accepted", () => {
+    assert.ok(R.cleanSubscription(goodSub()));
+    assert.ok(R.cleanSubscription({ ...goodSub(), endpoint: "https://web.push.apple.com/QGx" }));
+    assert.ok(R.cleanSubscription({ ...goodSub(), endpoint: "https://updates.push.services.mozilla.com/wpush/v2/x" }));
+    const bad = [
+      { ...goodSub(), endpoint: "http://fcm.googleapis.com/fcm/send/x" },
+      { ...goodSub(), endpoint: "https://evil.example/push" },
+      { ...goodSub(), endpoint: "https://fcm.googleapis.com.evil.example/x" },
+      { ...goodSub(), endpoint: "https://user@fcm.googleapis.com/x" },
+      { ...goodSub(), keys: { p256dh: "short", auth: goodSub().keys.auth } },
+      { ...goodSub(), keys: { p256dh: goodSub().keys.p256dh, auth: "<script>" } },
+      { endpoint: goodSub().endpoint }, null, "x", [],
+    ];
+    bad.forEach((s, i) => assert.equal(R.cleanSubscription(s), null, "case " + i));
+    // Nothing but the address is kept.
+    assert.deepEqual(Object.keys(R.cleanSubscription({ ...goodSub(), name: "Ashley", email: "a@b.c" })).sort(), ["endpoint", "keys"]);
+  });
+
+  await testAsync("turning it on stores only the address; turning it off deletes it", async () => {
+    const store = memStore();
+    const welcomed = [];
+    let r = await R.handleSignup({ store, method: "POST", body: { subscription: goodSub() }, now: new Date(2026, 10, 19), welcome: async s => { welcomed.push(s.endpoint); } });
+    assert.equal(r.status, 200);
+    assert.deepEqual(welcomed, [goodSub().endpoint]);
+    // A failed welcome doesn't undo the sign-up.
+    r = await R.handleSignup({ store: memStore(), method: "POST", body: { subscription: goodSub(9) }, welcome: async () => { throw new Error("push down"); } });
+    assert.equal(r.status, 200);
+    const saved = JSON.parse(store.m.get(R.keyFor(goodSub().endpoint)));
+    assert.deepEqual(Object.keys(saved).sort(), ["endpoint", "keys", "since"]);
+    assert.equal((await R.handleSignup({ store, method: "POST", body: { subscription: { endpoint: "https://evil.example/" } } })).status, 400);
+    assert.equal((await R.handleSignup({ store, method: "GET", body: {} })).status, 405);
+    r = await R.handleSignup({ store, method: "DELETE", body: { endpoint: goodSub().endpoint } });
+    assert.equal(r.status, 200);
+    assert.equal(store.m.size, 0);
+  });
+
+  test("tomorrow's reminder: lunch in the title, breakfast below; nothing before days off", () => {
+    const thu = R.reminderFor(menu, "2026-11-19");
+    assert.equal(thu.title, "Tomorrow: Turkey/Cheddar Wrap");
+    assert.equal(thu.body, "Breakfast: Cereal · Tap to pick School or Home");
+    assert.equal(R.reminderFor(menu, "2026-11-20"), null, "Friday night: Saturday");
+    assert.equal(R.reminderFor(menu, "2026-11-21"), null, "Saturday night: Sunday");
+    assert.equal(R.reminderFor(menu, "2026-11-24"), null, "before Thanksgiving break");
+    assert.equal(R.reminderFor(menu, "2026-11-22").title, "Tomorrow: Grilled Cheese");
+    assert.equal(R.reminderFor(menu, "2026-11-30"), null, "December not posted");
+  });
+
+  test("7:30 PM in Montana all year (two UTC runs, one sends)", () => {
+    assert.deepEqual(R.schoolClock(new Date("2026-11-20T02:30:00Z")), { date: "2026-11-19", hour: 19, minute: 30 });
+    assert.equal(R.schoolClock(new Date("2026-11-20T01:30:00Z")).hour, 18);
+    assert.equal(R.schoolClock(new Date("2027-05-14T01:30:00Z")).hour, 19, "daylight saving");
+    assert.equal(R.schoolClock(new Date("2027-05-14T02:30:00Z")).hour, 20);
+  });
+
+  await testAsync("the nightly run sends to everyone and forgets phones that turned it off", async () => {
+    const store = memStore();
+    for (const n of [1, 2, 3]) await R.handleSignup({ store, method: "POST", body: { subscription: goodSub(n) } });
+    const sent = [];
+    const send = async (sub, payload) => { if (sub.endpoint.endsWith("abc2")) throw Object.assign(new Error("gone"), { statusCode: 410 }); sent.push([sub.endpoint, JSON.parse(payload)]); };
+    const quiet = () => {};
+    const early = await R.runReminders({ store, menu, send, now: new Date("2026-11-20T01:30:00Z"), log: quiet });
+    assert.equal(early.sent, 0);
+    const r = await R.runReminders({ store, menu, send, now: new Date("2026-11-20T02:30:00Z"), log: quiet });
+    assert.equal(r.sent, 2);
+    assert.equal(r.removed, 1);
+    assert.equal(store.m.size, 2);
+    assert.equal(sent[0][1].title, "Tomorrow: Turkey/Cheddar Wrap");
+    const fri = await R.runReminders({ store, menu, send, now: new Date("2026-11-21T02:30:00Z"), log: quiet });
+    assert.equal(fri.sent, 0, "no reminder Friday night");
+  });
+
+  test("the app and the sender use the same public key; no private key in the code", () => {
+    const app = fs.readFileSync(path.join(path.dirname(FIXTURES), "..", "web", "app.js"), "utf8");
+    assert.ok(app.includes(`var VAPID_PUBLIC_KEY = "${VAPID_PUBLIC_KEY}";`));
+    for (const f of ["web/app.js", "menu/reminder.mjs", "menu/vapid-public.mjs", "netlify/functions/send-reminders.mjs", "netlify.toml"]) {
+      assert.ok(!/privateKey|VAPID_PRIVATE_KEY\s*=\s*["'][A-Za-z0-9_-]{20,}/.test(fs.readFileSync(path.join(path.dirname(FIXTURES), "..", f), "utf8")), f);
+    }
+  });
+}
+
 console.log(failed ? `\n${failed} failed` : "\nAll passed. Day crops are in test/out/.");
 process.exit(failed ? 1 : 0);

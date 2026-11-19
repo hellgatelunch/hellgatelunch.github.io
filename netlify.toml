@@ -21,6 +21,9 @@
 [functions.menu-data]
   included_files = ["lib/school-menu.js", "menu/break.json", "web/data/**", "web/calendar.ics"]
 
+[functions.send-reminders]
+  included_files = ["lib/school-menu.js", "menu/break.json", "web/data/**", "web/calendar.ics"]
+
 # Security headers for every page (the pages also carry the same policy as a <meta> tag).
 # Unlike GitHub Pages, Netlify can send frame-ancestors, so no other site can frame the app.
 [[headers]]

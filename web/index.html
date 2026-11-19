@@ -26,14 +26,6 @@
     </h1>
   </header>
 
-  <section id="hero" class="hero" aria-live="polite">
-    <p class="when">Loading…</p>
-  </section>
-
-  <div class="show-row">
-    <div id="toggles" class="toggles" role="group" aria-label="Meals to show"></div>
-  </div>
-
   <section id="install" class="install" aria-labelledby="install-title" hidden>
     <div class="install-row">
       <img class="install-icon" src="icons/apple-touch-icon.png" width="44" height="44" alt="">
@@ -45,6 +37,26 @@
       <button id="install-close" type="button" aria-label="Don't show this again">×</button>
     </div>
     <ol id="install-steps" class="install-steps" hidden></ol>
+  </section>
+
+  <section id="hero" class="hero" aria-live="polite">
+    <p class="when">Loading…</p>
+  </section>
+
+  <div class="show-row">
+    <div id="toggles" class="toggles" role="group" aria-label="Meals to show"></div>
+  </div>
+
+  <section id="reminder" class="reminder" aria-labelledby="reminder-title" hidden>
+    <div class="reminder-row">
+      <span class="reminder-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></span>
+      <div class="reminder-text">
+        <h2 id="reminder-title">Evening reminder</h2>
+        <p id="reminder-status">7:30 PM on school nights, with tomorrow's lunch.</p>
+      </div>
+      <button id="reminder-go" class="btn" type="button">Turn on</button>
+    </div>
+    <p class="reminder-note">Only an anonymous delivery address is stored to send it. Your hearts and School/Home picks stay on this phone. Turn it off any time.</p>
   </section>
 
   <section class="week" aria-labelledby="week-title">
@@ -84,7 +96,6 @@
   <p id="install-again" class="install-again" hidden>
     <button id="install-again-btn" type="button"><img src="icons/favicon-32.png" width="20" height="20" alt="">Add to your home screen</button>
   </p>
-
 
 </main>
 <script src="app.js"></script>
