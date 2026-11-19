@@ -568,5 +568,85 @@ console.log("iPhone widget (hellgate-lunch.js, with a stand-in for Scriptable)")
   });
 }
 
+{
+  console.log("\nNetlify: scheduled refresh into Blobs, and serving it");
+  const { runRefresh, serve, keyFor, SITE } = await import("../menu/site-store.mjs");
+  const { pngProblem } = await import("../menu/schema.mjs");
+  const { checkMenu } = await import("../menu/check.mjs");
+  // A stand-in for a Netlify Blobs store.
+  const fakeStore = () => {
+    const m = new Map();
+    return {
+      m,
+      async get(k, o = {}) { if (!m.has(k)) return null; const v = m.get(k); return o.type === "arrayBuffer" ? (typeof v === "string" ? Buffer.from(v) : v).buffer.slice(0) : (typeof v === "string" ? v : Buffer.from(v).toString("utf8")); },
+      async set(k, v) { m.set(k, typeof v === "string" ? v : Buffer.from(v)); },
+      async delete(k) { m.delete(k); },
+      async list() { return { blobs: [...m.keys()].map(key => ({ key })) }; },
+    };
+  };
+  const pageHtml = fs.readFileSync(path.join(FIXTURES, "k8-menu-page.html"), "utf8");
+  const fx = n => fs.readFileSync(path.join(FIXTURES, n));
+  const files = (withPdf) => async (meal, kind) => {
+    const base = meal === "lunch" ? "november-2026" : "november-2026-breakfast";
+    return kind === "render" ? fx(base + ".png") : withPdf ? fx(base + ".pdf") : Buffer.from("not a pdf");
+  };
+  const empty = { menu: null, ics: null, cells: new Map() };
+  const now = new Date(2026, 10, 10, 9);
+  const quiet = () => {};
+
+  await testAsync("first run reads the menus into the store, with the Netlify address in the calendar", async () => {
+    const store = fakeStore(); let purged = 0;
+    const r = await runRefresh({ store, now, page: async () => pageHtml, file: files(true), seed: empty, purge: async () => { purged++; }, log: quiet });
+    assert.ok(r.ok && r.changed, r.message);
+    const menu = JSON.parse(store.m.get("menu.json"));
+    assert.deepEqual(checkMenu(menu), []);
+    assert.deepEqual(menu.days["2026-11-10"].items, ["Cheeseburger", "Oven Fries", "Strawberries"]);
+    assert.match(store.m.get("calendar.ics"), /URL:https:\/\/hawkslunch\.netlify\.app\//);
+    assert.equal(purged, 1);
+    assert.equal(JSON.parse(store.m.get("status.json")).ok, true);
+    // Same menus again: nothing changes, nothing is purged.
+    const again = await runRefresh({ store, now, page: async () => pageHtml, file: files(true), seed: empty, purge: async () => { purged++; }, log: quiet });
+    assert.ok(again.ok && !again.changed, again.message);
+    assert.equal(purged, 1);
+  });
+
+  await testAsync("school site down: the saved menu stays, and the status says why", async () => {
+    const store = fakeStore();
+    await runRefresh({ store, now, page: async () => pageHtml, file: files(true), seed: empty, log: quiet });
+    const before = store.m.get("menu.json");
+    const r = await runRefresh({ store, now, page: async () => { throw new Error("timeout"); }, seed: empty, log: quiet });
+    assert.equal(r.ok, false);
+    assert.equal(store.m.get("menu.json"), before);
+    assert.match(JSON.parse(store.m.get("status.json")).message, /Couldn't reach/);
+  });
+
+  await testAsync("without readable words, pictures are stored and served as PNGs", async () => {
+    const store = fakeStore();
+    const r = await runRefresh({ store, now, page: async () => pageHtml, file: files(false), seed: empty, log: quiet });
+    assert.ok(r.ok, r.message);
+    const menu = JSON.parse(store.m.get("menu.json"));
+    const img = menu.days["2026-11-10"].img;
+    assert.equal(img, "cells/2026-11-10.png");
+    const s = await serve({ store, pathname: "/data/" + img });
+    assert.equal(s.status, 200);
+    assert.equal(s.type, "image/png");
+    assert.equal(pngProblem(s.body), null);
+  });
+
+  await testAsync("serving: only the menu paths; the bundled copy until the first run", async () => {
+    const store = fakeStore();
+    for (const p of ["/data/menu.json/../../package.json", "/package.json", "/data/cells/evil.png", "/data/x.json", "/netlify.toml", "/data/cells/2026-11-10.png.html"]) {
+      assert.equal(keyFor(p), null, p);
+      assert.equal((await serve({ store, pathname: p })).status, 404, p);
+    }
+    const seed = { menu: '{"seed":1}', ics: "BEGIN:VCALENDAR", cells: new Map() };
+    const m = await serve({ store, pathname: "/data/menu.json", seed });
+    assert.equal(m.body, '{"seed":1}');
+    assert.equal(m.type, "application/json; charset=utf-8");
+    assert.equal((await serve({ store, pathname: "/calendar.ics", seed })).type, "text/calendar; charset=utf-8");
+    assert.equal(SITE, "https://hawkslunch.netlify.app/");
+  });
+}
+
 console.log(failed ? `\n${failed} failed` : "\nAll passed. Day crops are in test/out/.");
 process.exit(failed ? 1 : 0);

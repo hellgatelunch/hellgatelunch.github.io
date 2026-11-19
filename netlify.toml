@@ -1,0 +1,40 @@
+# Netlify: the static site in web/, plus two functions (netlify/functions):
+#   refresh-menu  every 6 hours, reads the school's menus into Netlify Blobs
+#   menu-data     serves that data at /data/menu.json, /calendar.ics and the day pictures
+# Deployed from this folder with the Netlify CLI (no Git connection):  npm run deploy
+
+[build]
+  publish = "web"
+  functions = "netlify/functions"
+
+[functions.refresh-menu]
+  included_files = [
+    "lib/school-menu.js",
+    "menu/break.json",
+    "web/data/**",
+    "web/calendar.ics",
+    "node_modules/pdfjs-dist/legacy/build/**",
+    "node_modules/pdfjs-dist/cmaps/**",
+    "node_modules/pdfjs-dist/standard_fonts/**",
+  ]
+
+[functions.menu-data]
+  included_files = ["lib/school-menu.js", "menu/break.json", "web/data/**", "web/calendar.ics"]
+
+# Security headers for every page (the pages also carry the same policy as a <meta> tag).
+# Unlike GitHub Pages, Netlify can send frame-ancestors, so no other site can frame the app.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'"
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+    Strict-Transport-Security = "max-age=31536000"
+
+# Always check for a new service worker, so app updates reach phones promptly.
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "no-cache"

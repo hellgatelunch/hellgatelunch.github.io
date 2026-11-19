@@ -4,12 +4,18 @@
   "type": "module",
   "description": "Scriptable widget for the Hellgate Elementary K-8 lunch menu, plus off-phone tests.",
   "scripts": {
-    "test": "node test/run-tests.mjs"
+    "test": "node test/run-tests.mjs",
+    "deploy": "npm test && npx -y netlify-cli@27.20.1 deploy --prod",
+    "netlify": "npx -y netlify-cli@27.20.1"
   },
   "devDependencies": {
     "ical.js": "^2.1.0",
-    "pdfjs-dist": "^4.10.38",
-    "pngjs": "7.0.0",
     "qrcode": "^1.5.4"
+  },
+  "dependencies": {
+    "@netlify/blobs": "11.1.9",
+    "@netlify/functions": "6.1.1",
+    "pdfjs-dist": "^4.10.38",
+    "pngjs": "7.0.0"
   }
 }
