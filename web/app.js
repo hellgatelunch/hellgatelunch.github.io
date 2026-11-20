@@ -232,8 +232,9 @@
       return '<div class="main-line"><p class="main">' + esc(main) + "</p>" + favButton(id, main) + "</div>"
         + (sides ? '<p class="sides">' + sides + "</p>" : "");
     }
-    return '<span class="main">' + esc(main) + "</span>" + favButton(id, main)
-      + (sides ? '<span class="sides">' + sides + "</span>" : "");
+    // Week rows: the heart leads, so hearts line up in a column down the week.
+    return '<span class="food-line">' + favButton(id, main) + '<span class="food-text"><span class="main">' + esc(main) + "</span>"
+      + (sides ? '<span class="sides">' + sides + "</span>" : "") + "</span></span>";
   }
 
   function mealLabel(m, big) {

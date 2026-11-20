@@ -251,7 +251,11 @@ h2 { font-size: 20px; }
 .fav-btn:focus-visible, .plan-btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 1px; }
 .fav-btn[aria-pressed="true"] { color: var(--hi); }
 .fav-btn[aria-pressed="true"] .icon { fill: currentColor; }
-.row .fav-btn { width: 32px; height: 32px; margin: -6px -4px -6px 0; font-size: 16px; vertical-align: middle; }
+/* Week rows: heart first, in its own column, then the food */
+.row .food-line { display: flex; align-items: flex-start; gap: 4px; }
+.row .food-text { min-width: 0; }
+.row .fav-btn { width: 28px; height: 28px; margin: -4px 0 -4px -6px; font-size: 16px; }
+.row .food-line + .plan-line { margin-left: 26px; }
 .icon.filled { fill: currentColor; }
 
 .plan-line { display: block; margin-top: 10px; }
