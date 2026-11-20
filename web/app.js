@@ -39,6 +39,16 @@
   var LOCAL = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname);
   function preview(name) { return LOCAL ? new URLSearchParams(location.search).get(name) : null; }
 
+  // Opened from a home-screen icon added back when Hawks Lunch lived at the old GitHub address
+  // (the old address forwards here with ?from=old). That icon belongs to the old address, so an
+  // iPhone won't give it reminders, and it never counts as "on the home screen" here. The cards
+  // below tell the parent to swap it for a new one. Remembered for this visit, then the address is tidied.
+  var OLD_ICON = /(^|[?&])from=old(&|$)/.test(location.search.slice(1));
+  try {
+    if (OLD_ICON) { sessionStorage.setItem("hl-old-icon", "1"); history.replaceState(null, "", location.pathname + location.hash); }
+    else OLD_ICON = sessionStorage.getItem("hl-old-icon") === "1";
+  } catch (e) { /* private mode: still fine for this page load */ }
+
   // Today's date and hour in Montana. ?now=2026-11-23T15:00 pretends it's another time (test copies only).
   function schoolNow() {
     var q = preview("now");
@@ -423,18 +433,26 @@
 
   // Which steps fit this phone and browser.
   function installSteps(ua) {
-    if (/android/i.test(ua)) return androidSteps(ua);
+    // From the old icon: remove it first, then add the app again from its new address.
+    var swap = OLD_ICON
+      ? "<li>Hawks Lunch has a new address. A Hawks icon added to your home screen <strong>before the move</strong> "
+        + "can't get reminders: press and hold it, tap <strong>Remove App</strong> "
+        + "(or <strong>Delete Bookmark</strong>), then <strong>Delete</strong>.</li>"
+        + "<li>Open " + (/android/i.test(ua) ? "<strong>Chrome</strong>" : "<strong>Safari</strong>")
+        + " and go to <strong>hawkslunch.netlify.app</strong>. Then add it again:</li>"
+      : "";
+    if (/android/i.test(ua)) return swap + androidSteps(ua);
     var addSteps = "<li>Scroll down and tap <strong>Add to Home Screen</strong> " + glyph(PLUS) + "</li>"
       + "<li>Tap <strong>Add</strong>. The Hawks icon appears on your home screen.</li>";
     if (/CriOS|FxiOS|EdgiOS/.test(ua)) {
       return "<li>Tap <strong>Share</strong> " + glyph(SHARE) + " in the address bar.</li>" + addSteps;
     }
     // Apps that open links in their own browser (Facebook, Instagram, the Google app...) have no Add to Home Screen.
-    var inApp = /FBAN|FBAV|Instagram|GSA\/|Line\/|Snapchat|LinkedInApp|Pinterest|Twitter/i.test(ua) || !/Safari\//.test(ua);
+    var inApp = !OLD_ICON && (/FBAN|FBAV|Instagram|GSA\/|Line\/|Snapchat|LinkedInApp|Pinterest|Twitter/i.test(ua) || !/Safari\//.test(ua));
     var openInSafari = inApp
       ? "<li>First open this page in <strong>Safari</strong>: tap " + glyph(DOTS) + " or the share icon in this app and choose <strong>Open in Safari</strong> (or <em>Open in Browser</em>).</li>"
       : "";
-    return openInSafari
+    return swap + openInSafari
       + "<li>Tap <strong>Share</strong> " + glyph(SHARE) + " at the bottom of Safari."
       + '<span class="tip">Don\'t see it? Tap ' + glyph(DOTS) + " first, then Share.</span></li>"
       + addSteps;
@@ -455,7 +473,8 @@
   // which brings it back (with the steps open).
   function installCard(openSteps) {
     if (!M || !canInstall()) { $("install").hidden = true; $("install-again").hidden = true; return; }
-    var tucked = store("hl-install-dismissed") === "1";
+    var tucked = !OLD_ICON && store("hl-install-dismissed") === "1";
+    if (OLD_ICON) openSteps = true;
     $("install").hidden = tucked;
     $("install-again").hidden = !tucked;
     var go = $("install-go"), steps = $("install-steps");
@@ -520,7 +539,9 @@
       // iPhone: notifications only work from the home-screen app.
       card.hidden = !(ios && !standalone && location.protocol === "https:");
       btn.hidden = true;
-      status.textContent = "On iPhone, add Hawks Lunch to your home screen first, then turn this on from the home-screen app.";
+      status.textContent = OLD_ICON
+        ? "Hawks icons added before the move to this address can't get reminders on iPhone. Remove the old icon and add Hawks Lunch again (steps at the top), then turn this on from the new icon."
+        : "On iPhone, add Hawks Lunch to your home screen first, then turn this on from the home-screen app.";
       return;
     }
     card.hidden = false;
