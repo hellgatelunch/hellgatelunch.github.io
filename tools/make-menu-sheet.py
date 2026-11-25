@@ -8,7 +8,7 @@ with Google Sheets: each school day's box has dropdowns (Main, then Sides). Pick
 new one. Then File > Download > PDF and post it as usual. Same layout as the Word version
 (tools/make-menu-calendar.py), so Hawks Lunch reads it the same way.
 
-The food lists live on the "Foods" tab. Add a food at the bottom of its column and it shows up
+The food lists sit right of the calendar (columns H and I). Add a food at the bottom of a list and it shows up
 in every dropdown (the dropdowns cover the column down to row 300).
 """
 import calendar
@@ -47,20 +47,25 @@ def make(ym, meal, out_dir=OUT_DIR):
     wb = Workbook()
     ws = wb.active
     ws.title = "Menu"
-    fd = wb.create_sheet("Foods")
 
-    # Foods tab: Mains (days off first) and Sides, with room to add more.
-    fd["A1"], fd["B1"] = "Mains", "Sides"
-    for c in ("A1", "B1"):
-        fd[c].font = Font(name=FONT, bold=True)
-    for i, v in enumerate(DAYS_OFF + foods["mains"], start=2):
-        fd.cell(row=i, column=1, value=v)
-    for i, v in enumerate(foods["sides"], start=2):
-        fd.cell(row=i, column=2, value=v)
-    fd["D1"] = "Add a new food at the bottom of its column. It shows up in every dropdown on the Menu tab."
-    fd["D1"].font = Font(name=FONT, italic=True, color="666666")
-    fd.column_dimensions["A"].width = 40
-    fd.column_dimensions["B"].width = 28
+    # The food lists sit on this same tab, right of the calendar (outside the printed area), so
+    # the dropdowns don't depend on another tab surviving the move into Google Sheets.
+    # Mains (days off first) in column H, Sides in column I, with room to add more.
+    ws["H1"] = "HOW TO USE: on a phone, first tap ⋮ › Save as Google Sheets (on a computer: File › Save as Google Sheets)."
+    ws["H2"] = "Then tap a box under a date and pick a food. Add new foods at the bottom of a list below."
+    for c in ("H1", "H2"):
+        ws[c].font = Font(name=FONT, bold=True, color="C00000")
+    ws["H3"], ws["I3"] = "Mains", "Sides"
+    for c in ("H3", "I3"):
+        ws[c].font = Font(name=FONT, bold=True)
+    for i, v in enumerate(DAYS_OFF + foods["mains"], start=4):
+        ws.cell(row=i, column=8, value=v).font = Font(name=FONT, size=10)
+    for i, v in enumerate(foods["sides"], start=4):
+        ws.cell(row=i, column=9, value=v).font = Font(name=FONT, size=10)
+    ws.column_dimensions["F"].width = 4
+    ws.column_dimensions["G"].width = 4
+    ws.column_dimensions["H"].width = 40
+    ws.column_dimensions["I"].width = 28
 
     # Menu tab: 5 day columns.
     for col in "ABCDE":
@@ -92,9 +97,9 @@ def make(ym, meal, out_dir=OUT_DIR):
         c.border = Border(left=line, right=line, top=line, bottom=line)
     ws.row_dimensions[3].height = 24
 
-    mains = DataValidation(type="list", formula1="Foods!$A$2:$A$300", allow_blank=True,
+    mains = DataValidation(type="list", formula1="$H$4:$H$300", allow_blank=True,
                            showErrorMessage=False, promptTitle="Main", prompt="Pick the main dish, or a day off")
-    sides = DataValidation(type="list", formula1="Foods!$B$2:$B$300", allow_blank=True,
+    sides = DataValidation(type="list", formula1="$I$4:$I$300", allow_blank=True,
                            showErrorMessage=False, promptTitle="Side", prompt="Pick a side")
     ws.add_data_validation(mains)
     ws.add_data_validation(sides)
