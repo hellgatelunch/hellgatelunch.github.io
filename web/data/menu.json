@@ -4,7 +4,8 @@
   "2026-11": {
    "name": "November 2026",
    "source": "https://resources.finalsite.net/images/v1793201331/hellgatek12mtus/q36shaaq4eujy03daxtg/NovemberLUNCH2026docx.pdf",
-   "cut": "2026-11-10",
+   "cut": "2026-11-25",
+   "reader": 2,
    "ok": true
   }
  },
@@ -260,13 +261,15 @@
    "2026-11": {
     "name": "November 2026",
     "source": "https://resources.finalsite.net/images/v1793201252/hellgatek12mtus/twuuwxln6jhm3sul79la/November2026BREAKFASTdocx.pdf",
-    "cut": "2026-11-11",
+    "cut": "2026-11-25",
+    "reader": 2,
     "ok": true
    },
    "2026-12": {
     "name": "December 2026",
     "source": "https://resources.finalsite.net/images/v1795450797/hellgatek12mtus/s2k9hji9icsimwlnwea0/BreakfastDECEMBER2026docx.pdf",
-    "cut": "2026-11-23",
+    "cut": "2026-11-25",
+    "reader": 2,
     "ok": true
    }
   },
@@ -407,65 +410,85 @@
    },
    "2026-12-01": {
     "items": [
-     "Tuesday"
-    ]
-   },
-   "2026-12-02": {
-    "items": [
-     "Wednesday"
-    ]
-   },
-   "2026-12-03": {
-    "items": [
-     "Thursday"
-    ]
-   },
-   "2026-12-04": {
-    "items": [
-     "Friday"
-    ]
-   },
-   "2026-12-07": {
-    "img": "cells-breakfast/2026-12-07.png",
-    "w": 259,
-    "h": 81,
-    "mask": true
-   },
-   "2026-12-08": {
-    "img": "cells-breakfast/2026-12-08.png",
-    "w": 250,
-    "h": 81,
-    "mask": true
-   },
-   "2026-12-09": {
-    "img": "cells-breakfast/2026-12-09.png",
-    "w": 253,
-    "h": 81,
-    "mask": true
-   },
-   "2026-12-10": {
-    "img": "cells-breakfast/2026-12-10.png",
-    "w": 254,
-    "h": 81,
-    "mask": true
-   },
-   "2026-12-11": {
-    "img": "cells-breakfast/2026-12-11.png",
-    "w": 251,
-    "h": 81,
-    "mask": true
-   },
-   "2026-12-15": {
-    "items": [
      "Chocolate Chip Oatmeal Bar",
      "Cheddar Cheese Stick",
      "Pears"
     ]
    },
-   "2026-12-16": {
+   "2026-12-02": {
     "items": [
      "Yogurt",
      "Mini Donuts",
+     "Peaches"
+    ]
+   },
+   "2026-12-03": {
+    "items": [
+     "Maple Donut",
+     "Turkey Sausage Patty",
+     "Apple Slices"
+    ]
+   },
+   "2026-12-04": {
+    "items": [
+     "Cereal",
+     "Cheddar Cheese Stick",
+     "Pears"
+    ]
+   },
+   "2026-12-07": {
+    "items": [
+     "Biscuits & Sausage Gravy",
+     "Tri Tater",
+     "Juice"
+    ]
+   },
+   "2026-12-08": {
+    "items": [
+     "Oatmeal",
+     "Mini Donuts",
+     "Peach Cup"
+    ]
+   },
+   "2026-12-09": {
+    "items": [
+     "Cinnamon Roll",
+     "String Cheese",
+     "Mandarin Oranges"
+    ]
+   },
+   "2026-12-10": {
+    "items": [
+     "Chocolate Donut",
+     "Turkey Sausage Patty",
+     "Apple Slices"
+    ]
+   },
+   "2026-12-11": {
+    "items": [
+     "Cereal",
+     "Yogurt",
+     "Pears"
+    ]
+   },
+   "2026-12-14": {
+    "items": [
+     "Mini Strawberry Bagel",
+     "String Cheese",
+     "Pears"
+    ]
+   },
+   "2026-12-15": {
+    "items": [
+     "Mini Pancakes",
+     "Cheddar Cheese Stick",
+     "Mandarin Oranges"
+    ]
+   },
+   "2026-12-16": {
+    "items": [
+     "Chocolate Chip Muffin",
+     "Yogurt",
      "Peaches"
     ]
    },
@@ -480,75 +503,28 @@
     "items": [
      "Cereal",
      "Cheddar Cheese Stick",
-     "Pears"
-    ]
-   },
-   "2026-12-21": {
-    "items": [
-     "Biscuits & Sausage Gravy",
-     "Tri Tater",
-     "Juice"
+     "Variety Fruits"
     ]
    },
    "2026-12-22": {
-    "items": [
-     "Oatmeal",
-     "Mini Donuts",
-     "Peach Cup"
-    ]
+    "off": "Winter break"
    },
    "2026-12-23": {
-    "items": [
-     "Cinnamon Roll",
-     "String Cheese",
-     "Mandarin Oranges"
-    ]
-   },
-   "2026-12-24": {
-    "items": [
-     "Chocolate Donut",
-     "Turkey Sausage Patty",
-     "Apple Slices"
-    ]
-   },
-   "2026-12-25": {
-    "items": [
-     "Cereal",
-     "Yogurt",
-     "Pears"
-    ]
-   },
-   "2026-12-28": {
-    "items": [
-     "Mini Strawberry Bagel",
-     "String Cheese",
-     "Pears"
-    ]
+    "off": "Winter break"
    },
    "2026-12-29": {
-    "items": [
-     "Mini Pancakes",
-     "Cheddar Cheese Stick",
-     "Mandarin Oranges"
-    ]
+    "off": "See you back January 4th"
    },
    "2026-12-30": {
-    "items": [
-     "Chocolate Chip Muffin",
-     "Yogurt",
-     "Peaches"
-    ]
-   },
-   "2026-12-31": {
-    "items": [
-     "Maple Donut",
-     "Turkey Sausage Patty",
-     "Apple Slices"
-    ]
+    "off": "See you back January 4th"
    }
   },
   "noLunch": [
-   "2026-12-14"
+   "2026-12-21",
+   "2026-12-24",
+   "2026-12-25",
+   "2026-12-28",
+   "2026-12-31"
   ]
  },
  "break": {

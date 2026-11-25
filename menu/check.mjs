@@ -36,12 +36,13 @@ export function checkMenu(m) {
     need(isObj(d.months) && Object.keys(d.months).length <= 6, `${name}.months`);
     for (const [mk, e] of Object.entries(isObj(d.months) ? d.months : {})) {
       need(isMonth(mk), `${name}.months key ${mk}`);
-      need(isObj(e) && keysIn(e, ["name", "source", "cut", "ok"]), `${name}.months.${mk} fields`);
+      need(isObj(e) && keysIn(e, ["name", "source", "cut", "ok", "reader"]), `${name}.months.${mk} fields`);
       if (!isObj(e)) continue;
       need(plainText(e.name, 40), `${name}.months.${mk}.name`);
       need(schoolUrl(e.source), `${name}.months.${mk}.source is not a school address`);
       need(isDate(e.cut), `${name}.months.${mk}.cut`);
       need(typeof e.ok === "boolean", `${name}.months.${mk}.ok`);
+      need(e.reader === undefined || (Number.isInteger(e.reader) && e.reader > 0 && e.reader < 1000), `${name}.months.${mk}.reader`);
     }
     need(isObj(d.days) && Object.keys(d.days).length <= 100, `${name}.days`);
     const dir = name === "lunch" ? "cells" : "cells-breakfast";

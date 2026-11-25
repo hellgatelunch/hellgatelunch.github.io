@@ -45,5 +45,31 @@ export async function readMonth(png, pdfBytes, year, month) {
     days[k] = { picture: maskPng(img, t), w: t.w, h: t.h, ...(t.h < t.w * 0.3 ? { note: true } : {}) };
     fromPictures++;
   }
+  bannersToDaysOff(days);
   return { days, noLunch, fromText, fromPictures };
+}
+
+// A banner written across several boxes ("WINTER" | "BREAK", "SEE YOU BACK" | "JANUARY 4th")
+// lands one or two words per day. Days next to each other in a week holding nothing but one
+// all-capitals line are joined; if they read as a break (or there are two or more of them),
+// each becomes a day off with the joined words, e.g. "Winter break".
+const MONTHS = /\b(january|february|march|april|may|june|july|august|september|october|november|december)\b/g;
+const isBanner = d => d && d.items && d.items.length === 1 && /[A-Z]{2}/.test(d.items[0]) && !/[a-z]{2}/.test(d.items[0].replace(/\d+(st|nd|rd|th)\b/g, ""));
+export function bannersToDaysOff(days) {
+  const keys = Object.keys(days).sort();
+  const week = k => { const [y, m, d] = k.split("-").map(Number); const t = new Date(Date.UTC(y, m - 1, d)); return Math.floor((t - Date.UTC(1970, 0, 5)) / 864e5 / 7); };
+  let run = [];
+  const flush = () => {
+    const words = run.map(k => days[k].items[0].trim()).join(" ");
+    if (run.length >= 2 || /\b(break|holiday|vacation|no school|closed)\b/i.test(words)) {
+      const label = words.toLowerCase().replace(/^./, c => c.toUpperCase()).replace(MONTHS, m => m[0].toUpperCase() + m.slice(1));
+      for (const k of run) days[k] = { off: label };
+    }
+    run = [];
+  };
+  for (const k of keys) {
+    if (isBanner(days[k]) && (!run.length || week(run[run.length - 1]) === week(k))) run.push(k);
+    else { if (run.length) flush(); if (isBanner(days[k])) run.push(k); }
+  }
+  if (run.length) flush();
 }

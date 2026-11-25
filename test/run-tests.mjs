@@ -214,6 +214,21 @@ await testAsync("breakfast words from the PDF", async () => {
   for (const d of ["25", "26", "27"]) assert.equal(res.days["2026-11-" + d].off, "No school");
 });
 
+await testAsync("December breakfast: a tall green header band and a colored note above it; a winter break banner", async () => {
+  // The day names sit in white inside a soft green band, and an orange note runs above the calendar.
+  // Both used to shift every week up one row (Dec 1 read "Tuesday", Dec 7-11 came out as pictures).
+  const res = await readMonth(pngOf("december-2026-breakfast.png"), pdfOf("december-2026-breakfast.pdf"), 2026, 11);
+  assert.equal(res.fromPictures, 0);
+  assert.deepEqual([...res.days["2026-12-01"].items], ["Chocolate Chip Oatmeal Bar", "Cheddar Cheese Stick", "Pears"]);
+  assert.deepEqual([...res.days["2026-12-07"].items], ["Biscuits & Sausage Gravy", "Tri Tater", "Juice"]);
+  assert.deepEqual([...res.days["2026-12-11"].items], ["Cereal", "Yogurt", "Pears"]);
+  assert.deepEqual([...res.days["2026-12-18"].items], ["Cereal", "Cheddar Cheese Stick", "Variety Fruits"]);
+  // "WINTER" | "BREAK" and "SEE YOU BACK" | "JANUARY 4th" are written across the boxes.
+  assert.equal(res.days["2026-12-22"].off, "Winter break");
+  assert.equal(res.days["2026-12-23"].off, "Winter break");
+  assert.equal(res.days["2026-12-30"].off, "See you back January 4th");
+});
+
 await testAsync("without readable words, a day falls back to a see-through picture", async () => {
   const res = await readMonth(pngOf("november-2026-breakfast.png"), null, 2026, 10);
   assert.equal(res.fromPictures, 21);
@@ -518,6 +533,11 @@ console.log("iPhone widget (hellgate-lunch.js, with a stand-in for Scriptable)")
     fs.mkdirSync(path.join(d, "data", "cells-breakfast"), { recursive: true });
     fs.copyFileSync(path.join(WEB, "data", "menu.json"), path.join(d, "data", "menu.json"));
     fs.copyFileSync(path.join(WEB, "calendar.ics"), path.join(d, "calendar.ics"));
+    // The day pictures the menu points to, if any (a month the build couldn't read as text).
+    for (const sub of ["cells", "cells-breakfast"]) {
+      const src = path.join(WEB, "data", sub);
+      if (fs.existsSync(src)) for (const f of fs.readdirSync(src)) if (/^\d{4}-\d\d-\d\d\.png$/.test(f)) fs.copyFileSync(path.join(src, f), path.join(d, "data", sub, f));
+    }
     return d;
   };
   const site = () => {

@@ -11,7 +11,7 @@ REFRESH-INTERVAL;VALUE=DURATION:PT6H
 X-PUBLISHED-TTL:PT6H
 BEGIN:VEVENT
 UID:20261102@hellgatelunch.github.io
-DTSTAMP:20261111T120000Z
+DTSTAMP:20261125T120000Z
 DTSTART;VALUE=DATE:20261102
 DTEND;VALUE=DATE:20261103
 SUMMARY:Lunch: Sweet & Sour Chicken/Rice
@@ -24,7 +24,7 @@ TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:20261103@hellgatelunch.github.io
-DTSTAMP:20261111T120000Z
+DTSTAMP:20261125T120000Z
 DTSTART;VALUE=DATE:20261103
 DTEND;VALUE=DATE:20261104
 SUMMARY:Lunch: Beef Hot Dog
@@ -37,7 +37,7 @@ TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:20261104@hellgatelunch.github.io
-DTSTAMP:20261111T120000Z
+DTSTAMP:20261125T120000Z
 DTSTART;VALUE=DATE:20261104
 DTEND;VALUE=DATE:20261105
 SUMMARY:Lunch: Beef Burrito
@@ -49,7 +49,7 @@ TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:20261105@hellgatelunch.github.io
-DTSTAMP:20261111T120000Z
+DTSTAMP:20261125T120000Z
 DTSTART;VALUE=DATE:20261105
 DTEND;VALUE=DATE:20261106
 SUMMARY:Lunch: Chicken Nuggets
@@ -62,7 +62,7 @@ TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:20261106@hellgatelunch.github.io
-DTSTAMP:20261111T120000Z
+DTSTAMP:20261125T120000Z
 DTSTART;VALUE=DATE:20261106
 DTEND;VALUE=DATE:20261107
 SUMMARY:Lunch: Sloppy Joe
@@ -74,7 +74,7 @@ TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:20261109@hellgatelunch.github.io
-DTSTAMP:20261111T120000Z
+DTSTAMP:20261125T120000Z
 DTSTART;VALUE=DATE:20261109
 DTEND;VALUE=DATE:20261110
 SUMMARY:Lunch: Orange Chicken/Rice
@@ -87,7 +87,7 @@ TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:20261110@hellgatelunch.github.io
-DTSTAMP:20261111T120000Z
+DTSTAMP:20261125T120000Z
 DTSTART;VALUE=DATE:20261110
 DTEND;VALUE=DATE:20261111
 SUMMARY:Lunch: Cheeseburger
@@ -100,7 +100,7 @@ TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:20261111@hellgatelunch.github.io
-DTSTAMP:20261111T120000Z
+DTSTAMP:20261125T120000Z
 DTSTART;VALUE=DATE:20261111
 DTEND;VALUE=DATE:20261112
 SUMMARY:Lunch: Chicken Strips
@@ -112,7 +112,7 @@ TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:20261112@hellgatelunch.github.io
-DTSTAMP:20261111T120000Z
+DTSTAMP:20261125T120000Z
 DTSTART;VALUE=DATE:20261112
 DTEND;VALUE=DATE:20261113
 SUMMARY:Lunch: Corn Dog
@@ -125,7 +125,7 @@ TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:20261113@hellgatelunch.github.io
-DTSTAMP:20261111T120000Z
+DTSTAMP:20261125T120000Z
 DTSTART;VALUE=DATE:20261113
 DTEND;VALUE=DATE:20261114
 SUMMARY:Lunch: Beef Chili/Cheese
@@ -138,7 +138,7 @@ TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:20261116@hellgatelunch.github.io
-DTSTAMP:20261111T120000Z
+DTSTAMP:20261125T120000Z
 DTSTART;VALUE=DATE:20261116
 DTEND;VALUE=DATE:20261117
 SUMMARY:Lunch: Beef Meatball Sub/Cheese
@@ -151,7 +151,7 @@ TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:20261117@hellgatelunch.github.io
-DTSTAMP:20261111T120000Z
+DTSTAMP:20261125T120000Z
 DTSTART;VALUE=DATE:20261117
 DTEND;VALUE=DATE:20261118
 SUMMARY:Lunch: Biscuits & Sausage Gravy
@@ -163,7 +163,7 @@ TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:20261118@hellgatelunch.github.io
-DTSTAMP:20261111T120000Z
+DTSTAMP:20261125T120000Z
 DTSTART;VALUE=DATE:20261118
 DTEND;VALUE=DATE:20261119
 SUMMARY:Lunch: Beef Taco
@@ -176,7 +176,7 @@ TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:20261119@hellgatelunch.github.io
-DTSTAMP:20261111T120000Z
+DTSTAMP:20261125T120000Z
 DTSTART;VALUE=DATE:20261119
 DTEND;VALUE=DATE:20261120
 SUMMARY:Lunch: Chicken Noodle Soup
@@ -189,7 +189,7 @@ TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:20261120@hellgatelunch.github.io
-DTSTAMP:20261111T120000Z
+DTSTAMP:20261125T120000Z
 DTSTART;VALUE=DATE:20261120
 DTEND;VALUE=DATE:20261121
 SUMMARY:Lunch: Turkey/Cheddar Wrap
@@ -202,7 +202,7 @@ TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:20261123@hellgatelunch.github.io
-DTSTAMP:20261111T120000Z
+DTSTAMP:20261125T120000Z
 DTSTART;VALUE=DATE:20261123
 DTEND;VALUE=DATE:20261124
 SUMMARY:Lunch: Grilled Cheese
@@ -215,7 +215,7 @@ TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:20261124@hellgatelunch.github.io
-DTSTAMP:20261111T120000Z
+DTSTAMP:20261125T120000Z
 DTSTART;VALUE=DATE:20261124
 DTEND;VALUE=DATE:20261125
 SUMMARY:Lunch: Chicken Strips
@@ -228,7 +228,7 @@ TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:20261130@hellgatelunch.github.io
-DTSTAMP:20261111T120000Z
+DTSTAMP:20261125T120000Z
 DTSTART;VALUE=DATE:20261130
 DTEND;VALUE=DATE:20261201
 SUMMARY:Lunch: Beef Burrito
@@ -241,109 +241,9 @@ TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:20261201@hellgatelunch.github.io
-DTSTAMP:20261123T120000Z
+DTSTAMP:20261125T120000Z
 DTSTART;VALUE=DATE:20261201
 DTEND;VALUE=DATE:20261202
-SUMMARY:Breakfast: Tuesday
-DESCRIPTION:Breakfast: Tuesday\nBreak (middle school): Mini Donuts · Yogur
- t · Fruits · Milk\nhttps://hellgatelunch.github.io/
-URL:https://hellgatelunch.github.io/
-TRANSP:TRANSPARENT
-END:VEVENT
-BEGIN:VEVENT
-UID:20261202@hellgatelunch.github.io
-DTSTAMP:20261123T120000Z
-DTSTART;VALUE=DATE:20261202
-DTEND;VALUE=DATE:20261203
-SUMMARY:Breakfast: Wednesday
-DESCRIPTION:Breakfast: Wednesday\nBreak (middle school): Mini Cinnis · Yog
- urt · Fruits · Milk\nhttps://hellgatelunch.github.io/
-URL:https://hellgatelunch.github.io/
-TRANSP:TRANSPARENT
-END:VEVENT
-BEGIN:VEVENT
-UID:20261203@hellgatelunch.github.io
-DTSTAMP:20261123T120000Z
-DTSTART;VALUE=DATE:20261203
-DTEND;VALUE=DATE:20261204
-SUMMARY:Breakfast: Thursday
-DESCRIPTION:Breakfast: Thursday\nBreak (middle school): Maple Donut · Stri
- ng Cheese · Fruits · Milk\nhttps://hellgatelunch.github.io/
-URL:https://hellgatelunch.github.io/
-TRANSP:TRANSPARENT
-END:VEVENT
-BEGIN:VEVENT
-UID:20261204@hellgatelunch.github.io
-DTSTAMP:20261123T120000Z
-DTSTART;VALUE=DATE:20261204
-DTEND;VALUE=DATE:20261205
-SUMMARY:Breakfast: Friday
-DESCRIPTION:Breakfast: Friday\nBreak (middle school): Chocolate Chip Muffin
-  · Cheddar Stick · Fruits · Milk\nhttps://hellgatelunch.github.io/
-URL:https://hellgatelunch.github.io/
-TRANSP:TRANSPARENT
-END:VEVENT
-BEGIN:VEVENT
-UID:20261207@hellgatelunch.github.io
-DTSTAMP:20261123T120000Z
-DTSTART;VALUE=DATE:20261207
-DTEND;VALUE=DATE:20261208
-SUMMARY:Breakfast: see the menu
-DESCRIPTION:Breakfast: see the menu\nBreak (middle school): Brown Sugar Pop
-  Tart · Cheddar Stick · Fruits · Milk\nhttps://hellgatelunch.github.io/
-URL:https://hellgatelunch.github.io/
-TRANSP:TRANSPARENT
-END:VEVENT
-BEGIN:VEVENT
-UID:20261208@hellgatelunch.github.io
-DTSTAMP:20261123T120000Z
-DTSTART;VALUE=DATE:20261208
-DTEND;VALUE=DATE:20261209
-SUMMARY:Breakfast: see the menu
-DESCRIPTION:Breakfast: see the menu\nBreak (middle school): Mini Donuts · 
- Yogurt · Fruits · Milk\nhttps://hellgatelunch.github.io/
-URL:https://hellgatelunch.github.io/
-TRANSP:TRANSPARENT
-END:VEVENT
-BEGIN:VEVENT
-UID:20261209@hellgatelunch.github.io
-DTSTAMP:20261123T120000Z
-DTSTART;VALUE=DATE:20261209
-DTEND;VALUE=DATE:20261210
-SUMMARY:Breakfast: see the menu
-DESCRIPTION:Breakfast: see the menu\nBreak (middle school): Mini Cinnis · 
- Yogurt · Fruits · Milk\nhttps://hellgatelunch.github.io/
-URL:https://hellgatelunch.github.io/
-TRANSP:TRANSPARENT
-END:VEVENT
-BEGIN:VEVENT
-UID:20261210@hellgatelunch.github.io
-DTSTAMP:20261123T120000Z
-DTSTART;VALUE=DATE:20261210
-DTEND;VALUE=DATE:20261211
-SUMMARY:Breakfast: see the menu
-DESCRIPTION:Breakfast: see the menu\nBreak (middle school): Maple Donut · 
- String Cheese · Fruits · Milk\nhttps://hellgatelunch.github.io/
-URL:https://hellgatelunch.github.io/
-TRANSP:TRANSPARENT
-END:VEVENT
-BEGIN:VEVENT
-UID:20261211@hellgatelunch.github.io
-DTSTAMP:20261123T120000Z
-DTSTART;VALUE=DATE:20261211
-DTEND;VALUE=DATE:20261212
-SUMMARY:Breakfast: see the menu
-DESCRIPTION:Breakfast: see the menu\nBreak (middle school): Chocolate Chip 
- Muffin · Cheddar Stick · Fruits · Milk\nhttps://hellgatelunch.github.io
- /
-URL:https://hellgatelunch.github.io/
-TRANSP:TRANSPARENT
-END:VEVENT
-BEGIN:VEVENT
-UID:20261215@hellgatelunch.github.io
-DTSTAMP:20261123T120000Z
-DTSTART;VALUE=DATE:20261215
-DTEND;VALUE=DATE:20261216
 SUMMARY:Breakfast: Chocolate Chip Oatmeal Bar
 DESCRIPTION:Breakfast: Chocolate Chip Oatmeal Bar · Cheddar Cheese Stick 
  · Pears\nBreak (middle school): Mini Donuts · Yogurt · Fruits · Milk\n
@@ -352,10 +252,10 @@ URL:https://hellgatelunch.github.io/
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
-UID:20261216@hellgatelunch.github.io
-DTSTAMP:20261123T120000Z
-DTSTART;VALUE=DATE:20261216
-DTEND;VALUE=DATE:20261217
+UID:20261202@hellgatelunch.github.io
+DTSTAMP:20261125T120000Z
+DTSTART;VALUE=DATE:20261202
+DTEND;VALUE=DATE:20261203
 SUMMARY:Breakfast: Yogurt
 DESCRIPTION:Breakfast: Yogurt · Mini Donuts · Peaches\nBreak (middle scho
  ol): Mini Cinnis · Yogurt · Fruits · Milk\nhttps://hellgatelunch.github
@@ -364,8 +264,128 @@ URL:https://hellgatelunch.github.io/
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
+UID:20261203@hellgatelunch.github.io
+DTSTAMP:20261125T120000Z
+DTSTART;VALUE=DATE:20261203
+DTEND;VALUE=DATE:20261204
+SUMMARY:Breakfast: Maple Donut
+DESCRIPTION:Breakfast: Maple Donut · Turkey Sausage Patty · Apple Slices\
+ nBreak (middle school): Maple Donut · String Cheese · Fruits · Milk\nht
+ tps://hellgatelunch.github.io/
+URL:https://hellgatelunch.github.io/
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:20261204@hellgatelunch.github.io
+DTSTAMP:20261125T120000Z
+DTSTART;VALUE=DATE:20261204
+DTEND;VALUE=DATE:20261205
+SUMMARY:Breakfast: Cereal
+DESCRIPTION:Breakfast: Cereal · Cheddar Cheese Stick · Pears\nBreak (midd
+ le school): Chocolate Chip Muffin · Cheddar Stick · Fruits · Milk\nhttp
+ s://hellgatelunch.github.io/
+URL:https://hellgatelunch.github.io/
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:20261207@hellgatelunch.github.io
+DTSTAMP:20261125T120000Z
+DTSTART;VALUE=DATE:20261207
+DTEND;VALUE=DATE:20261208
+SUMMARY:Breakfast: Biscuits & Sausage Gravy
+DESCRIPTION:Breakfast: Biscuits & Sausage Gravy · Tri Tater · Juice\nBrea
+ k (middle school): Brown Sugar Pop Tart · Cheddar Stick · Fruits · Milk
+ \nhttps://hellgatelunch.github.io/
+URL:https://hellgatelunch.github.io/
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:20261208@hellgatelunch.github.io
+DTSTAMP:20261125T120000Z
+DTSTART;VALUE=DATE:20261208
+DTEND;VALUE=DATE:20261209
+SUMMARY:Breakfast: Oatmeal
+DESCRIPTION:Breakfast: Oatmeal · Mini Donuts · Peach Cup\nBreak (middle s
+ chool): Mini Donuts · Yogurt · Fruits · Milk\nhttps://hellgatelunch.git
+ hub.io/
+URL:https://hellgatelunch.github.io/
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:20261209@hellgatelunch.github.io
+DTSTAMP:20261125T120000Z
+DTSTART;VALUE=DATE:20261209
+DTEND;VALUE=DATE:20261210
+SUMMARY:Breakfast: Cinnamon Roll
+DESCRIPTION:Breakfast: Cinnamon Roll · String Cheese · Mandarin Oranges\n
+ Break (middle school): Mini Cinnis · Yogurt · Fruits · Milk\nhttps://he
+ llgatelunch.github.io/
+URL:https://hellgatelunch.github.io/
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:20261210@hellgatelunch.github.io
+DTSTAMP:20261125T120000Z
+DTSTART;VALUE=DATE:20261210
+DTEND;VALUE=DATE:20261211
+SUMMARY:Breakfast: Chocolate Donut
+DESCRIPTION:Breakfast: Chocolate Donut · Turkey Sausage Patty · Apple Sli
+ ces\nBreak (middle school): Maple Donut · String Cheese · Fruits · Milk
+ \nhttps://hellgatelunch.github.io/
+URL:https://hellgatelunch.github.io/
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:20261211@hellgatelunch.github.io
+DTSTAMP:20261125T120000Z
+DTSTART;VALUE=DATE:20261211
+DTEND;VALUE=DATE:20261212
+SUMMARY:Breakfast: Cereal
+DESCRIPTION:Breakfast: Cereal · Yogurt · Pears\nBreak (middle school): Ch
+ ocolate Chip Muffin · Cheddar Stick · Fruits · Milk\nhttps://hellgatelu
+ nch.github.io/
+URL:https://hellgatelunch.github.io/
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:20261214@hellgatelunch.github.io
+DTSTAMP:20261125T120000Z
+DTSTART;VALUE=DATE:20261214
+DTEND;VALUE=DATE:20261215
+SUMMARY:Breakfast: Mini Strawberry Bagel
+DESCRIPTION:Breakfast: Mini Strawberry Bagel · String Cheese · Pears\nBre
+ ak (middle school): Brown Sugar Pop Tart · Cheddar Stick · Fruits · Mil
+ k\nhttps://hellgatelunch.github.io/
+URL:https://hellgatelunch.github.io/
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:20261215@hellgatelunch.github.io
+DTSTAMP:20261125T120000Z
+DTSTART;VALUE=DATE:20261215
+DTEND;VALUE=DATE:20261216
+SUMMARY:Breakfast: Mini Pancakes
+DESCRIPTION:Breakfast: Mini Pancakes · Cheddar Cheese Stick · Mandarin Or
+ anges\nBreak (middle school): Mini Donuts · Yogurt · Fruits · Milk\nhtt
+ ps://hellgatelunch.github.io/
+URL:https://hellgatelunch.github.io/
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:20261216@hellgatelunch.github.io
+DTSTAMP:20261125T120000Z
+DTSTART;VALUE=DATE:20261216
+DTEND;VALUE=DATE:20261217
+SUMMARY:Breakfast: Chocolate Chip Muffin
+DESCRIPTION:Breakfast: Chocolate Chip Muffin · Yogurt · Peaches\nBreak (m
+ iddle school): Mini Cinnis · Yogurt · Fruits · Milk\nhttps://hellgatelu
+ nch.github.io/
+URL:https://hellgatelunch.github.io/
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
 UID:20261217@hellgatelunch.github.io
-DTSTAMP:20261123T120000Z
+DTSTAMP:20261125T120000Z
 DTSTART;VALUE=DATE:20261217
 DTEND;VALUE=DATE:20261218
 SUMMARY:Breakfast: Maple Donut
@@ -377,121 +397,13 @@ TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:20261218@hellgatelunch.github.io
-DTSTAMP:20261123T120000Z
+DTSTAMP:20261125T120000Z
 DTSTART;VALUE=DATE:20261218
 DTEND;VALUE=DATE:20261219
 SUMMARY:Breakfast: Cereal
-DESCRIPTION:Breakfast: Cereal · Cheddar Cheese Stick · Pears\nBreak (midd
- le school): Chocolate Chip Muffin · Cheddar Stick · Fruits · Milk\nhttp
- s://hellgatelunch.github.io/
-URL:https://hellgatelunch.github.io/
-TRANSP:TRANSPARENT
-END:VEVENT
-BEGIN:VEVENT
-UID:20261221@hellgatelunch.github.io
-DTSTAMP:20261123T120000Z
-DTSTART;VALUE=DATE:20261221
-DTEND;VALUE=DATE:20261222
-SUMMARY:Breakfast: Biscuits & Sausage Gravy
-DESCRIPTION:Breakfast: Biscuits & Sausage Gravy · Tri Tater · Juice\nBrea
- k (middle school): Brown Sugar Pop Tart · Cheddar Stick · Fruits · Milk
- \nhttps://hellgatelunch.github.io/
-URL:https://hellgatelunch.github.io/
-TRANSP:TRANSPARENT
-END:VEVENT
-BEGIN:VEVENT
-UID:20261222@hellgatelunch.github.io
-DTSTAMP:20261123T120000Z
-DTSTART;VALUE=DATE:20261222
-DTEND;VALUE=DATE:20261223
-SUMMARY:Breakfast: Oatmeal
-DESCRIPTION:Breakfast: Oatmeal · Mini Donuts · Peach Cup\nBreak (middle s
- chool): Mini Donuts · Yogurt · Fruits · Milk\nhttps://hellgatelunch.git
- hub.io/
-URL:https://hellgatelunch.github.io/
-TRANSP:TRANSPARENT
-END:VEVENT
-BEGIN:VEVENT
-UID:20261223@hellgatelunch.github.io
-DTSTAMP:20261123T120000Z
-DTSTART;VALUE=DATE:20261223
-DTEND;VALUE=DATE:20261224
-SUMMARY:Breakfast: Cinnamon Roll
-DESCRIPTION:Breakfast: Cinnamon Roll · String Cheese · Mandarin Oranges\n
- Break (middle school): Mini Cinnis · Yogurt · Fruits · Milk\nhttps://he
- llgatelunch.github.io/
-URL:https://hellgatelunch.github.io/
-TRANSP:TRANSPARENT
-END:VEVENT
-BEGIN:VEVENT
-UID:20261224@hellgatelunch.github.io
-DTSTAMP:20261123T120000Z
-DTSTART;VALUE=DATE:20261224
-DTEND;VALUE=DATE:20261225
-SUMMARY:Breakfast: Chocolate Donut
-DESCRIPTION:Breakfast: Chocolate Donut · Turkey Sausage Patty · Apple Sli
- ces\nBreak (middle school): Maple Donut · String Cheese · Fruits · Milk
- \nhttps://hellgatelunch.github.io/
-URL:https://hellgatelunch.github.io/
-TRANSP:TRANSPARENT
-END:VEVENT
-BEGIN:VEVENT
-UID:20261225@hellgatelunch.github.io
-DTSTAMP:20261123T120000Z
-DTSTART;VALUE=DATE:20261225
-DTEND;VALUE=DATE:20261226
-SUMMARY:Breakfast: Cereal
-DESCRIPTION:Breakfast: Cereal · Yogurt · Pears\nBreak (middle school): Ch
- ocolate Chip Muffin · Cheddar Stick · Fruits · Milk\nhttps://hellgatelu
- nch.github.io/
-URL:https://hellgatelunch.github.io/
-TRANSP:TRANSPARENT
-END:VEVENT
-BEGIN:VEVENT
-UID:20261228@hellgatelunch.github.io
-DTSTAMP:20261123T120000Z
-DTSTART;VALUE=DATE:20261228
-DTEND;VALUE=DATE:20261229
-SUMMARY:Breakfast: Mini Strawberry Bagel
-DESCRIPTION:Breakfast: Mini Strawberry Bagel · String Cheese · Pears\nBre
- ak (middle school): Brown Sugar Pop Tart · Cheddar Stick · Fruits · Mil
- k\nhttps://hellgatelunch.github.io/
-URL:https://hellgatelunch.github.io/
-TRANSP:TRANSPARENT
-END:VEVENT
-BEGIN:VEVENT
-UID:20261229@hellgatelunch.github.io
-DTSTAMP:20261123T120000Z
-DTSTART;VALUE=DATE:20261229
-DTEND;VALUE=DATE:20261230
-SUMMARY:Breakfast: Mini Pancakes
-DESCRIPTION:Breakfast: Mini Pancakes · Cheddar Cheese Stick · Mandarin Or
- anges\nBreak (middle school): Mini Donuts · Yogurt · Fruits · Milk\nhtt
- ps://hellgatelunch.github.io/
-URL:https://hellgatelunch.github.io/
-TRANSP:TRANSPARENT
-END:VEVENT
-BEGIN:VEVENT
-UID:20261230@hellgatelunch.github.io
-DTSTAMP:20261123T120000Z
-DTSTART;VALUE=DATE:20261230
-DTEND;VALUE=DATE:20261231
-SUMMARY:Breakfast: Chocolate Chip Muffin
-DESCRIPTION:Breakfast: Chocolate Chip Muffin · Yogurt · Peaches\nBreak (m
- iddle school): Mini Cinnis · Yogurt · Fruits · Milk\nhttps://hellgatelu
- nch.github.io/
-URL:https://hellgatelunch.github.io/
-TRANSP:TRANSPARENT
-END:VEVENT
-BEGIN:VEVENT
-UID:20261231@hellgatelunch.github.io
-DTSTAMP:20261123T120000Z
-DTSTART;VALUE=DATE:20261231
-DTEND;VALUE=DATE:20270101
-SUMMARY:Breakfast: Maple Donut
-DESCRIPTION:Breakfast: Maple Donut · Turkey Sausage Patty · Apple Slices\
- nBreak (middle school): Maple Donut · String Cheese · Fruits · Milk\nht
- tps://hellgatelunch.github.io/
+DESCRIPTION:Breakfast: Cereal · Cheddar Cheese Stick · Variety Fruits\nBr
+ eak (middle school): Chocolate Chip Muffin · Cheddar Stick · Fruits · M
+ ilk\nhttps://hellgatelunch.github.io/
 URL:https://hellgatelunch.github.io/
 TRANSP:TRANSPARENT
 END:VEVENT

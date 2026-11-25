@@ -17,6 +17,10 @@ import { makeIcs } from "./calendar.mjs";
 import { schoolUrl, cleanText } from "./schema.mjs";
 
 const UA = "Mozilla/5.0 (compatible; hawks-lunch/1.0)";
+// Bump when the way menus are read improves: months read by an older reader are read again
+// (once), even though the school's file hasn't changed.
+//   2: header bands with day names inside them, notes above the calendar, banners across days
+export const READER = 2;
 const MEALS = {
   lunch: { label: "Lunch", dir: "cells" },
   breakfast: { label: "Breakfast", dir: "cells-breakfast" },
@@ -93,7 +97,8 @@ export async function refresh({ prev = {}, cells = new Map(), breakJson = {}, no
 
     for (const item of Object.values(found)) {
       const name = `${S.MON_LONG[item.month]} ${item.year}`;
-      if (!force && data.months[item.mk] && data.months[item.mk].source === item.url) { log(`  ${name}: already cut`); continue; }
+      const had = data.months[item.mk];
+      if (!force && had && had.source === item.url && had.reader === READER) { log(`  ${name}: already cut`); continue; }
       let buf, pdf = null;
       try { buf = (file && await file(meal, "render", item)) || await get(item.render || item.url, S.ACCEPT); }
       catch (e) { log(`  ${name}: download failed (${e.message}), will retry next run`); continue; }
@@ -102,7 +107,7 @@ export async function refresh({ prev = {}, cells = new Map(), breakJson = {}, no
         pdf = (file && await file(meal, "pdf", item)) || await get(item.url, "application/pdf");
         if (pdf.subarray(0, 4).toString("latin1") !== "%PDF") pdf = null;
       } catch (e) { pdf = null; }
-      const entry = { name, source: item.url, cut: now.toISOString().slice(0, 10) };
+      const entry = { name, source: item.url, cut: now.toISOString().slice(0, 10), reader: READER };
       // Drop this month's old days and pictures, then cut the new ones.
       for (const k of Object.keys(data.days)) if (k.startsWith(item.mk)) delete data.days[k];
       data.noLunch = data.noLunch.filter(k => !k.startsWith(item.mk));
