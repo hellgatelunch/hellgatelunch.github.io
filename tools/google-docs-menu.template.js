@@ -1,25 +1,25 @@
-// Hawks Lunch: menu calendars in Google Docs with dropdown chips.
+// Hawks Lunch: the school year's menu calendars in one Google Doc, with dropdown chips.
 //
-// HOW TO USE (on a computer, once per batch of months):
-//   1. Go to script.google.com and click "New project".
+// HOW TO USE (on a computer, once a year, or again after changing the food lists):
+//   1. Go to script.google.com and click "New project" (or open your "Hawks Lunch menus" project).
 //   2. Delete what's in the editor and paste all of this in.
 //   3. On the left, next to "Services", click +, pick "Google Docs API", click Add.
-//   4. Edit the MENUS list just below if you want other months.
-//   5. At the top, choose the function "makeMenus" and click Run. Allow access when asked
+//   4. Check SCHOOL_YEAR just below (first and last month).
+//   5. At the top, choose the function "makeSchoolYear" and click Run. Allow access when asked
 //      (it's your own script: if Google warns, click Advanced, then Go to the project).
-//   6. The new Docs are in your Google Drive. Their links are in the Execution log.
+//   6. The new Doc is in your Google Drive. Its link is in the Execution log.
 //
-// In each Doc, every school day has a Main chip and Side chips. Tap a chip and pick a food.
-// "—" means nothing in that spot (it prints as a dash, and Hawks Lunch ignores it).
-// To add a food: tap any chip, "Add/Edit Options" (it updates every chip of that kind; 50 at most).
-// Days off are at the top of the Main list. When done: File > Download > PDF, and post it as usual.
+// The Doc has a "Lunch" tab and a "Breakfast" tab (in the tab list on the left), each with a tab
+// per month. In a month, every school day has a Main chip and Side chips. Tap a chip and pick a
+// food. "—" means nothing in that spot (it prints as a dash, and Hawks Lunch ignores it).
+// Days off are at the top of the Main list.
+// To post a month: open its tab, File > Download > PDF (choose "Current tab"), post it as usual.
+// To add a food for the rest of the year: add it to FOODS below and run again (makes a new Doc),
+// or tap a chip, "Add/Edit Options" (that changes that one month's tab only).
+// A dropdown holds 50 options at most: Main = "—" + days off + mains, Side = "—" + sides.
 
-var MENUS = [
-  // [ "YYYY-MM", "lunch" or "breakfast" ]
-  ["2026-12", "lunch"],
-  ["2027-01", "lunch"],
-  ["2027-01", "breakfast"],
-];
+var SCHOOL_YEAR = { first: "2026-08", last: "2027-06" };
+var MEALS = ["lunch", "breakfast"];
 
 var FOODS = /*FOODS*/;
 
@@ -30,12 +30,80 @@ var GREEN = "#72AC83", TITLE_GREEN = "#5A9E6F", ORANGE = "#E46C0A";
 var MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 var DAY_NAMES = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
 
-function makeMenus() {
+function makeSchoolYear() {
   if (typeof Docs === "undefined") throw new Error('Add the "Google Docs API" service first (Services + on the left), then run again.');
-  MENUS.forEach(function (m) {
-    var url = makeMenu(m[0], m[1]);
-    Logger.log(m[0] + " " + m[1] + ": " + url);
+  MEALS.forEach(function (meal) { checkLists(meal); });
+  var months = monthsOf(SCHOOL_YEAR.first, SCHOOL_YEAR.last);
+  var y1 = SCHOOL_YEAR.first.slice(0, 4), y2 = SCHOOL_YEAR.last.slice(2, 4);
+  var doc = DocumentApp.create("Hellgate " + y1 + "–" + y2 + " School Menus");
+  var id = doc.getId();
+  doc.saveAndClose();
+
+  // Tabs: the first tab becomes "Lunch", then "Breakfast" beside it, then a tab per month under each.
+  var first = Docs.Documents.get(id, { includeTabsContent: true }).tabs[0].tabProperties.tabId;
+  var parents = {};
+  parents[MEALS[0]] = first;
+  var reqs = [{ updateDocumentTabProperties: { tabProperties: { tabId: first, title: cap(MEALS[0]) }, fields: "title" } }];
+  MEALS.slice(1).forEach(function (meal) { reqs.push({ addDocumentTab: { tabProperties: { title: cap(meal) } } }); });
+  var replies = Docs.Documents.batchUpdate({ requests: reqs }, id).replies;
+  MEALS.slice(1).forEach(function (meal, i) { parents[meal] = replies[i + 1].addDocumentTab.tabProperties.tabId; });
+
+  reqs = [];
+  var order = [];
+  MEALS.forEach(function (meal) {
+    months.forEach(function (ym, i) {
+      reqs.push({ addDocumentTab: { tabProperties: { title: monthName(ym), parentTabId: parents[meal], index: i } } });
+      order.push({ meal: meal, ym: ym });
+    });
   });
+  replies = Docs.Documents.batchUpdate({ requests: reqs }, id).replies;
+  order.forEach(function (o, i) { o.tabId = replies[i].addDocumentTab.tabProperties.tabId; });
+
+  // Fill the tabs.
+  doc = DocumentApp.openById(id);
+  MEALS.forEach(function (meal) {
+    var body = doc.getTab(parents[meal]).asDocumentTab().getBody();
+    var p = body.getParagraphs()[0];
+    p.setText(cap(meal) + " menus, " + monthName(SCHOOL_YEAR.first) + " to " + monthName(SCHOOL_YEAR.last));
+    style(p, { size: 20, bold: true });
+    style(body.appendParagraph("Open a month in the tab list on the left. Tap a chip under a date and pick a food; "
+      + "days off are at the top of the Main list. \"—\" means nothing in that spot."), { size: 11 });
+    style(body.appendParagraph("To post a month: open its tab, then File > Download > PDF (Current tab), and post it as usual."), { size: 11 });
+  });
+  order.forEach(function (o) { fillMonth(doc.getTab(o.tabId).asDocumentTab().getBody(), o.ym, o.meal); });
+  doc.saveAndClose();
+
+  // Swap each {{date|slot}} line for a chip, a tab at a time (each tab keeps its own lists).
+  var json = Docs.Documents.get(id, { includeTabsContent: true });
+  allTabs(json.tabs).forEach(function (t) {
+    var meal = null;
+    order.forEach(function (o) { if (o.tabId === t.tabProperties.tabId) meal = o.meal; });
+    if (!meal) return;
+    var r = chipRequests(t.documentTab.body, meal, t.tabProperties.tabId);
+    if (r.length > 2) Docs.Documents.batchUpdate({ requests: r }, id);
+  });
+  var url = "https://docs.google.com/document/d/" + id + "/edit";
+  Logger.log("School year menus: " + url);
+  return url;
+}
+
+function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+function pad(n) { return (n < 10 ? "0" : "") + n; }
+function monthName(ym) { return MONTHS[+ym.slice(5, 7) - 1] + " " + ym.slice(0, 4); }
+
+function monthsOf(first, last) {
+  var y = +first.slice(0, 4), m = +first.slice(5, 7), out = [];
+  while (y * 100 + m <= +last.slice(0, 4) * 100 + +last.slice(5, 7)) {
+    out.push(y + "-" + pad(m));
+    if (++m > 12) { m = 1; y++; }
+  }
+  return out;
+}
+
+function allTabs(tabs) {
+  var out = [];
+  (tabs || []).forEach(function (t) { out.push(t); out = out.concat(allTabs(t.childTabs)); });
+  return out;
 }
 
 // Mon-Fri rows for the month: each row is 5 day numbers (0 = not in this month).
@@ -50,13 +118,9 @@ function weeksOf(year, month) {
   return rows;
 }
 
-function pad(n) { return (n < 10 ? "0" : "") + n; }
-
-function makeMenu(ym, meal) {
-  var year = +ym.slice(0, 4), month = +ym.slice(5, 7);
-  var Meal = meal.charAt(0).toUpperCase() + meal.slice(1);
-  var doc = DocumentApp.create(MONTHS[month - 1] + " " + year + " " + Meal + " Menu");
-  var body = doc.getBody();
+// One month's page, laid out like the school's menu sheets.
+function fillMonth(body, ym, meal) {
+  var year = +ym.slice(0, 4), month = +ym.slice(5, 7), Meal = cap(meal);
   body.setPageWidth(792).setPageHeight(612);
   body.setMarginTop(30).setMarginBottom(30).setMarginLeft(36).setMarginRight(36);
 
@@ -88,7 +152,7 @@ function makeMenu(ym, meal) {
     hp.setAlignment(DocumentApp.HorizontalAlignment.CENTER);
   }
   // Each school day: the date, then a placeholder line per chip ({{date|slot}}), swapped for
-  // chips below through the Docs API (DocumentApp can't make dropdowns).
+  // chips afterwards through the Docs API (DocumentApp can't make dropdowns).
   var rowH = weeks.length <= 5 ? 84 : 70;
   weeks.forEach(function (w, r) {
     var row = cal.getRow(r + 1);
@@ -103,12 +167,6 @@ function makeMenu(ym, meal) {
       });
     });
   });
-  doc.saveAndClose();
-
-  var id = doc.getId();
-  var requests = chipRequests(Docs.Documents.get(id), meal);
-  Docs.Documents.batchUpdate({ requests: requests }, id);
-  return "https://docs.google.com/document/d/" + id + "/edit";
 }
 
 function style(p, o) {
@@ -119,6 +177,17 @@ function style(p, o) {
   return p;
 }
 
+function mainNames(meal) { return [NONE].concat(DAYS_OFF, FOODS[meal].mains); }
+function sideNames(meal) { return [NONE].concat(FOODS[meal].sides); }
+
+function checkLists(meal) {
+  if (!FOODS[meal]) throw new Error("FOODS has no " + meal + " list.");
+  [["Main", mainNames(meal)], ["Side", sideNames(meal)]].forEach(function (l) {
+    var n = options("x", l[1]).length;
+    if (n > 50) throw new Error("A dropdown can hold 50 options; the " + meal + " " + l[0] + " list has " + n + ". Shorten it in FOODS.");
+  });
+}
+
 function options(prefix, names) {
   var seen = {}, out = [];
   names.forEach(function (n) {
@@ -126,13 +195,12 @@ function options(prefix, names) {
     seen[n] = true;
     out.push({ optionId: "dropdownItem." + prefix + pad(out.length), displayValue: n });
   });
-  if (out.length > 50) throw new Error("A dropdown can hold 50 options; this list has " + out.length + ". Shorten it in FOODS.");
   return out;
 }
 
-// documents.get output -> the batchUpdate requests: two dropdown definitions (Main, Side), then
+// A tab's body -> the batchUpdate requests: two dropdown definitions (Main, Side) in that tab, then
 // each {{date|slot}} placeholder replaced by a chip, last one first so earlier positions stay put.
-function chipRequests(docJson, meal) {
+function chipRequests(body, meal, tabId) {
   var marks = [];
   (function walk(content) {
     (content || []).forEach(function (el) {
@@ -144,19 +212,18 @@ function chipRequests(docJson, meal) {
         while ((m = re.exec(pe.textRun.content))) marks.push({ start: pe.startIndex + m.index, end: pe.startIndex + m.index + m[0].length, slot: m[2] });
       });
     });
-  })(docJson.body.content);
+  })(body.content);
   marks.sort(function (a, b) { return b.start - a.start; });
 
-  var f = FOODS[meal];
   var requests = [
-    { createDropdownDefinition: { dropdownDefinition: { dropdownDefinitionId: "kix.hlmain", dropdownDefinitionProperties: {
-      title: "Main", options: options("m", [NONE].concat(DAYS_OFF, f.mains)) } } } },
-    { createDropdownDefinition: { dropdownDefinition: { dropdownDefinitionId: "kix.hlside", dropdownDefinitionProperties: {
-      title: "Side", options: options("s", [NONE].concat(f.sides)) } } } },
+    { createDropdownDefinition: { tabId: tabId, dropdownDefinition: { dropdownDefinitionId: "kix.hlmain", dropdownDefinitionProperties: {
+      title: "Main", options: options("m", mainNames(meal)) } } } },
+    { createDropdownDefinition: { tabId: tabId, dropdownDefinition: { dropdownDefinitionId: "kix.hlside", dropdownDefinitionProperties: {
+      title: "Side", options: options("s", sideNames(meal)) } } } },
   ];
   marks.forEach(function (k) {
-    requests.push({ deleteContentRange: { range: { startIndex: k.start, endIndex: k.end } } });
-    requests.push({ insertDropdown: { location: { index: k.start }, dropdownDefinitionId: k.slot === "main" ? "kix.hlmain" : "kix.hlside" } });
+    requests.push({ deleteContentRange: { range: { startIndex: k.start, endIndex: k.end, tabId: tabId } } });
+    requests.push({ insertDropdown: { location: { index: k.start, tabId: tabId }, dropdownDefinitionId: k.slot === "main" ? "kix.hlmain" : "kix.hlside" } });
   });
   return requests;
 }
