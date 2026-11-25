@@ -52,7 +52,8 @@ function makeSchoolYear() {
   var order = [];
   MEALS.forEach(function (meal) {
     months.forEach(function (ym, i) {
-      reqs.push({ addDocumentTab: { tabProperties: { title: monthName(ym), parentTabId: parents[meal], index: i } } });
+      // Tab names must be unique in a Doc, so the meal is part of each month's name.
+      reqs.push({ addDocumentTab: { tabProperties: { title: monthName(ym) + " " + cap(meal), parentTabId: parents[meal], index: i } } });
       order.push({ meal: meal, ym: ym });
     });
   });
