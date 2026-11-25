@@ -135,3 +135,5 @@ python -m http.server 8788 --directory web
 ### Menu calendars with dropdowns (for the kitchen)
 
 `python tools/make-menu-calendar.py 2027-02 lunch` (or `breakfast`) writes `menu-calendars/2027-02 Lunch.docx`: the month's calendar in the school's layout with the dates filled in, and dropdowns in each school day's box (Main, then Sides). Pick a food from the list or type a new one; pick "No School" / "Winter Break" in Main for days off. Then save as PDF and post it as usual. Slots left alone show faint dots, which the app ignores. Foods come from `tools/foods.json`; add new ones there and run the script again. Dropdowns work in desktop Word (Windows and Mac).
+
+**Google version:** `python tools/make-menu-sheet.py 2027-02 lunch` writes `menu-calendars/2027-02 Lunch (Google Sheets).xlsx`, the same calendar as a spreadsheet. Upload it to Google Drive and open it with Google Sheets; the dropdowns carry over. Foods are on its "Foods" tab (add new ones at the bottom of a column). Print it with File > Download > PDF. (Google Docs can't take dropdowns from an uploaded file, so the Google version is a Sheet.)
