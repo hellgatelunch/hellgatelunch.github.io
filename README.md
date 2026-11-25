@@ -63,12 +63,12 @@ Each school day gets an all-day event titled with lunch ("Lunch: Cheeseburger"),
 
 ## How it works (for whoever maintains this)
 
-`web/` is a static site published with GitHub Pages. A GitHub Action (`.github/workflows/menu.yml`) runs every 6 hours:
+`web/` is a static site published on Netlify (`npm run deploy`). Netlify reads the school's menu itself every 6 hours (`netlify/functions/refresh-menu.mjs`, `menu/site-store.mjs`) and keeps the result in Netlify Blobs. The same reader runs locally with `node menu/build.mjs`:
 
 1. `menu/build.mjs` reads the school's menu page and finds the monthly **lunch** and **breakfast** PDFs.
 2. For each new month, it finds the calendar's day boxes (grid code in `lib/school-menu.js`) and reads the words in each box from the PDF's text layer (`menu/pdf-text.mjs`, pdf.js).
 3. It writes `web/data/menu.json` (the one menu file the website and the widget read) and `web/calendar.ics` (`menu/calendar.mjs`).
-4. It commits anything that changed and republishes the site.
+4. Locally, commit what changed as a backup. (The GitHub Action that used to do this every 6 hours is turned off; it runs only by hand.)
 
 Details:
 

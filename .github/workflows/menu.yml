@@ -10,12 +10,11 @@ name: Refresh menu and publish site
 #   deploy   publishes that package to GitHub Pages.
 # Actions are pinned to exact commits so a changed tag upstream can't change what runs here.
 
+# Turned off 2026-11-24: the app lives on Netlify, which reads the menu itself every 6 hours
+# (netlify/functions/refresh-menu.mjs). This runs only when started by hand (Actions tab >
+# Run workflow), e.g. to republish the old address's forwarding pages.
 on:
-  schedule:
-    - cron: "17 */6 * * *" # every 6 hours (UTC), like the widget
   workflow_dispatch:
-  push:
-    branches: [main]
 
 permissions: {}
 
